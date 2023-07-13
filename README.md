@@ -1,6 +1,6 @@
 # comizy
 
-A new Flutter project.
+O modelo de negócios do Comizy se encontra no arquivo bmc_comizy.pdf
 
 ## Getting Started
 
