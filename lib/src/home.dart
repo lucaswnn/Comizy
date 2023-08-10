@@ -12,79 +12,85 @@ class MyHome extends StatefulWidget {
 }
 
 class _MyHomeState extends State<MyHome> {
-  var selectedIndex = 0;
+  var _selectedIndex = 1;
+  final List<Widget> _pages = [ListScreen(), MapScreen(), UserScreen()];
+
+  final PageController _pageController =
+      PageController(initialPage: 1, keepPage: true);
+
+  final List<BottomNavigationBarItem> _bottomNavigationBarItems = const [
+    BottomNavigationBarItem(
+      label: "Lista",
+      icon: Icon(
+        Icons.list,
+        size: 28,
+      ),
+    ),
+    BottomNavigationBarItem(
+      label: "Home",
+      icon: Icon(
+        Icons.map,
+        size: 28,
+      ),
+    ),
+    BottomNavigationBarItem(
+      label: "User",
+      icon: Icon(
+        Icons.person,
+        size: 28,
+      ),
+    )
+  ];
 
   @override
   Widget build(BuildContext context) {
     var colorScheme = Theme.of(context).colorScheme;
 
-    Widget page;
-    switch (selectedIndex) {
-      case 0:
-        page = ListScreen();
-        break;
-
-      case 1:
-        page = const MapScreen();
-        break;
-
-      case 2:
-        page = UserScreen();
-        break;
-
-      default:
-        throw UnimplementedError("Não foi implementado");
-    }
-
-    var mainArea = ColoredBox(
-      color: colorScheme.background,
-      child: page,
-    );
-
     return Scaffold(
-      body: LayoutBuilder(builder: ((context, constraints) {
-        return Column(
-          children: [
-            Expanded(
-              child: mainArea,
-            ),
-            SafeArea(
-              child: BottomNavigationBar(
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return Column(
+            children: [
+              Expanded(
+                child: ColoredBox(
+                  color: colorScheme.background,
+                  child: PageView(
+                    controller: _pageController,
+                    children: _pages,
+                    onPageChanged: (index) {
+                      setState(
+                        () {
+                          _selectedIndex = index;
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ),
+              SafeArea(
+                child: BottomNavigationBar(
                   showSelectedLabels: false,
                   showUnselectedLabels: false,
-                  items: const [
-                    BottomNavigationBarItem(
-                      label: "Lista",
-                      icon: Icon(
-                        Icons.list,
-                        size: 28,
-                      ),
-                    ),
-                    BottomNavigationBarItem(
-                      label: "Home",
-                      icon: Icon(
-                        Icons.map,
-                        size: 28,
-                      ),
-                    ),
-                    BottomNavigationBarItem(
-                      label: "User",
-                      icon: Icon(
-                        Icons.person,
-                        size: 28,
-                      ),
-                    ),
-                  ],
-                  currentIndex: selectedIndex,
-                  onTap: (value) {
-                    setState(() {
-                      selectedIndex = value;
-                    });
-                  }),
-            ),
-          ],
-        );
-      })),
+                  items: _bottomNavigationBarItems,
+                  currentIndex: _selectedIndex,
+                  onTap: (index) {
+                    setState(
+                      () {
+                        _selectedIndex = index;
+                        _pageController.animateToPage(
+                          index,
+                          duration: const Duration(milliseconds: 500),
+                          curve: Curves.ease,
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
 }

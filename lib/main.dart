@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'src/home.dart';
 import 'src/theme.dart';
@@ -13,10 +14,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var themeData = MainThemeData().mainThemeData;
-    return MaterialApp(
-      title: "App",
-      theme: themeData,
-      home: const MyHome(),
+    return ChangeNotifierProvider(
+      create: (context) {},
+      child: MaterialApp(
+        title: "App",
+        theme: themeData,
+        home: const MyHome(),
+      ),
     );
   }
 }

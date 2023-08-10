@@ -83,6 +83,11 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_web_plugins:
+    dependency: transitive
+    description: flutter
+    source: sdk
+    version: "0.0.0"
   http:
     dependency: transitive
     description:
@@ -139,6 +144,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.1"
+  location:
+    dependency: "direct main"
+    description:
+      name: location
+      sha256: c8e0c8cd92c6ce8b42760f9aafd6d80592459e2e0cd702bc336061c738ec4715
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.0.2+1"
+  location_platform_interface:
+    dependency: transitive
+    description:
+      name: location_platform_interface
+      sha256: a211a41b1fdfaddaf02996750dd703abcc7ac1d4fd90e978c8773ccf2260af68
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.1.1"
+  location_web:
+    dependency: transitive
+    description:
+      name: location_web
+      sha256: acde3e95c4dec2b82cbdc3490bf010eeaf66e793e20f62364887e072bd701d49
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.1.1"
   matcher:
     dependency: transitive
     description:
@@ -187,6 +216,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.8.3"
+  plugin_platform_interface:
+    dependency: transitive
+    description:
+      name: plugin_platform_interface
+      sha256: "43798d895c929056255600343db8f049921cbec94d31ec87f1dc5c16c01935dd"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.5"
   polylabel:
     dependency: transitive
     description:
