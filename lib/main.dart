@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'src/home.dart';
-import 'src/theme.dart';
+import 'package:comizy/src/home.dart';
+import 'package:comizy/src/theme.dart';
+import 'package:comizy/src/state.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     var themeData = MainThemeData().mainThemeData;
     return ChangeNotifierProvider(
-      create: (context) {},
+      create: (context) => MyAppState(),
       child: MaterialApp(
         title: "App",
         theme: themeData,
