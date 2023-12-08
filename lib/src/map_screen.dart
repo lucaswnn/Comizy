@@ -5,6 +5,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MapScreen extends StatefulWidget {
   MapScreen({super.key});
@@ -74,12 +75,13 @@ class _MapScreenState extends State<MapScreen> {
         _currentLocation!.latitude!,
         _currentLocation!.longitude!,
       ));
-      for (var shopLatLng in testData.shopLatLng) {
+      for (var shop in testData.shops) {
         _markers.add(
           Marker(
-            width: 60,
-            height: 60,
-            point: shopLatLng,
+            width: 30,
+            height: 30,
+            anchorPos: AnchorPos.align(AnchorAlign.center),
+            point: shop.location,
             builder: (context) => IconButton(
               icon: const Icon(
                 Icons.location_on_sharp,
@@ -89,9 +91,11 @@ class _MapScreenState extends State<MapScreen> {
                     blurRadius: 2,
                   ),
                 ],
-                size: 30,
                 color: Colors.yellow,
               ),
+              iconSize: 30,
+              padding: EdgeInsets.zero,
+              alignment: Alignment.center,
               onPressed: () => print('aqui'),
             ),
           ),
@@ -126,9 +130,9 @@ class _MapScreenState extends State<MapScreen> {
           showFlutterMapAttribution: false,
           attributions: [
             TextSourceAttribution(
-              'testando',
-              prependCopyright: false,
-              onTap: () {},
+              'OpenStreetMap',
+              prependCopyright: true,
+              onTap: () => launchUrl(Uri.parse('https://openstreetmap.org/copyright')),
             ),
           ],
         ),
@@ -139,12 +143,12 @@ class _MapScreenState extends State<MapScreen> {
           subdomains: const ['a', 'b', 'c'],
           userAgentPackageName: 'com.comizy.comizy',
         ),
+        CircleLayer(
+          circles: _circleMarkers,
+        ),
         MarkerLayer(
           markers: _markers,
         ),
-        CircleLayer(
-          circles: _circleMarkers,
-        )
       ],
     );
   }

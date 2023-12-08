@@ -2,10 +2,11 @@ import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart';
 
 import 'package:comizy/src/product.dart';
+import 'package:comizy/src/shop.dart';
 
 class TestData {
   LocationData? currentLocation;
-  final List<LatLng> shopLatLng = [];
+  final List<Shop> shops = [];
   final List<Product> products = [
     Product('Produto 1', 1, 'Tipo 1'),
     Product('Produto 2', 2, 'Tipo 2'),
@@ -21,30 +22,30 @@ class TestData {
 
   void loadLocations(LatLng? latlng) {
     if (latlng != null) {
-      shopLatLng.add(LatLng(
+      shops.add(Shop(1, 'Loja 1', LatLng(
         latlng.latitude + 0.01,
         latlng.longitude + 0.01,
-      ));
+      )));
 
-      shopLatLng.add(LatLng(
+      shops.add(Shop(2, 'Loja 2', LatLng(
         latlng.latitude + 0.02,
         latlng.longitude + 0.01,
-      ));
+      )));
 
-      shopLatLng.add(LatLng(
+      shops.add(Shop(3, 'Loja 3', LatLng(
         latlng.latitude + 0.02,
         latlng.longitude - 0.01,
-      ));
+      )));
 
-      shopLatLng.add(LatLng(
+      shops.add(Shop(4, 'Loja 4', LatLng(
         latlng.latitude - 0.01,
         latlng.longitude + 0.01,
-      ));
+      )));
 
-      shopLatLng.add(LatLng(
+      shops.add(Shop(5, 'Loja 5', LatLng(
         latlng.latitude - 0.02,
         latlng.longitude,
-      ));
+      )));
     } else {
       print('erro_comizy_fonte_testes');
     }
