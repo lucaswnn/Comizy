@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:comizy/src/product.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -20,8 +22,36 @@ class _ListScreenState extends State<ListScreen> {
 
   String addon = 'a';
 
+  Future<void> addUser() async {
+    String apiUrl = 'http://3.134.88.63:3000/adicionar_usuario';
+    Map<String, dynamic> dados = {
+      'nome': 'Lucas',
+      'login': 'lucaswnn',
+      'senha': 'senha',
+      'telefone': '01234567'
+    };
+    try {
+      var response = await http.post(
+        Uri.parse(apiUrl),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(dados),
+      );
+      if (response.statusCode == 200) {
+        print('Dados enviados com sucesso');
+        print('Resposta do servidor: ${response.body}');
+      } else {
+        print(
+            'Falha ao enviar os dados. Código de status: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Erro ao enviar requisição: $e');
+    }
+  }
+
   Future<void> getDataFromWeb() async {
-    String apiUrl = 'http://3.134.88.63:3000/dados';
+    String apiUrl = 'http://3.134.88.63:3000/dados_teste';
     try {
       final response = await http.get(Uri.parse(apiUrl));
       if (response.statusCode == 200) {
@@ -39,6 +69,8 @@ class _ListScreenState extends State<ListScreen> {
   @override
   void initState() {
     super.initState();
+    addUser().then((value) => {print(addon)});
+
     getDataFromWeb().then((value) {
       products.add(Product(addon, 1, 'Tipo 1'));
     });
