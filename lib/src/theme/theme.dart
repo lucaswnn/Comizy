@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class MainThemeData {
-  ThemeData mainThemeData = ThemeData(
+  static ThemeData mainThemeData = ThemeData(
     useMaterial3: true,
     colorScheme: const ColorScheme(
         brightness: Brightness.light,

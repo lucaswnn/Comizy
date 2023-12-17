@@ -1,8 +1,8 @@
 import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart';
 
-import 'package:comizy/src/product.dart';
-import 'package:comizy/src/shop.dart';
+import 'package:comizy/src/tad/product.dart';
+import 'package:comizy/src/tad/shop.dart';
 
 class TestData {
   LocationData? currentLocation;
@@ -22,30 +22,45 @@ class TestData {
 
   void loadLocations(LatLng? latlng) {
     if (latlng != null) {
-      shops.add(Shop(1, 'Loja 1', LatLng(
-        latlng.latitude + 0.01,
-        latlng.longitude + 0.01,
-      )));
+      shops.add(Shop(
+          1,
+          'Loja 1',
+          LatLng(
+            latlng.latitude + 0.01,
+            latlng.longitude + 0.01,
+          )));
 
-      shops.add(Shop(2, 'Loja 2', LatLng(
-        latlng.latitude + 0.02,
-        latlng.longitude + 0.01,
-      )));
+      shops.add(Shop(
+          2,
+          'Loja 2',
+          LatLng(
+            latlng.latitude + 0.02,
+            latlng.longitude + 0.01,
+          )));
 
-      shops.add(Shop(3, 'Loja 3', LatLng(
-        latlng.latitude + 0.02,
-        latlng.longitude - 0.01,
-      )));
+      shops.add(Shop(
+          3,
+          'Loja 3',
+          LatLng(
+            latlng.latitude + 0.02,
+            latlng.longitude - 0.01,
+          )));
 
-      shops.add(Shop(4, 'Loja 4', LatLng(
-        latlng.latitude - 0.01,
-        latlng.longitude + 0.01,
-      )));
+      shops.add(Shop(
+          4,
+          'Loja 4',
+          LatLng(
+            latlng.latitude - 0.01,
+            latlng.longitude + 0.01,
+          )));
 
-      shops.add(Shop(5, 'Loja 5', LatLng(
-        latlng.latitude - 0.02,
-        latlng.longitude,
-      )));
+      shops.add(Shop(
+          5,
+          'Loja 5',
+          LatLng(
+            latlng.latitude - 0.02,
+            latlng.longitude,
+          )));
     } else {
       print('erro_comizy_fonte_testes');
     }

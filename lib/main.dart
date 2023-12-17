@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:comizy/src/home.dart';
-import 'package:comizy/src/theme.dart';
-import 'package:comizy/src/state.dart';
+import 'package:comizy/src/screen/home.dart';
+import 'package:comizy/src/theme/theme.dart';
+import 'package:comizy/src/state/state.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,10 +14,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var themeData = MainThemeData().mainThemeData;
+    var themeData = MainThemeData.mainThemeData;
     return ChangeNotifierProvider(
       create: (context) => MyAppState(),
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: "App",
         theme: themeData,
         home: const MyHome(),

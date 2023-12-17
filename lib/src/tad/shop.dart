@@ -1,4 +1,4 @@
-import 'package:comizy/src/product.dart';
+import 'package:comizy/src/tad/product.dart';
 
 import 'package:latlong2/latlong.dart';
 

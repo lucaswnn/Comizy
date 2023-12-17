@@ -1,6 +1,5 @@
 import 'dart:convert';
-
-import 'package:comizy/src/product.dart';
+import 'package:comizy/src/tad/product.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -79,14 +78,37 @@ class _ListScreenState extends State<ListScreen> {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-        itemCount: products.length,
-        itemBuilder: (BuildContext context, int index) {
-          return ListTile(
-            title: Text(
-              products.elementAt(index).name,
-            ),
-            leading: Icon(products.elementAt(index).iconData),
-          );
-        });
+      itemCount: products.length,
+      itemBuilder: (BuildContext context, int index) {
+        return ListTile(
+          title: Text(
+            products.elementAt(index).name,
+          ),
+          leading: Icon(products.elementAt(index).iconData),
+        );
+      },
+    );
+  }
+}
+
+class MySearchDelegate extends SearchDelegate {
+  @override
+  List<Widget>? buildActions(BuildContext context) {
+    return const [SizedBox.shrink()];
+  }
+
+  @override
+  Widget? buildLeading(BuildContext context) {
+    return const SizedBox.shrink();
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    return const SizedBox.shrink();
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    return const SizedBox.shrink();
   }
 }
