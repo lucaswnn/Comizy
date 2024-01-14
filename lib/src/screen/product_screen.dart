@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class ShopScreen extends StatelessWidget {
-  const ShopScreen({super.key});
+class ProductScreen extends StatelessWidget {
+  const ProductScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -9,8 +9,8 @@ class ShopScreen extends StatelessWidget {
       alignment: Alignment.center,
       child: const Column(
         children: [
-          Text('loja'),
-          Text('encontrar os melhores preços'),
+          Text('produto'),
+          Text('encontrar o melhor preço'),
         ],
       ),
     );

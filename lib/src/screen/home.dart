@@ -1,5 +1,7 @@
+import 'package:comizy/src/screen/product_screen.dart';
 import 'package:comizy/src/theme/style.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import 'package:comizy/src/screen/shop_screen.dart';
@@ -56,6 +58,7 @@ class _MyHomeState extends State<MyHome> {
               title: const Text(
                 'Procurar...',
                 textAlign: TextAlign.right,
+                style: TextStyle(color: Colors.grey),
               ),
               actions: [
                 IconButton(
@@ -146,14 +149,19 @@ class MySearchDelegate extends SearchDelegate {
   @override
   Widget buildResults(BuildContext context) {
     final state = context.watch<MyAppState>();
-    state.setCurrentShop(query);
-    return const ShopScreen();
+    if (state.shopOrProduct == 'Loja') {
+      state.setCurrentShop(query);
+      return const ShopScreen();
+    } else {
+      state.setCurrentProduct(query);
+      return const ProductScreen();
+    }
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
     List<String> suggestions = [];
-    List<ElevatedButton> hints = [];
+    HintElevatedButton hint = const HintElevatedButton();
 
     if (query.isNotEmpty) {
       suggestions = searchResults.where((searchResult) {
@@ -161,26 +169,19 @@ class MySearchDelegate extends SearchDelegate {
         final input = query.toLowerCase();
         return result.contains(input);
       }).toList();
-
-      int focus = 0;
-      hints = [
-        ElevatedButton(
-          onPressed: () {},
-          style: MyButtonStyles.searchBarHint,
-          child: const Text('Loja'),
-        ),
-        ElevatedButton(
-          onPressed: () {},
-          child: const Text('Produto'),
-        ),
-      ];
+      if (suggestions.isEmpty) {
+        return ShopProductRegister(
+          delegate: this,
+        );
+      }
     }
 
     return Column(
       children: [
-        Row(
-          children: hints,
-        ),
+        if (query.isNotEmpty)
+          Row(
+            children: [hint],
+          ),
         ListView.builder(
           shrinkWrap: true,
           itemCount: suggestions.length,
@@ -196,6 +197,72 @@ class MySearchDelegate extends SearchDelegate {
           },
         ),
       ],
+    );
+  }
+}
+
+class HintElevatedButton extends StatefulWidget {
+  const HintElevatedButton({super.key});
+
+  @override
+  State<HintElevatedButton> createState() => _HintElevatedButtonState();
+}
+
+class _HintElevatedButtonState extends State<HintElevatedButton> {
+  String? hintLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    var state = context.watch<MyAppState>();
+    setState(() {
+      hintLabel = state.shopOrProduct;
+    });
+    return ElevatedButton(
+      onPressed: () {
+        setState(() {
+          state.toggleShopProduct();
+          hintLabel = state.shopOrProduct;
+        });
+      },
+      style: MyButtonStyles.searchBarHint,
+      child: Text(hintLabel!),
+    );
+  }
+}
+
+class ShopProductRegister extends StatelessWidget {
+  final MySearchDelegate delegate;
+  ShopProductRegister({super.key, required this.delegate});
+
+  @override
+  Widget build(BuildContext context) {
+    var state = context.watch<MyAppState>();
+    String? noFindText;
+    if (state.shopOrProduct == 'Produto') {
+      noFindText =
+          'Produto não encontrado. Sentiu falta de algum produto? Cadastre um novo produto na plataforma';
+    } else {
+      noFindText =
+          'Loja não encontrada. Sentiu falta de alguma loja? Cadastre uma nova loja na plataforma';
+    }
+    return SizedBox(
+      height: 100,
+      width: 400,
+      child: Card(
+        color: Colors.amber,
+        shadowColor: Colors.grey,
+        child: Column(
+          children: [
+            Text(noFindText),
+            ElevatedButton(
+              onPressed: () {
+                delegate.close(context, null);
+              },
+              child: const Icon(Icons.add),
+            )
+          ],
+        ),
+      ),
     );
   }
 }

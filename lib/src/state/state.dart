@@ -15,7 +15,20 @@ class MyAppState extends ChangeNotifier {
   // loja corrente
   String? currentShop;
 
+  // produto corrente
+  String? currentProduct;
+
+  // alternador loja/produto para banco de dados interno
+  String shopOrProduct = 'Produto';
+
   TestData testData = TestData();
+
+  // método para alternar loja/produto para banco de dados interno
+  void toggleShopProduct() {
+    shopOrProduct == 'Produto'
+        ? shopOrProduct = 'Loja'
+        : shopOrProduct = 'Produto';
+  }
 
   // método para alterar a página selecionada da home
   void setHomeIndex(int index) {
@@ -29,6 +42,12 @@ class MyAppState extends ChangeNotifier {
   void setCurrentShop(String shop) {
     currentShop = shop;
     print(currentShop);
+  }
+
+  // método para alterar a loja corrente
+  void setCurrentProduct(String product) {
+    currentProduct = product;
+    print(currentProduct);
   }
 
   // método para capturar a localização atual GPS
