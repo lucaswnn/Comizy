@@ -1,4 +1,6 @@
+import 'package:comizy/src/db/db_access.dart';
 import 'package:comizy/src/screen/product_screen.dart';
+import 'package:comizy/src/tad/product.dart';
 import 'package:comizy/src/theme/style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -115,7 +117,11 @@ class _MyHomeState extends State<MyHome> {
 }
 
 class MySearchDelegate extends SearchDelegate {
-  List<String> searchResults = ['P1', 'P2'];
+  List<Product> searchResults = [];
+
+  Future<void> loadResults() async {
+    searchResults = Product.productList(await DbAccess.getProductList());
+  }
 
   @override
   String? get searchFieldLabel => 'procurar produto';
@@ -160,12 +166,12 @@ class MySearchDelegate extends SearchDelegate {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    List<String> suggestions = [];
+    List<Product> suggestions = [];
     HintElevatedButton hint = const HintElevatedButton();
 
     if (query.isNotEmpty) {
       suggestions = searchResults.where((searchResult) {
-        final result = searchResult.toLowerCase();
+        final result = searchResult.name.toLowerCase();
         final input = query.toLowerCase();
         return result.contains(input);
       }).toList();
@@ -176,6 +182,7 @@ class MySearchDelegate extends SearchDelegate {
       }
     }
 
+    loadResults();
     return Column(
       children: [
         if (query.isNotEmpty)
@@ -188,9 +195,9 @@ class MySearchDelegate extends SearchDelegate {
           itemBuilder: (context, index) {
             final suggestion = suggestions[index];
             return ListTile(
-              title: Text(suggestion),
+              title: Text(suggestion.name),
               onTap: () {
-                query = suggestion;
+                query = suggestion.name;
                 showResults(context);
               },
             );

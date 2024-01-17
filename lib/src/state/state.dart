@@ -28,6 +28,7 @@ class MyAppState extends ChangeNotifier {
     shopOrProduct == 'Produto'
         ? shopOrProduct = 'Loja'
         : shopOrProduct = 'Produto';
+        notifyListeners();
   }
 
   // método para alterar a página selecionada da home
@@ -41,13 +42,13 @@ class MyAppState extends ChangeNotifier {
   // método para alterar a loja corrente
   void setCurrentShop(String shop) {
     currentShop = shop;
-    print(currentShop);
+    notifyListeners();
   }
 
   // método para alterar a loja corrente
   void setCurrentProduct(String product) {
     currentProduct = product;
-    print(currentProduct);
+    notifyListeners();
   }
 
   // método para capturar a localização atual GPS

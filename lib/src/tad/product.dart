@@ -21,4 +21,13 @@ class Product {
         iconData = Icons.exposure_zero;
     }
   }
+
+  static List<Product> productList(List<Map<String, dynamic>> list) {
+    List<Product> products = [];
+    for (Map<String, dynamic> product in list) {
+      products.add(Product(
+          product['NOME'], product['ID_PRODUTO'], product['CATEGORIA']));
+    }
+    return products;
+  }
 }
