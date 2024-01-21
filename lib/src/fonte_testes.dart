@@ -25,6 +25,7 @@ class TestData {
       shops.add(Shop(
           1,
           'Loja 1',
+          'Rua tal',
           LatLng(
             latlng.latitude + 0.01,
             latlng.longitude + 0.01,
@@ -33,6 +34,7 @@ class TestData {
       shops.add(Shop(
           2,
           'Loja 2',
+          'Rua tal',
           LatLng(
             latlng.latitude + 0.02,
             latlng.longitude + 0.01,
@@ -41,6 +43,7 @@ class TestData {
       shops.add(Shop(
           3,
           'Loja 3',
+          'Rua tal',
           LatLng(
             latlng.latitude + 0.02,
             latlng.longitude - 0.01,
@@ -49,6 +52,7 @@ class TestData {
       shops.add(Shop(
           4,
           'Loja 4',
+          'Rua tal',
           LatLng(
             latlng.latitude - 0.01,
             latlng.longitude + 0.01,
@@ -57,6 +61,7 @@ class TestData {
       shops.add(Shop(
           5,
           'Loja 5',
+          'Rua tal',
           LatLng(
             latlng.latitude - 0.02,
             latlng.longitude,

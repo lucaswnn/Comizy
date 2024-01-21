@@ -1,11 +1,10 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'package:comizy/src/db/db_access.dart';
 import 'package:comizy/src/screen/product_screen.dart';
 import 'package:comizy/src/tad/product.dart';
 import 'package:comizy/src/theme/style.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
-
 import 'package:comizy/src/screen/shop_screen.dart';
 import 'package:comizy/src/state/state.dart';
 import 'package:comizy/src/screen/list_screen.dart';
@@ -176,8 +175,13 @@ class MySearchDelegate extends SearchDelegate {
         return result.contains(input);
       }).toList();
       if (suggestions.isEmpty) {
-        return ShopProductRegister(
-          delegate: this,
+        return Column(
+          children: [
+            hint,
+            ShopProductRegister(
+              delegate: this,
+            ),
+          ],
         );
       }
     }
@@ -264,6 +268,11 @@ class ShopProductRegister extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 delegate.close(context, null);
+                if (state.shopOrProduct == 'Produto') {
+                  Navigator.pushNamed(context, '/adicionar_produto');
+                } else {
+                  Navigator.pushNamed(context, '/adicionar_loja');
+                }
               },
               child: const Icon(Icons.add),
             )

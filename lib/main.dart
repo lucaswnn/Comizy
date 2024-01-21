@@ -1,3 +1,4 @@
+import 'package:comizy/src/screen/register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -22,6 +23,10 @@ class MyApp extends StatelessWidget {
         title: "App",
         theme: themeData,
         home: const MyHome(),
+        routes: {
+          '/adicionar_produto': (context) => const ProductRegisterScreen(),
+          '/adicionar_loja': (context) => const ShopRegisterScreen(),
+        },
       ),
     );
   }

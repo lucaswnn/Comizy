@@ -10,7 +10,7 @@ class MyAppState extends ChangeNotifier {
   int selectedHomeIndex = 1;
 
   // booleano para exibição da appbar
-  bool showAppBar = false;
+  bool showAppBar = true;
 
   // loja corrente
   String? currentShop;
@@ -28,12 +28,12 @@ class MyAppState extends ChangeNotifier {
     shopOrProduct == 'Produto'
         ? shopOrProduct = 'Loja'
         : shopOrProduct = 'Produto';
-        notifyListeners();
+    notifyListeners();
   }
 
   // método para alterar a página selecionada da home
   void setHomeIndex(int index) {
-    index == 0 ? showAppBar = true : showAppBar = false;
+    index == 0 || index == 1 ? showAppBar = true : showAppBar = false;
     selectedHomeIndex = index;
     notifyListeners();
     print('state $selectedHomeIndex, bool $showAppBar');

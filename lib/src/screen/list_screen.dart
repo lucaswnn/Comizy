@@ -22,7 +22,7 @@ class _ListScreenState extends State<ListScreen> {
   String addon = 'a';
 
   Future<void> addUser() async {
-    String apiUrl = 'http://3.134.88.63:3000/adicionar_usuario';
+    String apiUrl = 'http://18.217.197.254:3000/adicionar_usuario';
     Map<String, dynamic> dados = {
       'nome': 'Lucas',
       'login': 'lucaswnn',
@@ -50,7 +50,7 @@ class _ListScreenState extends State<ListScreen> {
   }
 
   Future<void> getDataFromWeb() async {
-    String apiUrl = 'http://3.134.88.63:3000/dados_teste';
+    String apiUrl = 'http://18.217.197.254:3000/dados_teste';
     try {
       final response = await http.get(Uri.parse(apiUrl));
       if (response.statusCode == 200) {
@@ -68,7 +68,6 @@ class _ListScreenState extends State<ListScreen> {
   @override
   void initState() {
     super.initState();
-    addUser().then((value) => {print(addon)});
 
     getDataFromWeb().then((value) {
       products.add(Product(addon, 1, 'Tipo 1'));
