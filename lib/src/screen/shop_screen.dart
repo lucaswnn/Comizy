@@ -1,17 +1,36 @@
+import 'package:comizy/src/tad/shop.dart';
 import 'package:flutter/material.dart';
 
 class ShopScreen extends StatelessWidget {
-  const ShopScreen({super.key});
+  final Shop shop;
+  const ShopScreen({super.key, required this.shop});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.center,
-      child: const Column(
-        children: [
-          Text('loja'),
-          Text('encontrar os melhores preços'),
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+              onPressed: () => Navigator.pop(context),
+              icon: const Icon(Icons.arrow_back))
         ],
+      ),
+      body: Center(
+        child: Column(
+          children: [Text(shop.name), Text(shop.address)],
+        ),
+      ),
+    );
+  }
+
+  static void showShopScreen(BuildContext context, Shop shop) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ShopScreen(
+          shop: shop,
+        ),
       ),
     );
   }

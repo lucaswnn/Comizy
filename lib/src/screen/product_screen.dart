@@ -1,17 +1,36 @@
+import 'package:comizy/src/tad/product.dart';
 import 'package:flutter/material.dart';
 
 class ProductScreen extends StatelessWidget {
-  const ProductScreen({super.key});
+  final Product product;
+  const ProductScreen({super.key, required this.product});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.center,
-      child: const Column(
-        children: [
-          Text('produto'),
-          Text('encontrar o melhor preço'),
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+              onPressed: () => Navigator.pop(context),
+              icon: const Icon(Icons.arrow_back))
         ],
+      ),
+      body: Center(
+        child: Column(
+          children: [Text(product.name), Text(product.value.toString())],
+        ),
+      ),
+    );
+  }
+
+  static void showProductScreen(BuildContext context, Product prod) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ProductScreen(
+          product: prod,
+        ),
       ),
     );
   }

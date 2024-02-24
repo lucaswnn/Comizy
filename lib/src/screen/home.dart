@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:comizy/src/db/db_access.dart';
-import 'package:comizy/src/screen/product_screen.dart';
-import 'package:comizy/src/tad/product.dart';
-import 'package:comizy/src/theme/style.dart';
-import 'package:comizy/src/screen/shop_screen.dart';
 import 'package:comizy/src/state/state.dart';
+import 'package:comizy/src/search/search.dart';
 import 'package:comizy/src/screen/list_screen.dart';
 import 'package:comizy/src/screen/map_screen.dart';
 import 'package:comizy/src/screen/user_screen.dart';
@@ -24,6 +20,7 @@ class _MyHomeState extends State<MyHome> {
   final PageController _pageController =
       PageController(initialPage: 1, keepPage: true);
 
+  // Ícones de navegação da PageView
   final List<BottomNavigationBarItem> _bottomNavigationBarItems = const [
     BottomNavigationBarItem(
       label: "Lista",
@@ -35,7 +32,7 @@ class _MyHomeState extends State<MyHome> {
     BottomNavigationBarItem(
       label: "Home",
       icon: Icon(
-        Icons.map,
+        Icons.location_on,
         size: 28,
       ),
     ),
@@ -53,14 +50,19 @@ class _MyHomeState extends State<MyHome> {
     var colorScheme = Theme.of(context).colorScheme;
     var state = context.watch<MyAppState>();
 
+    // carregar dados básicos de lojas e produtos
+    state.loadDB();
+
     return Scaffold(
+      // mostrar AppBar apenas nas páginas de lista e de mapa
       appBar: state.showAppBar
           ? AppBar(
-              title: const Text(
-                'Procurar...',
+              title: Text(
+                state.appBarText ?? '',
                 textAlign: TextAlign.right,
-                style: TextStyle(color: Colors.grey),
+                style: const TextStyle(color: Colors.grey),
               ),
+              
               actions: [
                 IconButton(
                   onPressed: () {
@@ -74,6 +76,7 @@ class _MyHomeState extends State<MyHome> {
               ],
             )
           : null,
+
       body: LayoutBuilder(
         builder: (context, constraints) {
           return Column(
@@ -87,6 +90,7 @@ class _MyHomeState extends State<MyHome> {
                   ),
                 ),
               ),
+
               SafeArea(
                 child: BottomNavigationBar(
                   showSelectedLabels: false,
@@ -110,174 +114,6 @@ class _MyHomeState extends State<MyHome> {
             ],
           );
         },
-      ),
-    );
-  }
-}
-
-class MySearchDelegate extends SearchDelegate {
-  List<Product> searchResults = [];
-
-  Future<void> loadResults() async {
-    searchResults = Product.productList(await DbAccess.getProductList());
-  }
-
-  @override
-  String? get searchFieldLabel => 'procurar produto';
-
-  @override
-  List<Widget>? buildActions(BuildContext context) {
-    return [
-      IconButton(
-        onPressed: () {
-          if (query.isEmpty) {
-            close(context, null);
-          } else {
-            query = '';
-          }
-        },
-        icon: const Icon(Icons.clear),
-      ),
-    ];
-  }
-
-  @override
-  Widget? buildLeading(BuildContext context) {
-    return IconButton(
-      onPressed: () {
-        close(context, null);
-      },
-      icon: const Icon(Icons.arrow_back),
-    );
-  }
-
-  @override
-  Widget buildResults(BuildContext context) {
-    final state = context.watch<MyAppState>();
-    if (state.shopOrProduct == 'Loja') {
-      state.setCurrentShop(query);
-      return const ShopScreen();
-    } else {
-      state.setCurrentProduct(query);
-      return const ProductScreen();
-    }
-  }
-
-  @override
-  Widget buildSuggestions(BuildContext context) {
-    List<Product> suggestions = [];
-    HintElevatedButton hint = const HintElevatedButton();
-
-    if (query.isNotEmpty) {
-      suggestions = searchResults.where((searchResult) {
-        final result = searchResult.name.toLowerCase();
-        final input = query.toLowerCase();
-        return result.contains(input);
-      }).toList();
-      if (suggestions.isEmpty) {
-        return Column(
-          children: [
-            hint,
-            ShopProductRegister(
-              delegate: this,
-            ),
-          ],
-        );
-      }
-    }
-
-    loadResults();
-    return Column(
-      children: [
-        if (query.isNotEmpty)
-          Row(
-            children: [hint],
-          ),
-        ListView.builder(
-          shrinkWrap: true,
-          itemCount: suggestions.length,
-          itemBuilder: (context, index) {
-            final suggestion = suggestions[index];
-            return ListTile(
-              title: Text(suggestion.name),
-              onTap: () {
-                query = suggestion.name;
-                showResults(context);
-              },
-            );
-          },
-        ),
-      ],
-    );
-  }
-}
-
-class HintElevatedButton extends StatefulWidget {
-  const HintElevatedButton({super.key});
-
-  @override
-  State<HintElevatedButton> createState() => _HintElevatedButtonState();
-}
-
-class _HintElevatedButtonState extends State<HintElevatedButton> {
-  String? hintLabel;
-
-  @override
-  Widget build(BuildContext context) {
-    var state = context.watch<MyAppState>();
-    setState(() {
-      hintLabel = state.shopOrProduct;
-    });
-    return ElevatedButton(
-      onPressed: () {
-        setState(() {
-          state.toggleShopProduct();
-          hintLabel = state.shopOrProduct;
-        });
-      },
-      style: MyButtonStyles.searchBarHint,
-      child: Text(hintLabel!),
-    );
-  }
-}
-
-class ShopProductRegister extends StatelessWidget {
-  final MySearchDelegate delegate;
-  ShopProductRegister({super.key, required this.delegate});
-
-  @override
-  Widget build(BuildContext context) {
-    var state = context.watch<MyAppState>();
-    String? noFindText;
-    if (state.shopOrProduct == 'Produto') {
-      noFindText =
-          'Produto não encontrado. Sentiu falta de algum produto? Cadastre um novo produto na plataforma';
-    } else {
-      noFindText =
-          'Loja não encontrada. Sentiu falta de alguma loja? Cadastre uma nova loja na plataforma';
-    }
-    return SizedBox(
-      height: 100,
-      width: 400,
-      child: Card(
-        color: Colors.amber,
-        shadowColor: Colors.grey,
-        child: Column(
-          children: [
-            Text(noFindText),
-            ElevatedButton(
-              onPressed: () {
-                delegate.close(context, null);
-                if (state.shopOrProduct == 'Produto') {
-                  Navigator.pushNamed(context, '/adicionar_produto');
-                } else {
-                  Navigator.pushNamed(context, '/adicionar_loja');
-                }
-              },
-              child: const Icon(Icons.add),
-            )
-          ],
-        ),
       ),
     );
   }

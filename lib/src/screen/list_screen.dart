@@ -1,7 +1,12 @@
-import 'dart:convert';
+import 'package:comizy/src/screen/product_screen.dart';
+import 'package:comizy/src/screen/shop_screen.dart';
+import 'package:comizy/src/state/state.dart';
 import 'package:comizy/src/tad/product.dart';
+import 'package:comizy/src/tad/shop.dart';
+
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 
 class ListScreen extends StatefulWidget {
   ListScreen({super.key});
@@ -11,103 +16,118 @@ class ListScreen extends StatefulWidget {
 }
 
 class _ListScreenState extends State<ListScreen> {
-  List<Product> products = [
-    Product('Produto 1', 1, 'Tipo 1'),
-    Product('Produto 2', 2, 'Tipo 2'),
-    Product('Produto 3', 3, 'Tipo 2'),
-    Product('Produto 4', 4, 'Tipo 3'),
-    Product('Produto 5', 5, 'Tipo 3')
-  ];
-
-  String addon = 'a';
-
-  Future<void> addUser() async {
-    String apiUrl = 'http://18.217.197.254:3000/adicionar_usuario';
-    Map<String, dynamic> dados = {
-      'nome': 'Lucas',
-      'login': 'lucaswnn',
-      'senha': 'senha',
-      'telefone': '01234567'
-    };
-    try {
-      var response = await http.post(
-        Uri.parse(apiUrl),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode(dados),
-      );
-      if (response.statusCode == 200) {
-        print('Dados enviados com sucesso');
-        print('Resposta do servidor: ${response.body}');
-      } else {
-        print(
-            'Falha ao enviar os dados. Código de status: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Erro ao enviar requisição: $e');
-    }
-  }
-
-  Future<void> getDataFromWeb() async {
-    String apiUrl = 'http://18.217.197.254:3000/dados_teste';
-    try {
-      final response = await http.get(Uri.parse(apiUrl));
-      if (response.statusCode == 200) {
-        setState(() {
-          addon = response.body;
-        });
-      } else {
-        print('Falha ao buscar dados: ${response.statusCode}');
-      }
-    } catch (error) {
-      print('Erro de conexão: $error');
-    }
-  }
+  List<Product> products = [];
+  List<Shop> shops = [];
 
   @override
   void initState() {
     super.initState();
-
-    getDataFromWeb().then((value) {
-      products.add(Product(addon, 1, 'Tipo 1'));
-    });
   }
 
-  @override
-  Widget build(BuildContext context) {
+  void loadList(MyAppState state) {
+    products.clear();
+    shops.clear();
+
+    if (state.settedState == SettedState.currentShopSetted) {
+      for (Product product in state.currentShop!.products) {
+        products.add(product);
+      }
+    } else if (state.settedState == SettedState.currentProductSetted) {
+      for (Shop shop in state.currentProduct!.shops) {
+        shops.add(shop);
+      }
+    }
+  }
+
+  ListView listViewBuilder(MyAppState state) {
+    if (state.settedState == SettedState.currentShopSetted) {
+      return ListView.builder(
+        itemCount: products.length,
+        itemBuilder: (BuildContext context, int index) {
+          return productListTile(index);
+        },
+      );
+    } else if (state.settedState == SettedState.currentProductSetted) {
+      return ListView.builder(
+        itemCount: shops.length,
+        itemBuilder: (BuildContext context, int index) {
+          return shopListTile(index);
+        },
+      );
+    }
     return ListView.builder(
-      itemCount: products.length,
+      itemCount: 1,
       itemBuilder: (BuildContext context, int index) {
-        return ListTile(
-          title: Text(
-            products.elementAt(index).name,
-          ),
-          leading: Icon(products.elementAt(index).iconData),
+        return const ListTile(
+          title: Text('Pesquise algo para encontrar as melhores condições'),
         );
       },
     );
   }
-}
 
-class MySearchDelegate extends SearchDelegate {
-  @override
-  List<Widget>? buildActions(BuildContext context) {
-    return const [SizedBox.shrink()];
+  Card productListTile(int index) {
+    final curFormat = NumberFormat.currency(symbol: r'R$', locale: 'pt_BR');
+
+    return Card(
+      child: ListTile(
+        title: Text(products[index].name),
+        subtitle: Row(
+          children: [
+            const Icon(Icons.grade_outlined),
+            const SizedBox(width: 10),
+            Text('${products[index].rating} / 5'),
+          ],
+        ),
+        leading: Icon(products[index].iconData),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(curFormat.format(products[index].value)),
+            const SizedBox(width: 10),
+            const Icon(Icons.attach_money)
+          ],
+        ),
+        onTap: () {
+          ProductScreen.showProductScreen(context, products[index]);
+        },
+      ),
+    );
+  }
+
+  Card shopListTile(int index) {
+    final curFormat = NumberFormat.currency(symbol: r'R$', locale: 'pt_BR');
+
+    return Card(
+      child: ListTile(
+        title: Text(shops[index].name),
+        subtitle: Row(
+          children: [
+            const Icon(Icons.grade_outlined),
+            const SizedBox(width: 10),
+            Text('${shops[index].rating} / 5'),
+          ],
+        ),
+        leading: Icon(shops[index].iconData),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(curFormat.format(shops[index].products.first.value)),
+            const SizedBox(width: 10),
+            const Icon(Icons.attach_money)
+          ],
+        ),
+        onTap: () {
+          ShopScreen.showShopScreen(context, shops[index]);
+        },
+      ),
+    );
   }
 
   @override
-  Widget? buildLeading(BuildContext context) {
-    return const SizedBox.shrink();
-  }
+  Widget build(BuildContext context) {
+    final state = Provider.of<MyAppState>(context, listen: true);
+    loadList(state);
 
-  @override
-  Widget buildResults(BuildContext context) {
-    return const SizedBox.shrink();
-  }
-
-  @override
-  Widget buildSuggestions(BuildContext context) {
-    return const SizedBox.shrink();
+    return listViewBuilder(state);
   }
 }

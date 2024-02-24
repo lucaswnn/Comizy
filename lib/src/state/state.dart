@@ -1,6 +1,14 @@
+import 'dart:js_interop';
+
+import 'package:comizy/src/db/db_access.dart';
+import 'package:comizy/src/tad/product.dart';
+import 'package:comizy/src/tad/shop.dart';
 import 'package:flutter/material.dart';
-import 'package:comizy/src/fonte_testes.dart';
 import 'package:location/location.dart';
+
+enum SettedState { currentShopSetted, currentProductSetted, nothingSetted }
+
+enum SettedSearchFilter { shopQuery, productQuery }
 
 class MyAppState extends ChangeNotifier {
   // localização atual GPS
@@ -13,22 +21,87 @@ class MyAppState extends ChangeNotifier {
   bool showAppBar = true;
 
   // loja corrente
-  String? currentShop;
+  Shop? currentShop;
+
+  // produtos com a loja corrente
+  List<Product>? currentShopProducts;
+
+  // produtos carregados do banco
+  List<Product> dataBaseProducts = [];
 
   // produto corrente
-  String? currentProduct;
+  Product? currentProduct;
 
-  // alternador loja/produto para banco de dados interno
-  String shopOrProduct = 'Produto';
+  // lojas com o produto corrente
+  List<Shop>? currentProductShops;
 
-  TestData testData = TestData();
+  // lojas carregadas do banco
+  List<Shop> dataBaseShops = [];
 
-  // método para alternar loja/produto para banco de dados interno
-  void toggleShopProduct() {
-    shopOrProduct == 'Produto'
-        ? shopOrProduct = 'Loja'
-        : shopOrProduct = 'Produto';
+  // estado de elemento carregado
+  SettedState settedState = SettedState.nothingSetted;
+
+  // estado de pesquisa
+  SettedSearchFilter queryState = SettedSearchFilter.productQuery;
+
+  // DB carregado ou não
+  bool isDBLoaded = false;
+
+  int click = 0;
+
+  String? appBarText;
+
+  void addClick() {
+    click++;
     notifyListeners();
+  }
+
+  void resetClick() {
+    click = 0;
+    notifyListeners();
+  }
+
+  void toggleSearchFilterState() {
+    queryState == SettedSearchFilter.productQuery
+        ? queryState = SettedSearchFilter.shopQuery
+        : queryState = SettedSearchFilter.productQuery;
+    notifyListeners();
+  }
+
+  Future<void> loadDB() async {
+    if (!isDBLoaded) {
+      dataBaseProducts = Product.productList(await DbAccess.getProductList());
+      dataBaseShops = Shop.shopList(await DbAccess.getShopList());
+      isDBLoaded = true;
+      notifyListeners();
+    }
+  }
+
+  Future<void> setCurrentProductShops() async {
+    if (currentProduct != null) {
+      currentProduct!.shops =
+          Shop.shopList(await DbAccess.getProductShopsList(currentProduct!));
+
+      double minimumPrice = double.infinity;
+      for (final shop in currentProduct!.shops) {
+        if (shop.products.first.value.isNull) {
+          continue;
+        }
+        if ((shop.products.first.value!) < minimumPrice) {
+          minimumPrice = (shop.products.first.value!);
+        }
+      }
+      currentProduct!.value = minimumPrice;
+      notifyListeners();
+    }
+  }
+
+  Future<void> setCurrentShopProducts() async {
+    if (currentShop != null) {
+      currentShop!.products =
+          Product.productList(await DbAccess.getShopProductsList(currentShop!));
+      notifyListeners();
+    }
   }
 
   // método para alterar a página selecionada da home
@@ -36,29 +109,30 @@ class MyAppState extends ChangeNotifier {
     index == 0 || index == 1 ? showAppBar = true : showAppBar = false;
     selectedHomeIndex = index;
     notifyListeners();
-    print('state $selectedHomeIndex, bool $showAppBar');
   }
 
   // método para alterar a loja corrente
-  void setCurrentShop(String shop) {
+  void setCurrentShop(Shop shop) {
+    settedState = SettedState.currentShopSetted;
     currentShop = shop;
+    currentProduct = null;
+    setCurrentShopProducts();
+    appBarText = shop.name;
     notifyListeners();
   }
 
   // método para alterar a loja corrente
-  void setCurrentProduct(String product) {
+  void setCurrentProduct(Product product) {
+    settedState = SettedState.currentProductSetted;
     currentProduct = product;
+    currentShop = null;
+    setCurrentProductShops();
+    appBarText = product.name;
     notifyListeners();
   }
 
   // método para capturar a localização atual GPS
-  Future<void> loadCurrentLocation() async {
-    try {
-      final loc = Location();
-      currentLocation = await loc.getLocation();
-      print(currentLocation!.latitude!);
-    } catch (e) {
-      print('erro ao capturar a localização atual');
-    }
+  void setCurrentLocation(LocationData loc) {
+    currentLocation = loc;
   }
 }

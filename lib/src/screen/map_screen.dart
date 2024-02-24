@@ -1,4 +1,6 @@
+import 'package:comizy/src/screen/shop_screen.dart';
 import 'package:comizy/src/state/state.dart';
+import 'package:comizy/src/tad/shop.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -17,90 +19,22 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> {
   LocationData? _currentLocation;
   final List<Marker> _markers = [];
-  final List<CircleMarker> _circleMarkers = [];
+  final List<Marker> _currentLocMarker = [];
+  final List<CircleMarker> _currentLocCircleMarker = [];
   final MapController _mapController = MapController();
 
   @override
   void initState() {
+    getCurrentLocation();
     super.initState();
-    _firstSetup();
   }
 
-  Future<void> _firstSetup() async {
-    final loc = Location();
+  Future<void> getCurrentLocation() async {
     try {
-      _currentLocation = await loc.getLocation();
-      _setup();
-    } catch (e) {
-      print('erro_comizy: $e');
-    }
-  }
+      _currentLocation = await Location().getLocation();
 
-  void _setup() {
-    if (_currentLocation != null) {
-      _markers.add(
-        Marker(
-          width: 40.0,
-          height: 40.0,
-          point:
-              LatLng(_currentLocation!.latitude!, _currentLocation!.longitude!),
-          builder: (context) => const Icon(
-            Icons.circle,
-            size: 15,
-            shadows: [
-              Shadow(
-                color: Colors.blueAccent,
-                blurRadius: 6,
-              )
-            ],
-            color: Colors.blue,
-          ),
-        ),
-      );
-
-      _circleMarkers.add(CircleMarker(
-        point:
-            LatLng(_currentLocation!.latitude!, _currentLocation!.longitude!),
-        radius: _currentLocation!.accuracy! == 0
-            ? 500
-            : _currentLocation!.accuracy!,
-        useRadiusInMeter: true,
-        borderColor: Colors.lightBlue,
-        borderStrokeWidth: 3,
-        color: const Color.fromARGB(24, 0, 204, 255),
-      ));
-
-      var testData = context.read<MyAppState>().testData;
-      testData.loadLocations(LatLng(
-        _currentLocation!.latitude!,
-        _currentLocation!.longitude!,
-      ));
-      for (var shop in testData.shops) {
-        _markers.add(
-          Marker(
-            width: 30,
-            height: 30,
-            anchorPos: AnchorPos.align(AnchorAlign.center),
-            point: shop.location,
-            builder: (context) => IconButton(
-              icon: const Icon(
-                Icons.location_on_sharp,
-                shadows: [
-                  Shadow(
-                    color: Colors.black,
-                    blurRadius: 2,
-                  ),
-                ],
-                color: Colors.yellow,
-              ),
-              iconSize: 30,
-              padding: EdgeInsets.zero,
-              alignment: Alignment.center,
-              onPressed: () => print('aqui'),
-            ),
-          ),
-        );
-      }
+      _currentLocCircleMarker.add(createLocCircleMarker());
+      _currentLocMarker.add(createLocMarker());
 
       _mapController.move(
         LatLng(
@@ -109,13 +43,85 @@ class _MapScreenState extends State<MapScreen> {
         ),
         13.0,
       );
-    } else {
-      print('erro_comizy_setup_map');
+    } catch (e) {
+      print(
+          'comizy: error getting current location - on map_screen._mapScreenState.getCurrentLocation');
+    }
+  }
+
+  CircleMarker createLocCircleMarker() {
+    return CircleMarker(
+      point: LatLng(_currentLocation!.latitude!, _currentLocation!.longitude!),
+      radius:
+          _currentLocation!.accuracy! == 0 ? 500 : _currentLocation!.accuracy!,
+      useRadiusInMeter: true,
+      borderColor: Colors.lightBlue,
+      borderStrokeWidth: 3,
+      color: const Color.fromARGB(24, 0, 204, 255),
+    );
+  }
+
+  Marker createLocMarker() {
+    return Marker(
+      width: 40.0,
+      height: 40.0,
+      point: LatLng(_currentLocation!.latitude!, _currentLocation!.longitude!),
+      builder: (context) => const Icon(
+        Icons.circle,
+        size: 15,
+        shadows: [
+          Shadow(
+            color: Colors.blueAccent,
+            blurRadius: 6,
+          )
+        ],
+        color: Colors.blue,
+      ),
+    );
+  }
+
+  ShopMarker createShopMarker(Shop shop) {
+    return ShopMarker(
+      width: 30,
+      height: 30,
+      anchorPos: AnchorPos.align(AnchorAlign.center),
+      shopData: shop,
+      point: shop.location,
+      builder: (context) => IconButton(
+        icon: const Icon(
+          Icons.location_on_sharp,
+          shadows: [
+            Shadow(
+              color: Colors.black,
+              blurRadius: 2,
+            ),
+          ],
+          color: Colors.yellow,
+        ),
+        iconSize: 30,
+        padding: EdgeInsets.zero,
+        alignment: Alignment.center,
+        onPressed: () => ShopScreen.showShopScreen(context, shop),
+      ),
+    );
+  }
+
+  void loadShops(List<Shop> shops) {
+    _markers.clear();
+    for (var shop in shops) {
+      _markers.add(createShopMarker(shop));
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final state = Provider.of<MyAppState>(context, listen: true);
+    if (state.settedState == SettedState.currentShopSetted) {
+      loadShops([state.currentShop!]);
+    } else if (state.settedState == SettedState.currentProductSetted) {
+      loadShops(state.currentProduct!.shops);
+    }
+
     return FlutterMap(
       mapController: _mapController,
       options: MapOptions(
@@ -132,7 +138,8 @@ class _MapScreenState extends State<MapScreen> {
             TextSourceAttribution(
               'OpenStreetMap',
               prependCopyright: true,
-              onTap: () => launchUrl(Uri.parse('https://openstreetmap.org/copyright')),
+              onTap: () =>
+                  launchUrl(Uri.parse('https://openstreetmap.org/copyright')),
             ),
           ],
         ),
@@ -144,12 +151,30 @@ class _MapScreenState extends State<MapScreen> {
           userAgentPackageName: 'com.comizy.comizy',
         ),
         CircleLayer(
-          circles: _circleMarkers,
+          circles: _currentLocCircleMarker,
         ),
         MarkerLayer(
           markers: _markers,
         ),
+        MarkerLayer(
+          markers: _currentLocMarker,
+        )
       ],
     );
   }
+}
+
+class ShopMarker extends Marker {
+  Shop shopData;
+  ShopMarker(
+      {required super.point,
+      required super.builder,
+      required this.shopData,
+      super.anchorPos,
+      super.height,
+      super.key,
+      super.rotate,
+      super.rotateAlignment,
+      super.rotateOrigin,
+      super.width});
 }
