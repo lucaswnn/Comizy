@@ -8,7 +8,7 @@ import 'package:location/location.dart';
 
 enum SettedState { currentShopSetted, currentProductSetted, nothingSetted }
 
-enum SettedSearchFilter { shopQuery, productQuery }
+enum SearchFilterLabel { shopQuery, productQuery }
 
 class MyAppState extends ChangeNotifier {
   // localização atual GPS
@@ -42,7 +42,10 @@ class MyAppState extends ChangeNotifier {
   SettedState settedState = SettedState.nothingSetted;
 
   // estado de pesquisa
-  SettedSearchFilter queryState = SettedSearchFilter.productQuery;
+  Map<SearchFilterLabel, bool> queryState = {
+    SearchFilterLabel.productQuery: true,
+    SearchFilterLabel.shopQuery: false,
+  };
 
   // DB carregado ou não
   bool isDBLoaded = false;
@@ -61,10 +64,23 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void toggleSearchFilterState() {
-    queryState == SettedSearchFilter.productQuery
-        ? queryState = SettedSearchFilter.shopQuery
-        : queryState = SettedSearchFilter.productQuery;
+  void resetSearchFilterState() {
+    queryState[SearchFilterLabel.productQuery] = true;
+    queryState[SearchFilterLabel.shopQuery] = false;
+  }
+
+  void setSearchFilterState(SearchFilterLabel label, bool value) {
+    queryState[label] = value;
+    notifyListeners();
+  }
+
+  toggleSearchFilterState() {
+    queryState[SearchFilterLabel.productQuery] =
+        !queryState[SearchFilterLabel.productQuery]!;
+
+    queryState[SearchFilterLabel.shopQuery] =
+        !queryState[SearchFilterLabel.shopQuery]!;
+
     notifyListeners();
   }
 

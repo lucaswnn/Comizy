@@ -12,7 +12,7 @@ class ShopScreen extends StatelessWidget {
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => Navigator.pushNamed(context, '/home'),
               icon: const Icon(Icons.arrow_back))
         ],
       ),

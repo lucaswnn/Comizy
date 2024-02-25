@@ -26,6 +26,7 @@ class MyApp extends StatelessWidget {
         routes: {
           '/adicionar_produto': (context) => const ProductRegisterScreen(),
           '/adicionar_loja': (context) => const ShopRegisterScreen(),
+          '/home': (context) => const MyHome(),
         },
       ),
     );

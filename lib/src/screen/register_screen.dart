@@ -71,8 +71,13 @@ class ProductRegisterScreenState extends State<ProductRegisterScreen> {
               child: ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    DbAccess.addProduct(Product(
-                        textNameController.text, 0, textTypeController.text));
+                    DbAccess.addProduct(
+                      Product(
+                        name: textNameController.text,
+                        id: 0,
+                        type: textTypeController.text,
+                      ),
+                    );
                     showDialog(
                       context: context,
                       builder: (context) {
@@ -158,8 +163,12 @@ class ShopRegisterScreenState extends State<ShopRegisterScreen> {
               child: ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    DbAccess.addShop(Shop(0, textNameController.text,
-                        textAddressController.text, const LatLng(1, 1), ''));
+                    DbAccess.addShop(Shop(
+                        id: 0,
+                        name: textNameController.text,
+                        address: textAddressController.text,
+                        location: const LatLng(1, 1),
+                        type: ''));
                     showDialog(
                       context: context,
                       builder: (context) {
@@ -189,7 +198,7 @@ class ShopProductRegister extends StatelessWidget {
   Widget build(BuildContext context) {
     var state = Provider.of<MyAppState>(context, listen: true);
     String? noFindText;
-    if (state.queryState == SettedSearchFilter.productQuery) {
+    if (state.queryState[SearchFilterLabel.productQuery]!) {
       noFindText =
           'Produto não encontrado. Sentiu falta de algum produto? Cadastre um novo produto na plataforma';
     } else {
@@ -208,7 +217,7 @@ class ShopProductRegister extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 delegate.close(context, null);
-                if (state.queryState == SettedSearchFilter.productQuery) {
+                if (state.queryState[SearchFilterLabel.productQuery]!) {
                   Navigator.pushNamed(context, '/adicionar_produto');
                 } else {
                   Navigator.pushNamed(context, '/adicionar_loja');

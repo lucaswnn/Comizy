@@ -1,19 +1,21 @@
+import 'package:comizy/src/tad/basic_market_item.dart';
 import 'package:comizy/src/tad/product.dart';
 import 'package:flutter/material.dart';
 
 import 'package:latlong2/latlong.dart';
 
-class Shop {
-  final int id;
-  final String name;
+class Shop extends BasicMarketItem {
   final String address;
   final LatLng location;
-  final String type;
   List<Product> products = [];
-  double? rating;
-  late IconData iconData;
 
-  Shop(this.id, this.name, this.address, this.location, this.type) {
+  Shop(
+      {required int id,
+      required String name,
+      required this.address,
+      required this.location,
+      required String type})
+      : super(name: name, type: type, id: id) {
     _setCategoryIcon();
   }
 
@@ -44,21 +46,24 @@ class Shop {
     for (Map<String, dynamic> shop in list) {
       shops.add(
         Shop(
-          shop['ID_LOJA'],
-          shop['NOME_LOJA'],
-          shop['ENDERECO_LOJA'],
-          LatLng(
+          id: shop['ID_LOJA'],
+          name: shop['NOME_LOJA'],
+          address: shop['ENDERECO_LOJA'],
+          location: LatLng(
             shop['LATITUDE_LOJA'].toDouble(),
             shop['LONGITUDE_LOJA'].toDouble(),
           ),
-          shop['CATEGORIA_LOJA'],
+          type: shop['CATEGORIA_LOJA'],
         ),
       );
 
       if (shop.containsKey('VALOR_VENDA')) {
         shops.last.products.add(
-          Product(shop['NOME_PRODUTO'], shop['ID_PRODUTO'],
-              shop['CATEGORIA_PRODUTO']),
+          Product(
+            name: shop['NOME_PRODUTO'],
+            id: shop['ID_PRODUTO'],
+            type: shop['CATEGORIA_PRODUTO'],
+          ),
         );
 
         shops.last.products.first.value = shop['VALOR_VENDA'];
@@ -67,9 +72,5 @@ class Shop {
       shops.last.rating = shop['NOTA_LOJA'];
     }
     return shops;
-  }
-
-  void addProduct(Product product) {
-    products.add(product);
   }
 }

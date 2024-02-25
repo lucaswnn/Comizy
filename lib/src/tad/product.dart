@@ -1,16 +1,13 @@
+import 'package:comizy/src/tad/basic_market_item.dart';
 import 'package:comizy/src/tad/shop.dart';
 import 'package:flutter/material.dart';
 
-class Product {
-  final String name;
-  final int id;
-  final String type;
-  late IconData iconData;
+class Product extends BasicMarketItem {
   List<Shop> shops = [];
   double? value;
-  double? rating;
 
-  Product(this.name, this.id, this.type) {
+  Product({required int id, required String name, required String type})
+      : super(id: id, name: name, type: type) {
     _setCategoryIcon();
   }
 
@@ -41,9 +38,9 @@ class Product {
     for (Map<String, dynamic> product in list) {
       products.add(
         Product(
-          product['NOME_PRODUTO'],
-          product['ID_PRODUTO'],
-          product['CATEGORIA_PRODUTO'],
+          name: product['NOME_PRODUTO'],
+          id: product['ID_PRODUTO'],
+          type: product['CATEGORIA_PRODUTO'],
         ),
       );
 
