@@ -2,9 +2,11 @@ import 'dart:convert';
 import 'package:comizy/src/tad/product.dart';
 import 'package:comizy/src/tad/shop.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
+import 'package:location/location.dart';
 
 class DbAccess {
-  static const String baseIpv4 = 'http://18.223.123.203:3000';
+  static const String baseIpv4 = 'http://18.190.27.226:3000';
 
   // lista de produtos do servidor
   static Future<List<Map<String, dynamic>>> getProductList() async {
@@ -96,7 +98,7 @@ class DbAccess {
     String url = '$baseIpv4/adicionar_produto';
     Map<String, dynamic> dados = {
       'nome': product.name,
-      'categoria': product.type,
+      'categoria': product.category.type,
     };
     try {
       var response = await http.post(
@@ -143,6 +145,66 @@ class DbAccess {
       }
     } catch (e) {
       print('Erro ao enviar requisição: $e');
+    }
+  }
+
+  static Future<void> addGenericSearchHistory(
+      LocationData? loc, String item) async {
+    String url = '$baseIpv4/adicionar_pesquisa_generica';
+
+    final now = DateTime.now();
+    final formattedNow = DateFormat('yyyy-MM-dd HH:mm:ss').format(now);
+
+    Map<String, dynamic> dados = {
+      'id_usuario': 1,
+      'item_pesquisa_generica': item,
+      'data_hora_pesquisa_generica': formattedNow,
+      'latitude_pesquisa_generica': loc == null ? 0 : (loc.latitude ?? 0),
+      'longitude_pesquisa_generica': loc == null ? 0 : (loc.longitude ?? 0),
+    };
+    
+    try {
+      var response = await http.post(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(dados),
+      );
+      if (response.statusCode == 200) {
+        print('Dados de pesquisa genérica enviados com sucesso');
+        print('Resposta do servidor: ${response.body}');
+      } else {
+        print(
+            'Falha ao enviar os dados de pesquisa genérica. Código de status: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Erro ao enviar requisição de pesquisa genérica: $e');
+    }
+  }
+
+  static Future<void> addGenericRegister(String item) async {
+    String url = '$baseIpv4/adicionar_cadastro_generico';
+
+    Map<String, String> dados = {
+      'solicitacao': item,};
+    try {
+      var response = await http.post(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(dados),
+      );
+      if (response.statusCode == 200) {
+        print('Solicitação de cadastro enviado com sucesso');
+        print('Resposta do servidor: ${response.body}');
+      } else {
+        print(
+            'Falha ao enviar solicitação de cadastro. Código de status: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Erro ao enviar solicitação de cadastro: $e');
     }
   }
 

@@ -13,8 +13,13 @@ class MainThemeData {
         onError: Colors.white,
         background: Colors.white,
         onBackground: Colors.black,
-        surface: Colors.lightBlueAccent,
+        surface: Color.fromARGB(255, 219, 219, 219),
         onSurface: Colors.black),
-    appBarTheme: AppBarTheme(backgroundColor: Colors.grey.shade300),
+    appBarTheme: const AppBarTheme(
+      backgroundColor: Color.fromARGB(255, 255, 70, 70),
+      foregroundColor: Colors.white,
+      elevation: 4,
+      shadowColor: Colors.grey,
+    ),
   );
 }

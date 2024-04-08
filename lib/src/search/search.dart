@@ -1,5 +1,11 @@
+import 'dart:math';
+
+import 'package:comizy/src/db/db_access.dart';
 import 'package:comizy/src/screen/shop_screen.dart';
+import 'package:comizy/src/search/register_form.dart';
 import 'package:comizy/src/tad/basic_market_item.dart';
+import 'package:comizy/src/util/geo_util.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 
@@ -23,10 +29,16 @@ class MySearchDelegate extends SearchDelegate {
           if (query.isEmpty) {
             close(context, null);
           } else {
+            suggestions = [];
+            results = [];
             query = '';
           }
         },
         icon: const Icon(Icons.clear),
+      ),
+      IconButton(
+        onPressed: () => showResults(context),
+        icon: const Icon(Icons.search),
       ),
     ];
   }
@@ -68,9 +80,22 @@ class MySearchDelegate extends SearchDelegate {
                 state.queryState[SearchFilterLabel.productQuery]!;
           },
         ),
-      );
+      )
+      ..sort((a, b) => a.name.compareTo(b.name));
+    if (query.isNotEmpty) {
+      if (results.isEmpty) {
+        // cria histórico de pesquisa na tabela avulsa
+        DbAccess.addGenericSearchHistory(state.currentLocation, query);
 
-    return resultsListViewBuilder();
+        return noSearchStatus(context);
+      }
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+        child: resultsListViewBuilder(),
+      );
+    } else {
+      return Container();
+    }
   }
 
   @override
@@ -86,13 +111,8 @@ class MySearchDelegate extends SearchDelegate {
         final result = searchResult.name.toLowerCase();
         final input = query.toLowerCase();
         return result.contains(input);
-      }).toList();
-
-      if (suggestions.isEmpty) {
-        return const Card(
-          child: Text('Ops... não encontramos resultados para a pesquisa'),
-        );
-      }
+      }).toList()
+        ..sort((a, b) => a.name.compareTo(b.name));
     }
 
     return suggestionsListViewBuilder();
@@ -102,74 +122,193 @@ class MySearchDelegate extends SearchDelegate {
     return Column(
       children: [
         const SearchFilterButtons(),
+        const SizedBox(height: 15),
         ListView.builder(
-          itemCount: results.length,
+          itemCount: min(results.length, 10),
           shrinkWrap: true,
           itemBuilder: (context, index) {
             final state = context.watch<MyAppState>();
             final result = results[index];
-            return ListTile(
-              title: Text(result.name),
-              onTap: () {
-                if (result is Shop) {
-                  state.setCurrentShop(result);
-                  state.setCurrentShopProducts().then(
-                    (value) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ShopScreen(
-                            shop: state.currentShop!,
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                } else if (result is Product) {
-                  state.setCurrentProduct(result);
-                  state.setCurrentProductShops().then(
-                    (value) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ProductScreen(
-                            product: state.currentProduct!,
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                }
-              },
-            );
+            if (state.queryState[SearchFilterLabel.shopQuery]!) {
+              return resultsShopListTile(result, state, context);
+            } else {
+              return resultsProductListTile(result, state, context);
+            }
           },
         ),
       ],
     );
   }
 
+  ListTile resultsShopListTile(
+      BasicMarketItem result, MyAppState state, BuildContext context) {
+    final myLocation = LatLng(
+        state.currentLocation!.latitude!, state.currentLocation!.longitude!);
+    double actualDistance;
+    if (result is Shop) {
+      actualDistance = calculateDistance(myLocation, result.location);
+    } else {
+      actualDistance = 0;
+    }
+
+    return ListTile(
+      title: Text(result.name),
+      subtitle:
+          Text('Distância atual: ${actualDistance.toStringAsFixed(2)} km'),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Text(
+            result.category.type,
+            style: const TextStyle(fontSize: 15),
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          Icon(result.category.iconData),
+        ],
+      ),
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10))),
+      onTap: () {
+        if (result is Shop) {
+          // cria histórico de pesquisa na tabela pesquisa_loja
+          DbAccess.addGenericSearchHistory(state.currentLocation, result.name);
+
+          state.setCurrentShop(result);
+          state.setCurrentShopProducts().then(
+            (value) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ShopScreen(
+                    shop: state.currentShop!,
+                  ),
+                ),
+              );
+            },
+          );
+        }
+      },
+    );
+  }
+
+  ListTile resultsProductListTile(
+      BasicMarketItem result, MyAppState state, BuildContext context) {
+    return ListTile(
+      title: Text(result.name),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Text(
+            result.category.type,
+            style: const TextStyle(fontSize: 15),
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          Icon(result.category.iconData),
+        ],
+      ),
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10))),
+      onTap: () {
+        if (result is Product) {
+          // cria histórico de pesquisa na tabela pesquisa_produto
+          DbAccess.addGenericSearchHistory(state.currentLocation, result.name);
+
+          state.setCurrentProduct(result);
+          state.setCurrentProductShops().then(
+            (value) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProductScreen(
+                    product: state.currentProduct!,
+                  ),
+                ),
+              );
+            },
+          );
+        }
+      },
+    );
+  }
+
   ListView suggestionsListViewBuilder() {
     return ListView.builder(
-      itemCount: suggestions.length,
+      itemCount: min(suggestions.length, 10),
       itemBuilder: (context, index) {
         final state = context.watch<MyAppState>();
         final suggestion = suggestions[index];
-        return ListTile(
-          title: Text(suggestion.name),
-          subtitle: Text(suggestion is Shop ? 'Loja' : 'Produto'),
-          onTap: () {
-            query = suggestion.name;
-            if (suggestion is Shop) {
-              state.setSearchFilterState(SearchFilterLabel.shopQuery, true);
-              state.setSearchFilterState(SearchFilterLabel.productQuery, false);
-            } else if (suggestion is Product) {
-              state.setSearchFilterState(SearchFilterLabel.shopQuery, false);
-              state.setSearchFilterState(SearchFilterLabel.productQuery, true);
-            }
-            showResults(context);
-          },
-        );
+        return suggestionsListTile(suggestion, state, context);
       },
+    );
+  }
+
+  ListTile suggestionsListTile(
+    BasicMarketItem suggestion,
+    MyAppState state,
+    BuildContext context,
+  ) {
+    return ListTile(
+      title: Text(suggestion.name),
+      subtitle: Text(suggestion is Shop ? 'Loja' : 'Produto'),
+      onTap: () {
+        query = suggestion.name;
+        if (suggestion is Shop) {
+          state.setSearchFilterState(SearchFilterLabel.shopQuery, true);
+          state.setSearchFilterState(SearchFilterLabel.productQuery, false);
+        } else if (suggestion is Product) {
+          state.setSearchFilterState(SearchFilterLabel.shopQuery, false);
+          state.setSearchFilterState(SearchFilterLabel.productQuery, true);
+        }
+        showResults(context);
+      },
+    );
+  }
+
+  Column noSearchStatus(BuildContext context) {
+    final queryState = context.read<MyAppState>().queryState;
+    String type;
+    queryState[SearchFilterLabel.productQuery]!
+        ? type = 'Produto'
+        : type = 'Loja';
+
+    return Column(
+      children: [
+        const SearchFilterButtons(),
+        Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.no_food_outlined,
+                size: 50,
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              const Text(
+                'Ops, parece que não encontramos o item que você procurou...'
+                'Ajude-nos a registrar o item que você está tentando encontrar!',
+                style: TextStyle(fontSize: 20),
+              ),
+              IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => RegisterForm(type: type)),
+                    );
+                  },
+                  icon: const Icon(Icons.add)),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
@@ -187,7 +326,7 @@ class _SearchFilterButtonsState extends State<SearchFilterButtons> {
     final state = context.watch<MyAppState>();
 
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         FilterButton(
             isActive: state.queryState[SearchFilterLabel.productQuery]!,
@@ -198,7 +337,9 @@ class _SearchFilterButtonsState extends State<SearchFilterButtons> {
             },
             text: 'Produto'),
         const SizedBox(
-          width: 50,
+          width: 1,
+          height: 30,
+          child: ColoredBox(color: Colors.grey),
         ),
         FilterButton(
             isActive: state.queryState[SearchFilterLabel.shopQuery]!,
@@ -233,13 +374,14 @@ class FilterButton extends StatelessWidget {
         backgroundColor: MaterialStateProperty.all(
           isActive
               ? Colors.blue
-              : Colors.grey, // Cor diferente para ativo e inativo
+              : Colors.white, // Cor diferente para ativo e inativo
         ),
       ),
       child: Text(
         text,
         style: TextStyle(
           color: isActive ? Colors.white : Colors.black, // Cor do texto
+          fontSize: 15,
         ),
       ),
     );

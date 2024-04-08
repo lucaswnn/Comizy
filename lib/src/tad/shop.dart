@@ -1,6 +1,5 @@
 import 'package:comizy/src/tad/basic_market_item.dart';
 import 'package:comizy/src/tad/product.dart';
-import 'package:flutter/material.dart';
 
 import 'package:latlong2/latlong.dart';
 
@@ -15,31 +14,7 @@ class Shop extends BasicMarketItem {
       required this.address,
       required this.location,
       required String type})
-      : super(name: name, type: type, id: id) {
-    _setCategoryIcon();
-  }
-
-  void _setCategoryIcon() {
-    switch (type) {
-      case 'Supermercado':
-        iconData = Icons.local_grocery_store;
-        break;
-      case 'Posto':
-        iconData = Icons.local_gas_station;
-        break;
-      case 'Limpeza':
-        iconData = Icons.cleaning_services;
-        break;
-      case 'Higiene':
-        iconData = Icons.clean_hands;
-        break;
-      case 'Combustivel':
-        iconData = Icons.gas_meter;
-        break;
-      default:
-        iconData = Icons.exposure_zero;
-    }
-  }
+      : super(name: name, type: type, id: id);
 
   static List<Shop> shopList(List<Map<String, dynamic>> list) {
     List<Shop> shops = [];
@@ -65,11 +40,10 @@ class Shop extends BasicMarketItem {
             type: shop['CATEGORIA_PRODUTO'],
           ),
         );
-
-        shops.last.products.first.value = shop['VALOR_VENDA'];
+        shops.last.products.first.value = shop['VALOR_VENDA'].toDouble();
       }
 
-      shops.last.rating = shop['NOTA_LOJA'];
+      shops.last.rating = shop['NOTA_LOJA'].toDouble();
     }
     return shops;
   }

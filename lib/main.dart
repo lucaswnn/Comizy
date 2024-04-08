@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: "App",
         theme: themeData,
-        home: const MyHome(),
+        initialRoute: '/home',
         routes: {
           '/adicionar_produto': (context) => const ProductRegisterScreen(),
           '/adicionar_loja': (context) => const ShopRegisterScreen(),

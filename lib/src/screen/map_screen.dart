@@ -1,5 +1,6 @@
 import 'package:comizy/src/screen/shop_screen.dart';
 import 'package:comizy/src/state/state.dart';
+import 'package:comizy/src/tad/product.dart';
 import 'package:comizy/src/tad/shop.dart';
 
 import 'package:flutter/material.dart';
@@ -21,17 +22,27 @@ class _MapScreenState extends State<MapScreen> {
   final List<Marker> _markers = [];
   final List<Marker> _currentLocMarker = [];
   final List<CircleMarker> _currentLocCircleMarker = [];
-  final MapController _mapController = MapController();
+  late MapController _mapController;
 
   @override
   void initState() {
-    getCurrentLocation();
     super.initState();
+    final state = context.read<MyAppState>();
+    _mapController = state.mapController;
+    getCurrentLocation(state);
   }
 
-  Future<void> getCurrentLocation() async {
+  @override
+  void dispose()
+  {
+    _mapController.dispose();
+    super.dispose();
+  }
+
+  Future<void> getCurrentLocation(MyAppState state) async {
     try {
       _currentLocation = await Location().getLocation();
+      state.setCurrentLocation(_currentLocation!);
 
       _currentLocCircleMarker.add(createLocCircleMarker());
       _currentLocMarker.add(createLocMarker());
@@ -46,6 +57,7 @@ class _MapScreenState extends State<MapScreen> {
     } catch (e) {
       print(
           'comizy: error getting current location - on map_screen._mapScreenState.getCurrentLocation');
+      print(e);
     }
   }
 
@@ -82,28 +94,36 @@ class _MapScreenState extends State<MapScreen> {
 
   ShopMarker createShopMarker(Shop shop) {
     return ShopMarker(
-      width: 30,
-      height: 30,
-      anchorPos: AnchorPos.align(AnchorAlign.center),
-      shopData: shop,
-      point: shop.location,
-      builder: (context) => IconButton(
-        icon: const Icon(
-          Icons.location_on_sharp,
-          shadows: [
-            Shadow(
-              color: Colors.black,
-              blurRadius: 2,
+        width: 40,
+        height: 40,
+        anchorPos: AnchorPos.align(AnchorAlign.center),
+        shopData: shop,
+        point: shop.location,
+        builder: (context) {
+          Color iconColor = const Color.fromARGB(255, 184, 184, 184);
+          if (Product.minimumValueShop != null) {
+            if (shop.id == Product.minimumValueShop!.id) {
+              iconColor = Colors.blue;
+            }
+          }
+
+          return IconButton(
+            icon: Icon(
+              Icons.location_on_sharp,
+              shadows: const [
+                Shadow(
+                  color: Colors.black,
+                  blurRadius: 3,
+                ),
+              ],
+              color: iconColor,
             ),
-          ],
-          color: Colors.yellow,
-        ),
-        iconSize: 30,
-        padding: EdgeInsets.zero,
-        alignment: Alignment.center,
-        onPressed: () => ShopScreen.showShopScreen(context, shop),
-      ),
-    );
+            iconSize: 30,
+            padding: EdgeInsets.zero,
+            alignment: Alignment.center,
+            onPressed: () => ShopScreen.showShopScreen(context, shop),
+          );
+        });
   }
 
   void loadShops(List<Shop> shops) {

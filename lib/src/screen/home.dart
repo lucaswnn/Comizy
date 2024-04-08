@@ -1,3 +1,5 @@
+import 'package:comizy/src/screen/product_screen.dart';
+import 'package:comizy/src/screen/shop_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -17,8 +19,7 @@ class MyHome extends StatefulWidget {
 class _MyHomeState extends State<MyHome> {
   final List<Widget> _pages = [ListScreen(), MapScreen(), UserScreen()];
 
-  final PageController _pageController =
-      PageController(initialPage: 1, keepPage: true);
+  late PageController _pageController;
 
   // Ícones de navegação da PageView
   final List<BottomNavigationBarItem> _bottomNavigationBarItems = const [
@@ -46,6 +47,12 @@ class _MyHomeState extends State<MyHome> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _pageController = context.read<MyAppState>().pageViewController;
+  }
+
+  @override
   Widget build(BuildContext context) {
     var colorScheme = Theme.of(context).colorScheme;
     var state = context.watch<MyAppState>();
@@ -53,29 +60,56 @@ class _MyHomeState extends State<MyHome> {
     // carregar dados básicos de lojas e produtos
     state.loadDB();
 
+    List<IconButton> actionButtons = [];
+    if (state.showAppBar) {
+      if (state.currentShop != null) {
+        actionButtons
+          ..add(IconButton(
+              onPressed: () {
+                ShopScreen.showShopScreen(context, state.currentShop!);
+              },
+              icon: const Icon(Icons.question_mark)))
+          ..add(IconButton(
+              onPressed: () {
+                state.resetItemState();
+              },
+              icon: const Icon(Icons.clear)));
+      } else if (state.currentProduct != null) {
+        actionButtons
+          ..add(IconButton(
+              onPressed: () {
+                ProductScreen.showProductScreen(context, state.currentProduct!);
+              },
+              icon: const Icon(Icons.question_mark)))
+          ..add(IconButton(
+              onPressed: () {
+                state.resetItemState();
+              },
+              icon: const Icon(Icons.clear)));
+      }
+
+      actionButtons.add(IconButton(
+        onPressed: () {
+          showSearch(
+            context: context,
+            delegate: MySearchDelegate(),
+          );
+        },
+        icon: const Icon(Icons.search),
+      ));
+    }
+
+    String appBarText = state.appBarText ?? '';
+
     return Scaffold(
       // mostrar AppBar apenas nas páginas de lista e de mapa
-      appBar: state.showAppBar
-          ? AppBar(
-              title: Text(
-                state.appBarText ?? '',
-                textAlign: TextAlign.right,
-                style: const TextStyle(color: Colors.grey),
-              ),
-              
-              actions: [
-                IconButton(
-                  onPressed: () {
-                    showSearch(
-                      context: context,
-                      delegate: MySearchDelegate(),
-                    );
-                  },
-                  icon: const Icon(Icons.search),
-                )
-              ],
-            )
-          : null,
+      appBar: AppBar(
+        title: Text(
+          state.showAppBar ? appBarText : 'Painel do usuário',
+          textAlign: TextAlign.right,
+        ),
+        actions: actionButtons,
+      ),
 
       body: LayoutBuilder(
         builder: (context, constraints) {
@@ -86,11 +120,11 @@ class _MyHomeState extends State<MyHome> {
                   color: colorScheme.background,
                   child: PageView(
                     controller: _pageController,
+                    physics: const NeverScrollableScrollPhysics(),
                     children: _pages,
                   ),
                 ),
               ),
-
               SafeArea(
                 child: BottomNavigationBar(
                   showSelectedLabels: false,

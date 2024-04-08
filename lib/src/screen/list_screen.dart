@@ -1,6 +1,7 @@
-import 'package:comizy/src/screen/product_screen.dart';
+import 'package:comizy/src/screen/filtered_category_screen.dart';
 import 'package:comizy/src/screen/shop_screen.dart';
 import 'package:comizy/src/state/state.dart';
+import 'package:comizy/src/tad/basic_market_item.dart';
 import 'package:comizy/src/tad/product.dart';
 import 'package:comizy/src/tad/shop.dart';
 
@@ -31,6 +32,7 @@ class _ListScreenState extends State<ListScreen> {
     if (state.settedState == SettedState.currentShopSetted) {
       for (Product product in state.currentShop!.products) {
         products.add(product);
+        products.last.shops.add(state.currentShop!);
       }
     } else if (state.settedState == SettedState.currentProductSetted) {
       for (Shop shop in state.currentProduct!.shops) {
@@ -39,86 +41,95 @@ class _ListScreenState extends State<ListScreen> {
     }
   }
 
-  ListView listViewBuilder(MyAppState state) {
-    if (state.settedState == SettedState.currentShopSetted) {
-      return ListView.builder(
-        itemCount: products.length,
-        itemBuilder: (BuildContext context, int index) {
-          return productListTile(index);
-        },
-      );
-    } else if (state.settedState == SettedState.currentProductSetted) {
-      return ListView.builder(
-        itemCount: shops.length,
-        itemBuilder: (BuildContext context, int index) {
-          return shopListTile(index);
-        },
-      );
-    }
+  ListView shopListViewBuilder() {
     return ListView.builder(
-      itemCount: 1,
+      itemCount: shops.length,
       itemBuilder: (BuildContext context, int index) {
-        return const ListTile(
-          title: Text('Pesquise algo para encontrar as melhores condições'),
-        );
+        return shopListTile(index);
       },
     );
   }
 
-  Card productListTile(int index) {
+  ListTile shopListTile(int index) {
     final curFormat = NumberFormat.currency(symbol: r'R$', locale: 'pt_BR');
 
-    return Card(
-      child: ListTile(
-        title: Text(products[index].name),
-        subtitle: Row(
-          children: [
-            const Icon(Icons.grade_outlined),
-            const SizedBox(width: 10),
-            Text('${products[index].rating} / 5'),
-          ],
-        ),
-        leading: Icon(products[index].iconData),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(curFormat.format(products[index].value)),
-            const SizedBox(width: 10),
-            const Icon(Icons.attach_money)
-          ],
-        ),
-        onTap: () {
-          ProductScreen.showProductScreen(context, products[index]);
-        },
+    return ListTile(
+      title: Text(shops[index].name),
+      leading: Icon(shops[index].category.iconData),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            curFormat.format(shops[index].products.first.value),
+            style: const TextStyle(fontSize: 15),
+          ),
+          const SizedBox(width: 10),
+          const Icon(Icons.attach_money)
+        ],
       ),
+      onTap: () {
+        ShopScreen.showShopScreen(context, shops[index]);
+      },
     );
   }
 
-  Card shopListTile(int index) {
-    final curFormat = NumberFormat.currency(symbol: r'R$', locale: 'pt_BR');
+  GridView categoryGridViewBuilder() {
+    final categories = _getCategorySet().toList();
 
-    return Card(
-      child: ListTile(
-        title: Text(shops[index].name),
-        subtitle: Row(
-          children: [
-            const Icon(Icons.grade_outlined),
-            const SizedBox(width: 10),
-            Text('${shops[index].rating} / 5'),
-          ],
-        ),
-        leading: Icon(shops[index].iconData),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(curFormat.format(shops[index].products.first.value)),
-            const SizedBox(width: 10),
-            const Icon(Icons.attach_money)
-          ],
-        ),
-        onTap: () {
-          ShopScreen.showShopScreen(context, shops[index]);
+    return GridView.builder(
+        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+            maxCrossAxisExtent: 150),
+        itemCount: categories.length,
+        padding: const EdgeInsets.all(8.0),
+        itemBuilder: (context, index) {
+          return categoryTile(index, categories);
+        });
+  }
+
+  Set<Category> _getCategorySet() {
+    Set<Category> categories = {};
+
+    for (Product product in products) {
+      categories.add(Category(type: product.category.type));
+    }
+
+    return categories;
+  }
+
+  Padding categoryTile(int index, List<Category> categories) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ElevatedButton(
+        style: ButtonStyle(
+            backgroundColor:
+                MaterialStateProperty.all<Color>(categories[index].color),
+            shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16))),
+            foregroundColor: MaterialStateProperty.all<Color>(Colors.black)),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  FilteredCategoryScreen(category: categories[index]),
+            ),
+          );
         },
+        child: Center(
+            child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              categories[index].iconData,
+              weight: 1.5,
+              size: 30,
+            ),
+            Text(
+              categories[index].type,
+              style: const TextStyle(fontSize: 20),
+            ),
+          ],
+        )),
       ),
     );
   }
@@ -128,6 +139,29 @@ class _ListScreenState extends State<ListScreen> {
     final state = Provider.of<MyAppState>(context, listen: true);
     loadList(state);
 
-    return listViewBuilder(state);
+    if (state.settedState == SettedState.currentShopSetted) {
+      return categoryGridViewBuilder();
+    } else if (state.settedState == SettedState.currentProductSetted) {
+      return shopListViewBuilder();
+    } else {
+      return const Center(
+          child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.manage_search,
+            size: 50,
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          Text(
+            'Pesquise algo para encontrar as melhores condições',
+            style: TextStyle(fontSize: 20),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ));
+    }
   }
 }

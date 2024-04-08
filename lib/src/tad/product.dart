@@ -1,37 +1,19 @@
 import 'package:comizy/src/tad/basic_market_item.dart';
 import 'package:comizy/src/tad/shop.dart';
-import 'package:flutter/material.dart';
 
 class Product extends BasicMarketItem {
   List<Shop> shops = [];
   double? value;
 
-  Product({required int id, required String name, required String type})
-      : super(id: id, name: name, type: type) {
-    _setCategoryIcon();
-  }
+  static double? minimumValue;
+  static double? maximumValue;
+  static Shop? minimumValueShop;
 
-  void _setCategoryIcon() {
-    switch (type) {
-      case 'Bebida':
-        iconData = Icons.liquor;
-        break;
-      case 'Comida':
-        iconData = Icons.fastfood;
-        break;
-      case 'Limpeza':
-        iconData = Icons.cleaning_services;
-        break;
-      case 'Higiene':
-        iconData = Icons.clean_hands;
-        break;
-      case 'Combustivel':
-        iconData = Icons.local_gas_station;
-        break;
-      default:
-        iconData = Icons.exposure_zero;
-    }
-  }
+  Product({
+    required int id,
+    required String name,
+    required String type,
+  }) : super(id: id, name: name, type: type);
 
   static List<Product> productList(List<Map<String, dynamic>> list) {
     List<Product> products = [];
@@ -45,17 +27,13 @@ class Product extends BasicMarketItem {
       );
 
       product.containsKey('VALOR_VENDA')
-          ? products.last.value = product['VALOR_VENDA']
+          ? products.last.value = product['VALOR_VENDA'].toDouble()
           : null;
 
       product.containsKey('NOTA_VENDA')
-          ? products.last.rating = product['NOTA_VENDA']
+          ? products.last.rating = product['NOTA_VENDA'].toDouble()
           : null;
     }
     return products;
-  }
-
-  void addShop(Shop shop) {
-    shops.add(shop);
   }
 }

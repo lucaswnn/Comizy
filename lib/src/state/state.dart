@@ -1,10 +1,10 @@
-import 'dart:js_interop';
-
 import 'package:comizy/src/db/db_access.dart';
 import 'package:comizy/src/tad/product.dart';
 import 'package:comizy/src/tad/shop.dart';
+
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
+import 'package:flutter_map/flutter_map.dart';
 
 enum SettedState { currentShopSetted, currentProductSetted, nothingSetted }
 
@@ -14,8 +14,13 @@ class MyAppState extends ChangeNotifier {
   // localização atual GPS
   LocationData? currentLocation;
 
+  MapController mapController = MapController();
+
   // página selecionada da home
   int selectedHomeIndex = 1;
+
+  PageController pageViewController =
+      PageController(initialPage: 1, keepPage: true);
 
   // booleano para exibição da appbar
   bool showAppBar = true;
@@ -23,17 +28,11 @@ class MyAppState extends ChangeNotifier {
   // loja corrente
   Shop? currentShop;
 
-  // produtos com a loja corrente
-  List<Product>? currentShopProducts;
-
   // produtos carregados do banco
   List<Product> dataBaseProducts = [];
 
   // produto corrente
   Product? currentProduct;
-
-  // lojas com o produto corrente
-  List<Shop>? currentProductShops;
 
   // lojas carregadas do banco
   List<Shop> dataBaseShops = [];
@@ -99,15 +98,23 @@ class MyAppState extends ChangeNotifier {
           Shop.shopList(await DbAccess.getProductShopsList(currentProduct!));
 
       double minimumPrice = double.infinity;
+      double maximumPrice = 0;
+      Shop? minimumValueShop;
       for (final shop in currentProduct!.shops) {
-        if (shop.products.first.value.isNull) {
+        if (shop.products.first.value == null) {
           continue;
         }
         if ((shop.products.first.value!) < minimumPrice) {
           minimumPrice = (shop.products.first.value!);
+          minimumValueShop = shop;
+        }
+        if ((shop.products.first.value!) > maximumPrice) {
+          maximumPrice = (shop.products.first.value!);
         }
       }
-      currentProduct!.value = minimumPrice;
+      Product.minimumValue = minimumPrice;
+      Product.maximumValue = maximumPrice;
+      Product.minimumValueShop = minimumValueShop;
       notifyListeners();
     }
   }
@@ -134,6 +141,8 @@ class MyAppState extends ChangeNotifier {
     currentProduct = null;
     setCurrentShopProducts();
     appBarText = shop.name;
+    Product.minimumValue = null;
+    Product.minimumValueShop = null;
     notifyListeners();
   }
 
@@ -150,5 +159,15 @@ class MyAppState extends ChangeNotifier {
   // método para capturar a localização atual GPS
   void setCurrentLocation(LocationData loc) {
     currentLocation = loc;
+    notifyListeners();
+  }
+
+  // método para limpar o estado corrente de loja / produto
+  void resetItemState() {
+    settedState = SettedState.nothingSetted;
+    currentProduct = null;
+    currentShop = null;
+    appBarText = '';
+    notifyListeners();
   }
 }
