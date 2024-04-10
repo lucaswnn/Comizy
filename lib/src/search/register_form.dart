@@ -18,15 +18,15 @@ class RegisterFormState extends State<RegisterForm> {
 
   void _setHintText() {
     if (widget.type == 'Produto') {
-      _hintText =
-          'Fala pra gente o nome do produto pra gente cadastrar!'
+      _hintText = 'Fala pra gente o nome do produto pra gente cadastrar!'
           ' Se quiser, inclua características do produto no texto';
     } else if (widget.type == 'Loja') {
       _hintText =
           'Fala pra gente o nome da loja e endereço pra gente cadastrar!';
-    } else if (widget.type == 'Preço') {
-      'Conta pra gente o preço certo do produto que a gente corrige!'
-      ' Com sua colaboração, podemos deixar essa plataforma sempre atualizada';
+    } else if (widget.type.startsWith('Preço de')) {
+      _hintText =
+          'Conta pra gente o preço certo do produto que a gente corrige!'
+          ' Com sua colaboração, podemos deixar essa plataforma sempre atualizada';
     } else {
       throw '<type> precisa ser Produto, Loja ou Preço';
     }
@@ -64,7 +64,8 @@ class RegisterFormState extends State<RegisterForm> {
                     maxLines: null,
                     decoration: InputDecoration(
                       filled: true,
-                      hintText:_hintText,
+                      hintText: _hintText,
+                      hintMaxLines: 3,
                       hintStyle: TextStyle(color: Colors.grey.shade600),
                       fillColor: Colors.grey.shade200,
                       border: OutlineInputBorder(
@@ -72,8 +73,8 @@ class RegisterFormState extends State<RegisterForm> {
                           borderSide: BorderSide.none),
                     ),
                     validator: (value) {
-                      if (value == null || value.isEmpty || value.length < 10) {
-                        return 'O texto deve conter ao menos 10 caracteres';
+                      if (value == null || value.isEmpty) {
+                        return 'Tente digitar algo';
                       } else if (value.length > 255) {
                         return 'Preencha no máximo 255 caracteres';
                       }
@@ -94,7 +95,12 @@ class RegisterFormState extends State<RegisterForm> {
                     }
                     String text = 'Solicitação feita com sucesso!';
 
-                    DbAccess.addGenericRegister(_textController.text).onError((error, stackTrace) {text = 'Houve uma falha no cadastro. Tente novamente mais tarde.';});
+                    DbAccess.addGenericRegister(
+                            widget.type, _textController.text)
+                        .onError((error, stackTrace) {
+                      text =
+                          'Houve uma falha no cadastro. Tente novamente mais tarde.';
+                    });
 
                     final snackBar = SnackBar(content: Text(text));
                     ScaffoldMessenger.of(context).showSnackBar(snackBar);

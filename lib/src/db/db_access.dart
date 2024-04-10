@@ -183,11 +183,12 @@ class DbAccess {
     }
   }
 
-  static Future<void> addGenericRegister(String item) async {
+  static Future<void> addGenericRegister(String item, String origin) async {
     String url = '$baseIpv4/adicionar_cadastro_generico';
 
     Map<String, String> dados = {
-      'solicitacao': item,};
+      'solicitacao': item,
+      'origem_solicitacao_generica': origin};
     try {
       var response = await http.post(
         Uri.parse(url),

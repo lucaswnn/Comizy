@@ -76,6 +76,7 @@ class ProductRegisterScreenState extends State<ProductRegisterScreen> {
                         name: textNameController.text,
                         id: 0,
                         type: textTypeController.text,
+                        lastDate: ''
                       ),
                     );
                     showDialog(

@@ -52,7 +52,7 @@ class ProductScreen extends StatelessWidget {
             minWidth: 100,
             maxWidth: 200,
             minHeight: 100,
-            maxHeight: 300,
+            maxHeight: 400,
           ),
           child: Column(
             children: [

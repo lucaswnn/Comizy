@@ -126,7 +126,7 @@ class _ListScreenState extends State<ListScreen> {
             ),
             Text(
               categories[index].type,
-              style: const TextStyle(fontSize: 20),
+              style: const TextStyle(fontSize: 15),
             ),
           ],
         )),

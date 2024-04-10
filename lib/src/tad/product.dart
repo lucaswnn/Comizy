@@ -4,6 +4,7 @@ import 'package:comizy/src/tad/shop.dart';
 class Product extends BasicMarketItem {
   List<Shop> shops = [];
   double? value;
+  final String lastDate;
 
   static double? minimumValue;
   static double? maximumValue;
@@ -13,6 +14,7 @@ class Product extends BasicMarketItem {
     required int id,
     required String name,
     required String type,
+    required this.lastDate
   }) : super(id: id, name: name, type: type);
 
   static List<Product> productList(List<Map<String, dynamic>> list) {
@@ -23,6 +25,7 @@ class Product extends BasicMarketItem {
           name: product['NOME_PRODUTO'],
           id: product['ID_PRODUTO'],
           type: product['CATEGORIA_PRODUTO'],
+          lastDate: product['ULTIMA_ATUALIZACAO_PRODUTO']
         ),
       );
 

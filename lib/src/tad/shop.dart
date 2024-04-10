@@ -38,6 +38,7 @@ class Shop extends BasicMarketItem {
             name: shop['NOME_PRODUTO'],
             id: shop['ID_PRODUTO'],
             type: shop['CATEGORIA_PRODUTO'],
+            lastDate: shop['ULTIMA_ATUALIZACAO_PRODUTO']
           ),
         );
         shops.last.products.first.value = shop['VALOR_VENDA'].toDouble();

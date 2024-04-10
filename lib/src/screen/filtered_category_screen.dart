@@ -1,6 +1,8 @@
+import 'package:comizy/src/search/register_form.dart';
 import 'package:comizy/src/state/state.dart';
 import 'package:comizy/src/tad/basic_market_item.dart';
 import 'package:comizy/src/tad/product.dart';
+import 'package:comizy/src/util/string_util.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
@@ -93,6 +95,7 @@ class _FilteredCategoryScreenState extends State<FilteredCategoryScreen> {
     String productName = products[index].name;
     String shopName = products[index].shops.first.name;
     LatLng shopLocation = products[index].shops.first.location;
+    String lastUpdate = products[index].lastDate;
 
     return ListTile(
       title: Text(productName),
@@ -126,12 +129,12 @@ class _FilteredCategoryScreenState extends State<FilteredCategoryScreen> {
                       minWidth: 100,
                       maxWidth: 200,
                       minHeight: 100,
-                      maxHeight: 300,
+                      maxHeight: 400,
                     ),
                     child: Column(
                       children: [
                         _commonCard(context, curFormat, productValue, shopName,
-                            state, shopLocation)
+                            state, shopLocation, lastUpdate, productName)
                       ],
                     ),
                   ),
@@ -151,7 +154,14 @@ class _FilteredCategoryScreenState extends State<FilteredCategoryScreen> {
     String shopName,
     MyAppState state,
     LatLng shopLocation,
+    String lastUpdate,
+    String productName,
   ) {
+    final lastUpdateFormatted =
+        mySqlDateConversion(lastUpdate.substring(0, 10));
+
+        final registerType = 'Preço de $productName em $shopName';
+
     return Card(
       color: Colors.white,
       surfaceTintColor: Colors.white,
@@ -174,6 +184,28 @@ class _FilteredCategoryScreenState extends State<FilteredCategoryScreen> {
                 ),
               ],
             ),
+          ),
+          const SizedBox(height: 15),
+          Text(
+            'Última atualização: $lastUpdateFormatted',
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 15),
+          const Text(
+            'Tem algo de errado nesse preço?',
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 5),
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => RegisterForm(type: registerType),
+                ),
+              );
+            },
+            icon: const Icon(Icons.money_off),
           ),
           const SizedBox(height: 20),
           _bottomButtons(context, state, shopLocation),
