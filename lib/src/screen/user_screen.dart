@@ -19,56 +19,58 @@ class UserScreen extends StatelessWidget {
     Icons.history,
   ];
 
+  ListTile _listTile(BuildContext context, MyAppState state, int index) {
+    return ListTile(
+      leading: Icon(icons.elementAt(index)),
+      title: Text(entries.elementAt(index)),
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10))),
+      onTap: () {
+        switch (index) {
+          case 0:
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const AboutUsScreen()));
+            break;
+          case 1:
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const UserOpinionScreen()));
+            break;
+          case 2:
+            state.addClick();
+            break;
+          default:
+            state.resetClick();
+        }
+      },
+      onLongPress: () {
+        switch (index) {
+          case 2:
+            if (state.click == 4) {
+              state.resetClick();
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const HidedScreen()));
+            }
+            break;
+          default:
+            state.resetClick();
+        }
+        if (index == 2 && state.click == 4) {}
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var state = context.watch<MyAppState>();
     return SafeArea(
-      child: ListView.separated(
+      child: ListView.builder(
+        padding: const EdgeInsets.all(8),
         itemCount: entries.length,
         itemBuilder: (BuildContext context, int index) {
-          return ListTile(
-            leading: Icon(icons.elementAt(index)),
-            title: Text(entries.elementAt(index)),
-            onTap: () {
-              switch (index) {
-                case 0:
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const AboutUsScreen()));
-                  break;
-                case 1:
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const UserOpinionScreen()));
-                  break;
-                case 2:
-                  state.addClick();
-                  break;
-                default:
-                  state.resetClick();
-              }
-            },
-            onLongPress: () {
-              switch (index) {
-                case 2:
-                  if (state.click == 4) {
-                    state.resetClick();
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const HidedScreen()));
-                  }
-                  break;
-                default:
-                  state.resetClick();
-              }
-              if (index == 2 && state.click == 4) {}
-            },
-          );
+          return _listTile(context, state, index);
         },
-        separatorBuilder: (BuildContext context, int index) => const Divider(),
       ),
     );
   }

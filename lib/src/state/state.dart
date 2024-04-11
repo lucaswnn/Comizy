@@ -1,6 +1,7 @@
 import 'package:comizy/src/db/db_access.dart';
 import 'package:comizy/src/tad/product.dart';
 import 'package:comizy/src/tad/shop.dart';
+import 'package:comizy/src/util/geo_util.dart';
 
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
@@ -49,9 +50,15 @@ class MyAppState extends ChangeNotifier {
   // DB carregado ou não
   bool isDBLoaded = false;
 
+  // serviço e permissão GPS autorizados
+  bool? isGPSUsable;
+
+  // localização carregada ou não
+  bool isLocationLoaded = false;
+
   int click = 0;
 
-  String? appBarText;
+  String? appBarText = 'Comizy';
 
   void addClick() {
     click++;
@@ -85,9 +92,9 @@ class MyAppState extends ChangeNotifier {
 
   Future<void> loadDB() async {
     if (!isDBLoaded) {
+      isDBLoaded = true;
       dataBaseProducts = Product.productList(await DbAccess.getProductList());
       dataBaseShops = Shop.shopList(await DbAccess.getShopList());
-      isDBLoaded = true;
       notifyListeners();
     }
   }
@@ -156,10 +163,36 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> checkLocationIsReady() async {
+    final isGPSPermitted = await checkGPSPermission();
+    final isGPSEnabled = await checkGPSEnabled();
+
+    if (isGPSPermitted && isGPSEnabled) {
+      if (isGPSUsable == null) {
+        isGPSUsable = true;
+        notifyListeners();
+      } else if (!isGPSUsable!) {
+        isGPSUsable = true;
+        notifyListeners();
+      }
+    } else {
+      if (isGPSUsable == null) {
+        isGPSUsable = false;
+        notifyListeners();
+      } else if (isGPSUsable!) {
+        isGPSUsable = false;
+        notifyListeners();
+      }
+    }
+  }
+
   // método para capturar a localização atual GPS
-  void setCurrentLocation(LocationData loc) {
-    currentLocation = loc;
-    notifyListeners();
+  void setCurrentLocation(LocationData? loc) {
+    if (loc != null) {
+      currentLocation = loc;
+      isLocationLoaded = true;
+      notifyListeners();
+    }
   }
 
   // método para limpar o estado corrente de loja / produto
@@ -167,7 +200,7 @@ class MyAppState extends ChangeNotifier {
     settedState = SettedState.nothingSetted;
     currentProduct = null;
     currentShop = null;
-    appBarText = '';
+    appBarText = 'Comizy';
     notifyListeners();
   }
 }

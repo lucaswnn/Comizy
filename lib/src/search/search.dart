@@ -115,7 +115,10 @@ class MySearchDelegate extends SearchDelegate {
         ..sort((a, b) => a.name.compareTo(b.name));
     }
 
-    return suggestionsListViewBuilder();
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: suggestionsListViewBuilder(),
+    );
   }
 
   Column resultsListViewBuilder() {
@@ -256,6 +259,8 @@ class MySearchDelegate extends SearchDelegate {
     return ListTile(
       title: Text(suggestion.name),
       subtitle: Text(suggestion is Shop ? 'Loja' : 'Produto'),
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10))),
       onTap: () {
         query = suggestion.name;
         if (suggestion is Shop) {
@@ -292,7 +297,7 @@ class MySearchDelegate extends SearchDelegate {
                 height: 20,
               ),
               const Text(
-                'Ops, parece que não encontramos o item que você procurou...'
+                'Ops, parece que não encontramos o item que você procurou nesta área...'
                 'Ajude-nos a registrar o item que você está tentando encontrar!',
                 style: TextStyle(fontSize: 20),
               ),

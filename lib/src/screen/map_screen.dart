@@ -2,6 +2,7 @@ import 'package:comizy/src/screen/shop_screen.dart';
 import 'package:comizy/src/state/state.dart';
 import 'package:comizy/src/tad/product.dart';
 import 'package:comizy/src/tad/shop.dart';
+import 'package:comizy/src/util/geo_util.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -29,36 +30,33 @@ class _MapScreenState extends State<MapScreen> {
     super.initState();
     final state = context.read<MyAppState>();
     _mapController = state.mapController;
-    getCurrentLocation(state);
+    setCurrentLocationOnMap(state);
   }
 
   @override
-  void dispose()
-  {
+  void dispose() {
     _mapController.dispose();
     super.dispose();
   }
 
-  Future<void> getCurrentLocation(MyAppState state) async {
-    try {
-      _currentLocation = await Location().getLocation();
-      state.setCurrentLocation(_currentLocation!);
+  Future<void> setCurrentLocationOnMap(MyAppState state) async {
+    _currentLocation = await getCurrentLocation();
 
-      _currentLocCircleMarker.add(createLocCircleMarker());
-      _currentLocMarker.add(createLocMarker());
-
-      _mapController.move(
-        LatLng(
-          _currentLocation!.latitude!,
-          _currentLocation!.longitude!,
-        ),
-        13.0,
-      );
-    } catch (e) {
-      print(
-          'comizy: error getting current location - on map_screen._mapScreenState.getCurrentLocation');
-      print(e);
+    if (_currentLocation == null) {
+      return;
     }
+    state.setCurrentLocation(_currentLocation!);
+
+    _currentLocCircleMarker.add(createLocCircleMarker());
+    _currentLocMarker.add(createLocMarker());
+
+    _mapController.move(
+      LatLng(
+        _currentLocation!.latitude!,
+        _currentLocation!.longitude!,
+      ),
+      13.0,
+    );
   }
 
   CircleMarker createLocCircleMarker() {
@@ -127,11 +125,13 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   void loadShops(List<Shop> shops) {
-    _markers.clear();
+    _clearShops();
     for (var shop in shops) {
       _markers.add(createShopMarker(shop));
     }
   }
+
+  void _clearShops() => _markers.clear();
 
   @override
   Widget build(BuildContext context) {
@@ -140,6 +140,8 @@ class _MapScreenState extends State<MapScreen> {
       loadShops([state.currentShop!]);
     } else if (state.settedState == SettedState.currentProductSetted) {
       loadShops(state.currentProduct!.shops);
+    } else {
+      _clearShops();
     }
 
     return FlutterMap(

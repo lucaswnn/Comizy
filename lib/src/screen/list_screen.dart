@@ -43,6 +43,7 @@ class _ListScreenState extends State<ListScreen> {
 
   ListView shopListViewBuilder() {
     return ListView.builder(
+      padding: const EdgeInsets.all(8),
       itemCount: shops.length,
       itemBuilder: (BuildContext context, int index) {
         return shopListTile(index);
@@ -56,6 +57,8 @@ class _ListScreenState extends State<ListScreen> {
     return ListTile(
       title: Text(shops[index].name),
       leading: Icon(shops[index].category.iconData),
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10))),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [

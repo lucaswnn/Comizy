@@ -46,10 +46,102 @@ class _MyHomeState extends State<MyHome> {
     )
   ];
 
+  final List<NavigationRailDestination> _navigationRailDestinationItems =
+      const [
+    NavigationRailDestination(
+      label: Text('Lista'),
+      icon: Icon(
+        Icons.list,
+        size: 28,
+      ),
+    ),
+    NavigationRailDestination(
+      label: Text('Home'),
+      icon: Icon(
+        Icons.location_on,
+        size: 28,
+      ),
+    ),
+    NavigationRailDestination(
+      label: Text('User'),
+      icon: Icon(
+        Icons.person,
+        size: 28,
+      ),
+    )
+  ];
+
   @override
   void initState() {
     super.initState();
-    _pageController = context.read<MyAppState>().pageViewController;
+    final state = context.read<MyAppState>();
+    _pageController = state.pageViewController;
+  }
+
+  PageView _pageView(ColorScheme colorScheme, Axis scrollDirection) {
+    return PageView(
+      scrollDirection: scrollDirection,
+      controller: _pageController,
+      physics: const NeverScrollableScrollPhysics(),
+      children: _pages,
+    );
+  }
+
+  Column _mobileFriendlyLayout(MyAppState state, ColorScheme colorScheme) {
+    return Column(
+      children: [
+        Expanded(child: _pageView(colorScheme, Axis.horizontal)),
+        SafeArea(
+          child: BottomNavigationBar(
+            showSelectedLabels: false,
+            showUnselectedLabels: false,
+            items: _bottomNavigationBarItems,
+            currentIndex: state.selectedHomeIndex,
+            onTap: (index) {
+              setState(
+                () {
+                  state.setHomeIndex(index);
+                  _pageController.animateToPage(
+                    index,
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.ease,
+                  );
+                },
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Row _webFriendlyLayout(
+      MyAppState state, ColorScheme colorScheme, BoxConstraints constraints) {
+    return Row(
+      children: [
+        SafeArea(
+          child: NavigationRail(
+            indicatorColor: colorScheme.primary,
+            extended: false,
+            destinations: _navigationRailDestinationItems,
+            selectedIndex: state.selectedHomeIndex,
+            onDestinationSelected: (index) {
+              setState(
+                () {
+                  state.setHomeIndex(index);
+                  _pageController.animateToPage(
+                    index,
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.ease,
+                  );
+                },
+              );
+            },
+          ),
+        ),
+        Expanded(child: _pageView(colorScheme, Axis.vertical)),
+      ],
+    );
   }
 
   @override
@@ -101,6 +193,17 @@ class _MyHomeState extends State<MyHome> {
 
     String appBarText = state.appBarText ?? '';
 
+    String waitingMessage =
+        'Autorize a localização de seu dispositivo para poder utilizar o aplicativo';
+
+    state.checkLocationIsReady();
+    bool? canBuild = state.isGPSUsable;
+
+    if (canBuild == null) {
+      return showLoadingScreen();
+    } else if (!canBuild) {
+      return showRequestScreen(waitingMessage, state);
+    }
     return Scaffold(
       // mostrar AppBar apenas nas páginas de lista e de mapa
       appBar: AppBar(
@@ -113,42 +216,43 @@ class _MyHomeState extends State<MyHome> {
 
       body: LayoutBuilder(
         builder: (context, constraints) {
-          return Column(
-            children: [
-              Expanded(
-                child: ColoredBox(
-                  color: colorScheme.background,
-                  child: PageView(
-                    controller: _pageController,
-                    physics: const NeverScrollableScrollPhysics(),
-                    children: _pages,
-                  ),
-                ),
-              ),
-              SafeArea(
-                child: BottomNavigationBar(
-                  showSelectedLabels: false,
-                  showUnselectedLabels: false,
-                  items: _bottomNavigationBarItems,
-                  currentIndex: state.selectedHomeIndex,
-                  onTap: (index) {
-                    setState(
-                      () {
-                        state.setHomeIndex(index);
-                        _pageController.animateToPage(
-                          index,
-                          duration: const Duration(milliseconds: 500),
-                          curve: Curves.ease,
-                        );
-                      },
-                    );
-                  },
-                ),
-              ),
-            ],
-          );
+          if (constraints.maxWidth < 450) {
+            return _mobileFriendlyLayout(state, colorScheme);
+          } else {
+            return _webFriendlyLayout(state, colorScheme, constraints);
+          }
         },
       ),
+    );
+  }
+
+  Center showLoadingScreen() {
+    return const Center(child: CircularProgressIndicator());
+  }
+
+  Material showRequestScreen(String message, MyAppState state) {
+    return Material(
+      child: SafeArea(
+          child: Center(
+              child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            message,
+            style: const TextStyle(fontSize: 17),
+          ),
+          const SizedBox(height: 15),
+          IconButton(
+              onPressed: () {
+                state.checkLocationIsReady();
+              },
+              icon: const Icon(
+                Icons.location_on,
+                color: Color.fromARGB(255, 0, 66, 180),
+                size: 35,
+              ))
+        ],
+      ))),
     );
   }
 }
