@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
       create: (context) => MyAppState(),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: "App",
+        title: "Comizy",
         theme: themeData,
         initialRoute: '/home',
         routes: {

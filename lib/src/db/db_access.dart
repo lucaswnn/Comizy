@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:location/location.dart';
 
 class DbAccess {
-  static const String baseIpv4 = 'http://18.190.27.226:3000';
+  static const String baseIpv4 = 'https://comizy.link:3000';
 
   // lista de produtos do servidor
   static Future<List<Map<String, dynamic>>> getProductList() async {

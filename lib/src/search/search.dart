@@ -291,14 +291,15 @@ class MySearchDelegate extends SearchDelegate {
             children: [
               const Icon(
                 Icons.no_food_outlined,
-                size: 50,
+                size: 45,
               ),
               const SizedBox(
-                height: 20,
+                height: 25,
               ),
               const Text(
-                'Ops, parece que não encontramos o item que você procurou nesta área...'
+                'Ops, parece que não encontramos o item que você procurou nesta área...\n'
                 'Ajude-nos a registrar o item que você está tentando encontrar!',
+                textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 20),
               ),
               IconButton(
