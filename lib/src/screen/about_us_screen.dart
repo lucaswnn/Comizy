@@ -6,7 +6,7 @@ class AboutUsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const String introText =
+    const introText =
         '''Está cansado de comprar itens caros, e logo depois encontrar ou saber de um preço bem melhor em outra loja? Nós também cansamos. Portanto, somos a Comizy, plataforma de busca de preços de produtos e busca de lojas.
     
 Em desenvolvimento a partir do ano de 2023, a plataforma procura tornar a busca de itens uma tarefa fácil, sem a dor de cabeça de ter que realizar ligações para os estabelecimentos, sem precisar se deslocar entre diversos supermercados, assim como promover a comparação de preços entre lojas.

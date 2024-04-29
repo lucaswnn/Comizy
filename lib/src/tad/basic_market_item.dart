@@ -54,6 +54,7 @@ class Category {
         Colors.grey,
       ),
     };
+
     if (categories.containsKey(type)) {
       iconData = categories[type]!.iconData;
       color = categories[type]!.color;
@@ -62,6 +63,16 @@ class Category {
       color = Colors.grey;
     }
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Category &&
+          runtimeType == other.runtimeType &&
+          type == other.type;
+
+  @override
+  int get hashCode => type.hashCode;
 }
 
 class CategoryTuple<IconData, Color> {

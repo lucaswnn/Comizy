@@ -1,7 +1,6 @@
-import 'package:comizy/src/db/db_access.dart';
+import 'package:comizy/src/tad/market.dart';
 import 'package:comizy/src/tad/product.dart';
 import 'package:comizy/src/tad/shop.dart';
-import 'package:comizy/src/util/geo_util.dart';
 
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
@@ -29,14 +28,16 @@ class MyAppState extends ChangeNotifier {
   // loja corrente
   Shop? currentShop;
 
-  // produtos carregados do banco
-  List<Product> dataBaseProducts = [];
+  // lojas, produtos e sua associação
+  Market market = Market();
 
   // produto corrente
   Product? currentProduct;
 
-  // lojas carregadas do banco
-  List<Shop> dataBaseShops = [];
+  // carrinho de compras
+  Map<Product, int> productsCart = {};
+
+  // relação de lojas e produtos
 
   // estado de elemento carregado
   SettedState settedState = SettedState.nothingSetted;
@@ -48,7 +49,7 @@ class MyAppState extends ChangeNotifier {
   };
 
   // DB carregado ou não
-  bool isDBLoaded = false;
+  bool isMarketLoaded = false;
 
   // serviço e permissão GPS autorizados
   bool? isGPSUsable;
@@ -56,19 +57,26 @@ class MyAppState extends ChangeNotifier {
   // localização carregada ou não
   bool isLocationLoaded = false;
 
-  int click = 0;
-
   String? appBarText = 'Comizy';
 
-  void addClick() {
-    click++;
-    notifyListeners();
+  void addProductOnCart(Product product){
+    if(!(productsCart.containsKey(product))){
+      productsCart[product] = 1;
+    }
   }
 
-  void resetClick() {
-    click = 0;
-    notifyListeners();
+void increaseProductOnCart(Product product){
+  if(productsCart.containsKey(product)){
+    productsCart[product] = productsCart[product]! + 1;
   }
+}
+
+void decreaseProductOnCart(Product product){
+  if(productsCart.containsKey(product)){
+    if(productsCart[product]! > 0){
+    productsCart[product] = productsCart[product]! - 1;
+  }}
+}
 
   void resetSearchFilterState() {
     queryState[SearchFilterLabel.productQuery] = true;
@@ -90,11 +98,137 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> loadDB() async {
-    if (!isDBLoaded) {
-      isDBLoaded = true;
-      dataBaseProducts = Product.productList(await DbAccess.getProductList());
-      dataBaseShops = Shop.shopList(await DbAccess.getShopList());
+  Future<void> loadMarket() async {
+    if (!isMarketLoaded) {
+      isMarketLoaded = true;
+      await market.getFullMarketInRadius(5000);
+      notifyListeners();
+    }
+  }
+
+  // método para alterar a página selecionada da home
+  void setHomeIndex(int index) {
+    index == 0 || index == 1 ? showAppBar = true : showAppBar = false;
+    selectedHomeIndex = index;
+    notifyListeners();
+  }
+
+  // método para alterar a loja corrente
+  void setCurrentShop(Shop shop) {
+    settedState = SettedState.currentShopSetted;
+    currentShop = shop;
+    currentProduct = null;
+    appBarText = shop.name;
+    notifyListeners();
+  }
+
+  // método para alterar a loja corrente
+  void setCurrentProduct(Product product) {
+    settedState = SettedState.currentProductSetted;
+    currentProduct = product;
+    currentShop = null;
+    appBarText = product.name;
+    notifyListeners();
+  }
+
+  void loadSellingList() {}
+
+  // método para capturar a localização atual GPS
+  void setCurrentLocation(LocationData? loc) {
+    if (loc != null) {
+      currentLocation = loc;
+      isLocationLoaded = true;
+      notifyListeners();
+    }
+  }
+
+  // método para limpar o estado corrente de loja / produto
+  void resetItemState() {
+    settedState = SettedState.nothingSetted;
+    currentProduct = null;
+    currentShop = null;
+    appBarText = 'Comizy';
+    notifyListeners();
+  }
+}
+
+/*
+class MyAppState extends ChangeNotifier {
+  // localização atual GPS
+  LocationData? currentLocation;
+
+  MapController mapController = MapController();
+
+  // página selecionada da home
+  int selectedHomeIndex = 1;
+
+  PageController pageViewController =
+      PageController(initialPage: 1, keepPage: true);
+
+  // booleano para exibição da appbar
+  bool showAppBar = true;
+
+  // loja corrente
+  Shop? currentShop;
+
+  // lojas, produtos e sua associação
+  Market market = Market();
+
+  // produto corrente
+  Product? currentProduct;
+
+  // lojas carregadas do banco
+  List<Shop> dataBaseShops = [];
+
+  // relação de lojas e produtos
+
+
+  // estado de elemento carregado
+  SettedState settedState = SettedState.nothingSetted;
+
+  // estado de pesquisa
+  Map<SearchFilterLabel, bool> queryState = {
+    SearchFilterLabel.productQuery: true,
+    SearchFilterLabel.shopQuery: false,
+  };
+
+  // DB carregado ou não
+  bool isMarketLoaded = false;
+
+  // serviço e permissão GPS autorizados
+  bool? isGPSUsable;
+
+  // localização carregada ou não
+  bool isLocationLoaded = false;
+
+  String? appBarText = 'Comizy';
+
+  void resetSearchFilterState() {
+    queryState[SearchFilterLabel.productQuery] = true;
+    queryState[SearchFilterLabel.shopQuery] = false;
+  }
+
+  void setSearchFilterState(SearchFilterLabel label, bool value) {
+    queryState[label] = value;
+    notifyListeners();
+  }
+
+  toggleSearchFilterState() {
+    queryState[SearchFilterLabel.productQuery] =
+        !queryState[SearchFilterLabel.productQuery]!;
+
+    queryState[SearchFilterLabel.shopQuery] =
+        !queryState[SearchFilterLabel.shopQuery]!;
+
+    notifyListeners();
+  }
+
+  Future<void> loadMarket() async {
+    if (!isMarketLoaded) {
+      isMarketLoaded = true;
+      await market.addProducts();
+      await market.addShops();
+      await market.assotiateItems(5000);
       notifyListeners();
     }
   }
@@ -163,6 +297,8 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  void loadSellingList(){}
+
   Future<void> checkLocationIsReady() async {
     final isGPSPermitted = await checkGPSPermission();
     final isGPSEnabled = await checkGPSEnabled();
@@ -204,3 +340,4 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 }
+*/

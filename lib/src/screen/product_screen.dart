@@ -2,39 +2,34 @@ import 'package:comizy/src/state/state.dart';
 import 'package:comizy/src/tad/product.dart';
 import 'package:flutter/material.dart';
 
-import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 
-class ProductScreen extends StatelessWidget {
+class CurrentProductScreen extends StatelessWidget {
   final Product product;
-  const ProductScreen({super.key, required this.product});
+  const CurrentProductScreen({super.key, required this.product});
 
   @override
   Widget build(BuildContext context) {
     final state = context.watch<MyAppState>();
 
-    final double productValue;
-    final String shopName;
-    LatLng shopLocation;
+    String productValue = '-';
+    String shopName = '-';
+    LatLng shopLocation = const LatLng(0.0, 0.0);
 
-    if (state.currentProduct == null) {
-      productValue = product.value!;
-      shopName = product.shops.first.name;
-      shopLocation = product.shops.first.location;
-    } else {
-      productValue = Product.minimumValue!;
-      shopName = Product.minimumValueShop!.name;
-      shopLocation = Product.minimumValueShop!.location;
+    final minSelling = state.market.getMinSellingValue(product.id);
+    if (minSelling != null) {
+      productValue = minSelling.realFormattedValue;
+      shopName = minSelling.shop.name;
+      shopLocation = minSelling.shop.location;
     }
+
     return _buildProductScaffold(
         context, state, productValue, shopName, shopLocation);
   }
 
   Scaffold _buildProductScaffold(BuildContext context, MyAppState state,
-      double productValue, String shopName, LatLng shopLocation) {
-    final curFormat = NumberFormat.currency(symbol: r'R$', locale: 'pt_BR');
-
+      String productValue, String shopName, LatLng shopLocation) {
     return Scaffold(
       appBar: AppBar(
         title: Text(product.name),
@@ -42,7 +37,7 @@ class ProductScreen extends StatelessWidget {
         actions: [
           IconButton(
               onPressed: () =>
-                  Navigator.popUntil(context, ModalRoute.withName('/home')),
+                  Navigator.popUntil(context, ModalRoute.withName('/init')),
               icon: const Icon(Icons.arrow_back))
         ],
       ),
@@ -56,23 +51,13 @@ class ProductScreen extends StatelessWidget {
           ),
           child: Column(
             children: [
-              state.currentProduct != null
-                  ? _mainCard(
-                      context,
-                      curFormat,
-                      productValue,
-                      shopName,
-                      state,
-                      shopLocation,
-                    )
-                  : _commonCard(
-                      context,
-                      curFormat,
-                      productValue,
-                      shopName,
-                      state,
-                      shopLocation,
-                    ),
+              _mainCard(
+                context,
+                state,
+                productValue,
+                shopName,
+                shopLocation,
+              ),
             ],
           ),
         ),
@@ -82,10 +67,9 @@ class ProductScreen extends StatelessWidget {
 
   Card _mainCard(
     BuildContext context,
-    NumberFormat curFormat,
-    double productValue,
-    String shopName,
     MyAppState state,
+    String productValue,
+    String shopName,
     LatLng shopLocation,
   ) {
     return Card(
@@ -100,21 +84,25 @@ class ProductScreen extends StatelessWidget {
             padding: const EdgeInsets.all(12.0),
             child: Column(
               children: [
-                Text(
-                  curFormat.format(productValue),
-                  style: const TextStyle(fontSize: 20),
-                ),
                 const Text(
                   'Menor preço',
                   style: TextStyle(fontSize: 15),
                 ),
-                const SizedBox(height: 5),
+                const SizedBox(height: 2),
+                Text(
+                  productValue,
+                  style: const TextStyle(fontSize: 20),
+                ),
+                const SizedBox(height: 2),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      shopName,
-                      style: const TextStyle(fontSize: 15),
+                    Flexible(
+                      child: Text(
+                        shopName,
+                        softWrap: true,
+                        style: const TextStyle(fontSize: 15),
+                      ),
                     ),
                     const SizedBox(
                       width: 5,
@@ -127,49 +115,22 @@ class ProductScreen extends StatelessWidget {
                         state.pageViewController.jumpToPage(1);
                         state.mapController.move(shopLocation, 13.0);
                         Navigator.popUntil(
-                            context, ModalRoute.withName('/home'));
+                            context, ModalRoute.withName('/init'));
                       },
                     ),
                   ],
                 ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-          _bottomButtons(context, state, shopLocation),
-        ],
-      ),
-    );
-  }
-
-  Card _commonCard(
-    BuildContext context,
-    NumberFormat curFormat,
-    double productValue,
-    String shopName,
-    MyAppState state,
-    LatLng shopLocation,
-  ) {
-    return Card(
-      color: Colors.white,
-      surfaceTintColor: Colors.white,
-      elevation: 8.0,
-      shadowColor: Colors.black,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Column(
-              children: [
+                const SizedBox(height: 5),
+                const Text(
+                  'Preço médio',
+                  style: TextStyle(fontSize: 15),
+                ),
+                const SizedBox(height: 2),
                 Text(
-                  curFormat.format(productValue),
+                  product.meanValueFormatted(),
                   style: const TextStyle(fontSize: 20),
                 ),
-                Text(
-                  'Preço em $shopName',
-                  style: const TextStyle(fontSize: 15),
-                ),
+                const SizedBox(height: 5),
               ],
             ),
           ),
@@ -198,7 +159,7 @@ class ProductScreen extends StatelessWidget {
               onPressed: () {
                 state.setHomeIndex(0);
                 state.pageViewController.jumpToPage(0);
-                Navigator.popUntil(context, ModalRoute.withName('/home'));
+                Navigator.popUntil(context, ModalRoute.withName('/init'));
               },
               icon: const Icon(Icons.list)),
           IconButton(
@@ -207,7 +168,7 @@ class ProductScreen extends StatelessWidget {
                 state.setHomeIndex(1);
                 state.mapController.move(shopLocation, 13.0);
                 state.pageViewController.jumpToPage(1);
-                Navigator.popUntil(context, ModalRoute.withName('/home'));
+                Navigator.popUntil(context, ModalRoute.withName('/init'));
               },
               icon: const Icon(Icons.location_on)),
         ],
@@ -215,12 +176,12 @@ class ProductScreen extends StatelessWidget {
     );
   }
 
-  static void showProductScreen(BuildContext context, Product prod) {
+  static void showProductScreen(BuildContext context, Product product) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ProductScreen(
-          product: prod,
+        builder: (context) => CurrentProductScreen(
+          product: product,
         ),
       ),
     );

@@ -2,23 +2,21 @@ import 'package:comizy/src/screen/filtered_category_screen.dart';
 import 'package:comizy/src/screen/shop_screen.dart';
 import 'package:comizy/src/state/state.dart';
 import 'package:comizy/src/tad/basic_market_item.dart';
-import 'package:comizy/src/tad/product.dart';
-import 'package:comizy/src/tad/shop.dart';
+import 'package:comizy/src/tad/selling.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart';
 
 class ListScreen extends StatefulWidget {
-  ListScreen({super.key});
+  const ListScreen({super.key});
 
   @override
   State<ListScreen> createState() => _ListScreenState();
 }
 
 class _ListScreenState extends State<ListScreen> {
-  List<Product> products = [];
-  List<Shop> shops = [];
+  Map<int, Selling> _products = {};
+  Map<int, Selling> _shops = {};
 
   @override
   void initState() {
@@ -26,25 +24,20 @@ class _ListScreenState extends State<ListScreen> {
   }
 
   void loadList(MyAppState state) {
-    products.clear();
-    shops.clear();
+    _products.clear();
+    _shops.clear();
 
     if (state.settedState == SettedState.currentShopSetted) {
-      for (Product product in state.currentShop!.products) {
-        products.add(product);
-        products.last.shops.add(state.currentShop!);
-      }
+      _products = state.currentShop!.associatedProducts;
     } else if (state.settedState == SettedState.currentProductSetted) {
-      for (Shop shop in state.currentProduct!.shops) {
-        shops.add(shop);
+      _shops = state.currentProduct!.associatedShops;
       }
     }
-  }
-
+  
   ListView shopListViewBuilder() {
     return ListView.builder(
       padding: const EdgeInsets.all(8),
-      itemCount: shops.length,
+      itemCount: _shops.length,
       itemBuilder: (BuildContext context, int index) {
         return shopListTile(index);
       },
@@ -52,18 +45,19 @@ class _ListScreenState extends State<ListScreen> {
   }
 
   ListTile shopListTile(int index) {
-    final curFormat = NumberFormat.currency(symbol: r'R$', locale: 'pt_BR');
+    final id = _shops.keys.elementAt(index);
+    final shop = _shops[id]!.shop;
 
     return ListTile(
-      title: Text(shops[index].name),
-      leading: Icon(shops[index].category.iconData),
+      title: Text(shop.name),
+      leading: Icon(shop.category.iconData),
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(10))),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            curFormat.format(shops[index].products.first.value),
+            _shops[id]!.realFormattedValue,
             style: const TextStyle(fontSize: 15),
           ),
           const SizedBox(width: 10),
@@ -71,7 +65,7 @@ class _ListScreenState extends State<ListScreen> {
         ],
       ),
       onTap: () {
-        ShopScreen.showShopScreen(context, shops[index]);
+        ShopScreen.showShopScreen(context, shop);
       },
     );
   }
@@ -92,8 +86,8 @@ class _ListScreenState extends State<ListScreen> {
   Set<Category> _getCategorySet() {
     Set<Category> categories = {};
 
-    for (Product product in products) {
-      categories.add(Category(type: product.category.type));
+    for (var selling in _products.values) {
+      categories.add(selling.product.category);
     }
 
     return categories;

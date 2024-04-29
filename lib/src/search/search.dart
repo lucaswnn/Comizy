@@ -54,6 +54,31 @@ class MySearchDelegate extends SearchDelegate {
   }
 
   @override
+  Widget buildSuggestions(BuildContext context) {
+    suggestions = [];
+    final state = context.watch<MyAppState>();
+    state.resetSearchFilterState();
+    state.loadMarket();
+
+    if (query.isNotEmpty) {
+      suggestions = [
+        ...state.market.shops.values.toList(),
+        ...state.market.products.values.toList()
+      ].where((searchResult) {
+        final result = searchResult.name.toLowerCase();
+        final input = query.toLowerCase();
+        return result.contains(input);
+      }).toList()
+        ..sort((a, b) => a.name.compareTo(b.name));
+    }
+
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: suggestionsListViewBuilder(),
+    );
+  }
+
+  @override
   Widget buildResults(BuildContext context) {
     final state = context.watch<MyAppState>();
     results = [];
@@ -96,29 +121,6 @@ class MySearchDelegate extends SearchDelegate {
     } else {
       return Container();
     }
-  }
-
-  @override
-  Widget buildSuggestions(BuildContext context) {
-    suggestions = [];
-    final state = context.watch<MyAppState>();
-    state.resetSearchFilterState();
-    state.loadDB();
-
-    if (query.isNotEmpty) {
-      suggestions = [...state.dataBaseShops, ...state.dataBaseProducts]
-          .where((searchResult) {
-        final result = searchResult.name.toLowerCase();
-        final input = query.toLowerCase();
-        return result.contains(input);
-      }).toList()
-        ..sort((a, b) => a.name.compareTo(b.name));
-    }
-
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: suggestionsListViewBuilder(),
-    );
   }
 
   Column resultsListViewBuilder() {
@@ -180,17 +182,13 @@ class MySearchDelegate extends SearchDelegate {
           DbAccess.addGenericSearchHistory(state.currentLocation, result.name);
 
           state.setCurrentShop(result);
-          state.setCurrentShopProducts().then(
-            (value) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ShopScreen(
-                    shop: state.currentShop!,
-                  ),
-                ),
-              );
-            },
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ShopScreen(
+                shop: state.currentShop!,
+              ),
+            ),
           );
         }
       },
@@ -223,17 +221,13 @@ class MySearchDelegate extends SearchDelegate {
           DbAccess.addGenericSearchHistory(state.currentLocation, result.name);
 
           state.setCurrentProduct(result);
-          state.setCurrentProductShops().then(
-            (value) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ProductScreen(
-                    product: state.currentProduct!,
-                  ),
-                ),
-              );
-            },
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CurrentProductScreen(
+                product: state.currentProduct!,
+              ),
+            ),
           );
         }
       },
@@ -365,7 +359,7 @@ class FilterButton extends StatelessWidget {
   final VoidCallback onPressed;
   final String text;
 
-  FilterButton({
+  const FilterButton({
     super.key,
     required this.isActive,
     required this.onPressed,

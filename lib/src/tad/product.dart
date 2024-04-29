@@ -1,42 +1,20 @@
 import 'package:comizy/src/tad/basic_market_item.dart';
-import 'package:comizy/src/tad/shop.dart';
+import 'package:comizy/src/tad/selling.dart';
+import 'package:comizy/src/util/string_util.dart';
 
 class Product extends BasicMarketItem {
-  List<Shop> shops = [];
-  double? value;
-  final String lastDate;
-
-  static double? minimumValue;
-  static double? maximumValue;
-  static Shop? minimumValueShop;
+  Map<int, Selling> associatedShops = {};
 
   Product({
     required int id,
     required String name,
     required String type,
-    required this.lastDate
   }) : super(id: id, name: name, type: type);
 
-  static List<Product> productList(List<Map<String, dynamic>> list) {
-    List<Product> products = [];
-    for (Map<String, dynamic> product in list) {
-      products.add(
-        Product(
-          name: product['NOME_PRODUTO'],
-          id: product['ID_PRODUTO'],
-          type: product['CATEGORIA_PRODUTO'],
-          lastDate: product['ULTIMA_ATUALIZACAO_PRODUTO']
-        ),
-      );
-
-      product.containsKey('VALOR_VENDA')
-          ? products.last.value = product['VALOR_VENDA'].toDouble()
-          : null;
-
-      product.containsKey('NOTA_VENDA')
-          ? products.last.rating = product['NOTA_VENDA'].toDouble()
-          : null;
-    }
-    return products;
+  double meanValue(){
+    if(associatedShops.isEmpty){throw 'associatedShops not loaded yet';}
+    return associatedShops.values.map((e) => e.value).reduce((a, b) => a+b) / associatedShops.length;
   }
+
+  String meanValueFormatted() => realFormattedValue(meanValue());
 }

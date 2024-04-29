@@ -17,7 +17,11 @@ class MyHome extends StatefulWidget {
 }
 
 class _MyHomeState extends State<MyHome> {
-  final List<Widget> _pages = [ListScreen(), MapScreen(), UserScreen()];
+  final List<Widget> _pages = [
+    const ListScreen(),
+    const MapScreen(),
+    UserScreen()
+  ];
 
   late PageController _pageController;
 
@@ -150,8 +154,7 @@ class _MyHomeState extends State<MyHome> {
     var state = context.watch<MyAppState>();
 
     // carregar dados básicos de lojas e produtos
-    state.loadDB();
-
+    state.loadMarket();
     List<IconButton> actionButtons = [];
     if (state.showAppBar) {
       if (state.currentShop != null) {
@@ -170,7 +173,8 @@ class _MyHomeState extends State<MyHome> {
         actionButtons
           ..add(IconButton(
               onPressed: () {
-                ProductScreen.showProductScreen(context, state.currentProduct!);
+                CurrentProductScreen.showProductScreen(
+                    context, state.currentProduct!);
               },
               icon: const Icon(Icons.question_mark)))
           ..add(IconButton(
@@ -193,17 +197,6 @@ class _MyHomeState extends State<MyHome> {
 
     String appBarText = state.appBarText ?? '';
 
-    String waitingMessage =
-        'Autorize a localização de seu dispositivo para poder utilizar o aplicativo';
-
-    state.checkLocationIsReady();
-    bool? canBuild = state.isGPSUsable;
-
-    if (canBuild == null) {
-      return showLoadingScreen();
-    } else if (!canBuild) {
-      return showRequestScreen(waitingMessage, state);
-    }
     return Scaffold(
       // mostrar AppBar apenas nas páginas de lista e de mapa
       appBar: AppBar(
@@ -213,6 +206,14 @@ class _MyHomeState extends State<MyHome> {
         ),
         actions: actionButtons,
       ),
+      floatingActionButton: state.showAppBar
+          ? FloatingActionButton(
+              elevation: 6.0,
+              shape: const CircleBorder(),
+              onPressed: () {},
+              child: const Icon(Icons.shopping_cart),
+            )
+          : null,
 
       body: LayoutBuilder(
         builder: (context, constraints) {
@@ -223,36 +224,6 @@ class _MyHomeState extends State<MyHome> {
           }
         },
       ),
-    );
-  }
-
-  Center showLoadingScreen() {
-    return const Center(child: CircularProgressIndicator());
-  }
-
-  Material showRequestScreen(String message, MyAppState state) {
-    return Material(
-      child: SafeArea(
-          child: Center(
-              child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            message,
-            style: const TextStyle(fontSize: 17),
-          ),
-          const SizedBox(height: 15),
-          IconButton(
-              onPressed: () {
-                state.checkLocationIsReady();
-              },
-              icon: const Icon(
-                Icons.location_on,
-                color: Color.fromARGB(255, 0, 66, 180),
-                size: 35,
-              ))
-        ],
-      ))),
     );
   }
 }

@@ -1,45 +1,11 @@
+import 'dart:developer';
+
 import 'package:comizy/src/state/state.dart';
 import 'package:comizy/src/tad/shop.dart';
 import 'package:comizy/src/util/geo_util.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
-
-class OldShopScreen extends StatelessWidget {
-  final Shop shop;
-  const OldShopScreen({super.key, required this.shop});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        actions: [
-          IconButton(
-              onPressed: () =>
-                  Navigator.popUntil(context, ModalRoute.withName('/home')),
-              icon: const Icon(Icons.arrow_back))
-        ],
-      ),
-      body: Center(
-        child: Column(
-          children: [Text(shop.name), Text(shop.address)],
-        ),
-      ),
-    );
-  }
-
-  static void showShopScreen(BuildContext context, Shop shop) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => OldShopScreen(
-          shop: shop,
-        ),
-      ),
-    );
-  }
-}
 
 class ShopScreen extends StatelessWidget {
   final Shop shop;
@@ -64,7 +30,7 @@ class ShopScreen extends StatelessWidget {
         actions: [
           IconButton(
               onPressed: () =>
-                  Navigator.popUntil(context, ModalRoute.withName('/home')),
+                  Navigator.popUntil(context, ModalRoute.withName('/init')),
               icon: const Icon(Icons.arrow_back))
         ],
       ),
@@ -115,7 +81,8 @@ class ShopScreen extends StatelessWidget {
         style: TextStyle(fontSize: 15),
       ));
     } else {
-      print('erro');
+      const debugOrigin = 'shop_screen:ShopScreen._mainCard';
+      log('comizy: unpredicted state on $debugOrigin');
     }
 
     return Card(
@@ -161,7 +128,7 @@ class ShopScreen extends StatelessWidget {
               onPressed: () {
                 state.setHomeIndex(0);
                 state.pageViewController.jumpToPage(0);
-                Navigator.popUntil(context, ModalRoute.withName('/home'));
+                Navigator.popUntil(context, ModalRoute.withName('/init'));
               },
               icon: const Icon(Icons.list)),
           IconButton(
@@ -170,7 +137,7 @@ class ShopScreen extends StatelessWidget {
                 state.setHomeIndex(1);
                 state.mapController.move(shopLocation, 13.0);
                 state.pageViewController.jumpToPage(1);
-                Navigator.popUntil(context, ModalRoute.withName('/home'));
+                Navigator.popUntil(context, ModalRoute.withName('/init'));
               },
               icon: const Icon(Icons.location_on)),
         ],
@@ -197,15 +164,13 @@ class ShopScreen extends StatelessWidget {
                 state.setHomeIndex(1);
                 state.mapController.move(shopLocation, 13.0);
                 state.pageViewController.jumpToPage(1);
-                Navigator.popUntil(context, ModalRoute.withName('/home'));
+                Navigator.popUntil(context, ModalRoute.withName('/init'));
               },
               icon: const Icon(Icons.location_on)),
         ],
       ),
     );
   }
-
-  
 
   static void showShopScreen(BuildContext context, Shop shop) {
     Navigator.push(

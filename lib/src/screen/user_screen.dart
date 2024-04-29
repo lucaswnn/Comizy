@@ -1,4 +1,3 @@
-import 'package:comizy/src/etc/teste.dart';
 import 'package:comizy/src/screen/about_us_screen.dart';
 import 'package:comizy/src/screen/user_opinion_screen.dart';
 import 'package:comizy/src/state/state.dart';
@@ -37,26 +36,8 @@ class UserScreen extends StatelessWidget {
                 MaterialPageRoute(
                     builder: (context) => const UserOpinionScreen()));
             break;
-          case 2:
-            state.addClick();
-            break;
           default:
-            state.resetClick();
         }
-      },
-      onLongPress: () {
-        switch (index) {
-          case 2:
-            if (state.click == 4) {
-              state.resetClick();
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const HidedScreen()));
-            }
-            break;
-          default:
-            state.resetClick();
-        }
-        if (index == 2 && state.click == 4) {}
       },
     );
   }

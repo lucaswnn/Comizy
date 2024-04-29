@@ -1,6 +1,6 @@
 import 'package:comizy/src/screen/shop_screen.dart';
 import 'package:comizy/src/state/state.dart';
-import 'package:comizy/src/tad/product.dart';
+import 'package:comizy/src/tad/selling.dart';
 import 'package:comizy/src/tad/shop.dart';
 import 'package:comizy/src/util/geo_util.dart';
 
@@ -12,7 +12,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MapScreen extends StatefulWidget {
-  MapScreen({super.key});
+  const MapScreen({super.key});
 
   @override
   State<MapScreen> createState() => _MapScreenState();
@@ -91,6 +91,14 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   ShopMarker createShopMarker(Shop shop) {
+    final state = context.read<MyAppState>();
+
+    Selling? minimumSelling;
+    if (state.settedState == SettedState.currentProductSetted) {
+      minimumSelling =
+          state.market.getMinSellingValue(state.currentProduct!.id);
+    }
+
     return ShopMarker(
         width: 40,
         height: 40,
@@ -99,8 +107,8 @@ class _MapScreenState extends State<MapScreen> {
         point: shop.location,
         builder: (context) {
           Color iconColor = const Color.fromARGB(255, 184, 184, 184);
-          if (Product.minimumValueShop != null) {
-            if (shop.id == Product.minimumValueShop!.id) {
+          if (minimumSelling != null) {
+            if (shop.id == minimumSelling.shop.id) {
               iconColor = Colors.blue;
             }
           }
@@ -135,11 +143,14 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final state = Provider.of<MyAppState>(context, listen: true);
+    final state = context.watch<MyAppState>();
     if (state.settedState == SettedState.currentShopSetted) {
       loadShops([state.currentShop!]);
     } else if (state.settedState == SettedState.currentProductSetted) {
-      loadShops(state.currentProduct!.shops);
+      final returnList = state.currentProduct!.associatedShops.entries
+          .map((entry) => entry.value.shop)
+          .toList();
+      loadShops(returnList);
     } else {
       _clearShops();
     }
@@ -155,6 +166,7 @@ class _MapScreenState extends State<MapScreen> {
       ),
       nonRotatedChildren: [
         RichAttributionWidget(
+          alignment: AttributionAlignment.bottomLeft,
           showFlutterMapAttribution: false,
           attributions: [
             TextSourceAttribution(

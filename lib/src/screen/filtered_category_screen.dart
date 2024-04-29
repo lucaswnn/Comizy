@@ -1,17 +1,18 @@
+import 'dart:developer';
+
 import 'package:comizy/src/search/register_form.dart';
 import 'package:comizy/src/state/state.dart';
 import 'package:comizy/src/tad/basic_market_item.dart';
-import 'package:comizy/src/tad/product.dart';
-import 'package:comizy/src/util/string_util.dart';
+import 'package:comizy/src/tad/selling.dart';
+
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import 'dart:ui' as ui;
 
 class FilteredCategoryScreen extends StatefulWidget {
   final Category category;
-  FilteredCategoryScreen({
+  const FilteredCategoryScreen({
     super.key,
     required this.category,
   });
@@ -41,7 +42,7 @@ class _FilteredCategoryScreenState extends State<FilteredCategoryScreen> {
         actions: [
           IconButton(
               onPressed: () =>
-                  Navigator.popUntil(context, ModalRoute.withName('/home')),
+                  Navigator.popUntil(context, ModalRoute.withName('/init')),
               icon: const Icon(Icons.arrow_back))
         ],
       ),
@@ -67,44 +68,44 @@ class _FilteredCategoryScreenState extends State<FilteredCategoryScreen> {
     );
   }
 
-  List<Product> getProductsFromCategory(MyAppState state) {
+  List<Selling> getProductsFromCategory(MyAppState state) {
     try {
-      final actualProducts = state.currentShop!.products;
+      final actualProducts = state.currentShop!.associatedProducts;
 
-      List<Product> filteredProducts = [];
-      for (var product in actualProducts) {
-        if (product.category.type == widget.category.type) {
-          filteredProducts.add(product);
+      List<Selling> filteredProducts = [];
+      for (var selling in actualProducts.values) {
+        if (selling.product.category.type == widget.category.type) {
+          filteredProducts.add(selling);
         }
       }
       return filteredProducts;
-    } catch (e) {
-      print(e);
+    } catch (error) {
+      const debugOrigin = 'filtered_category_screen:FilteredCategoryScreenState.getProductsFromCategory';
+      log('comizy: exception on $debugOrigin: $error');
       return [];
     }
   }
 
   ListTile productListTile(
     int index,
-    List<Product> products,
+    List<Selling> products,
     BuildContext context,
     MyAppState state,
   ) {
-    final curFormat = NumberFormat.currency(symbol: r'R$', locale: 'pt_BR');
-    double productValue = products[index].value!;
-    String productName = products[index].name;
-    String shopName = products[index].shops.first.name;
-    LatLng shopLocation = products[index].shops.first.location;
-    String lastUpdate = products[index].lastDate;
+    String productValue = products[index].realFormattedValue;
+    String productName = products[index].product.name;
+    String shopName = products[index].shop.name;
+    LatLng shopLocation = products[index].shop.location;
+    String lastUpdate = products[index].lastUpdateFormatted;
 
     return ListTile(
       title: Text(productName),
-      leading: Icon(products[index].category.iconData),
+      leading: Icon(products[index].product.category.iconData),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            curFormat.format(productValue),
+            productValue,
             style: const TextStyle(fontSize: 15),
           ),
           const SizedBox(width: 10),
@@ -133,7 +134,7 @@ class _FilteredCategoryScreenState extends State<FilteredCategoryScreen> {
                     ),
                     child: Column(
                       children: [
-                        _commonCard(context, curFormat, productValue, shopName,
+                        _commonCard(context, productValue, shopName,
                             state, shopLocation, lastUpdate, productName)
                       ],
                     ),
@@ -149,16 +150,13 @@ class _FilteredCategoryScreenState extends State<FilteredCategoryScreen> {
 
   Card _commonCard(
     BuildContext context,
-    NumberFormat curFormat,
-    double productValue,
+    String productValue,
     String shopName,
     MyAppState state,
     LatLng shopLocation,
     String lastUpdate,
     String productName,
   ) {
-    final lastUpdateFormatted =
-        mySqlDateConversion(lastUpdate.substring(0, 10));
 
         final registerType = 'Preço de $productName em $shopName';
 
@@ -175,7 +173,7 @@ class _FilteredCategoryScreenState extends State<FilteredCategoryScreen> {
             child: Column(
               children: [
                 Text(
-                  curFormat.format(productValue),
+                  productValue,
                   style: const TextStyle(fontSize: 20),
                 ),
                 Text(
@@ -187,7 +185,7 @@ class _FilteredCategoryScreenState extends State<FilteredCategoryScreen> {
           ),
           const SizedBox(height: 15),
           Text(
-            'Última atualização: $lastUpdateFormatted',
+            'Última atualização: $lastUpdate',
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 15),
@@ -242,7 +240,7 @@ class _FilteredCategoryScreenState extends State<FilteredCategoryScreen> {
               state.setHomeIndex(1);
               state.mapController.move(shopLocation, 13.0);
               state.pageViewController.jumpToPage(1);
-              Navigator.popUntil(context, ModalRoute.withName('/home'));
+              Navigator.popUntil(context, ModalRoute.withName('/init'));
             },
             icon: const Icon(Icons.location_on),
           ),

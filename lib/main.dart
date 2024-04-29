@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import 'package:comizy/src/screen/register_screen.dart';
 import 'package:comizy/src/screen/home.dart';
+import 'package:comizy/src/screen/init_screen.dart';
 import 'package:comizy/src/theme/theme.dart';
 import 'package:comizy/src/state/state.dart';
+
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -22,10 +22,9 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: "Comizy",
         theme: themeData,
-        initialRoute: '/home',
+        initialRoute: '/init',
         routes: {
-          '/adicionar_produto': (context) => const ProductRegisterScreen(),
-          '/adicionar_loja': (context) => const ShopRegisterScreen(),
+          '/init': (context) => const InitScreen(),
           '/home': (context) => const MyHome(),
         },
       ),

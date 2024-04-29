@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart';
+import 'dart:developer' as developer;
 
 double calculateDistance(LatLng latLng1, LatLng latLng2) {
   double p = 0.017453292519943295;
@@ -49,10 +50,9 @@ Future<LocationData?> getCurrentLocation() async {
     if (isGPSPermitted && isGPSEnabled) {
       return await Location().getLocation();
     }
-  } catch (e) {
-    print(
-        'comizy: error getting current location - on map_screen._mapScreenState.getCurrentLocation');
-    print(e);
+  } catch (error) {
+    const debugOrigin = 'geo_util:getCurrentLocation';
+    developer.log('comizy: exception on $debugOrigin: $error');
     throw 'Localização não adquirida';
   }
   return null;
