@@ -11,9 +11,12 @@ class Product extends BasicMarketItem {
     required String type,
   }) : super(id: id, name: name, type: type);
 
-  double meanValue(){
-    if(associatedShops.isEmpty){throw 'associatedShops not loaded yet';}
-    return associatedShops.values.map((e) => e.value).reduce((a, b) => a+b) / associatedShops.length;
+  double meanValue() {
+    if (associatedShops.isEmpty) {
+      throw 'associatedShops not loaded yet';
+    }
+    return associatedShops.values.map((e) => e.value).reduce((a, b) => a + b) /
+        associatedShops.length;
   }
 
   String meanValueFormatted() => realFormattedValue(meanValue());

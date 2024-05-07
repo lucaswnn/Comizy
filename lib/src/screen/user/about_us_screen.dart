@@ -1,4 +1,4 @@
-import 'package:comizy/src/screen/user_opinion_screen.dart';
+import 'package:comizy/src/screen/user/user_opinion_screen.dart';
 import 'package:flutter/material.dart';
 
 class AboutUsScreen extends StatelessWidget {

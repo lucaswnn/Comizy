@@ -1,5 +1,5 @@
-import 'package:comizy/src/screen/about_us_screen.dart';
-import 'package:comizy/src/screen/user_opinion_screen.dart';
+import 'package:comizy/src/screen/user/about_us_screen.dart';
+import 'package:comizy/src/screen/user/user_opinion_screen.dart';
 import 'package:comizy/src/state/state.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

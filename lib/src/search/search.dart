@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:comizy/src/db/db_access.dart';
-import 'package:comizy/src/screen/shop_screen.dart';
+import 'package:comizy/src/screen/etc/shop_screen.dart';
 import 'package:comizy/src/search/register_form.dart';
 import 'package:comizy/src/tad/basic_market_item.dart';
 import 'package:comizy/src/util/geo_util.dart';
@@ -9,7 +9,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 
-import 'package:comizy/src/screen/product_screen.dart';
+import 'package:comizy/src/screen/etc/product_screen.dart';
 import 'package:comizy/src/state/state.dart';
 import 'package:comizy/src/tad/product.dart';
 import 'package:comizy/src/tad/shop.dart';

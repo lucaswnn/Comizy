@@ -59,24 +59,33 @@ class MyAppState extends ChangeNotifier {
 
   String? appBarText = 'Comizy';
 
-  void addProductOnCart(Product product){
-    if(!(productsCart.containsKey(product))){
+  void addProductOnCart(Product product) {
+    if (!(productsCart.containsKey(product))) {
       productsCart[product] = 1;
+      notifyListeners();
     }
   }
 
-void increaseProductOnCart(Product product){
-  if(productsCart.containsKey(product)){
-    productsCart[product] = productsCart[product]! + 1;
+  void increaseProductOnCart(Product product) {
+    if (productsCart.containsKey(product)) {
+      productsCart[product] = productsCart[product]! + 1;
+      notifyListeners();
+    }
   }
-}
 
-void decreaseProductOnCart(Product product){
-  if(productsCart.containsKey(product)){
-    if(productsCart[product]! > 0){
-    productsCart[product] = productsCart[product]! - 1;
-  }}
-}
+  void decreaseProductOnCart(Product product) {
+    if (productsCart.containsKey(product)) {
+      if (productsCart[product]! > 1) {
+        productsCart[product] = productsCart[product]! - 1;
+        notifyListeners();
+      } else if (productsCart[product]! == 1) {
+        productsCart.remove(product);
+        notifyListeners();
+      }
+    }
+  }
+
+  void clearCart(){productsCart.clear();notifyListeners();}
 
   void resetSearchFilterState() {
     queryState[SearchFilterLabel.productQuery] = true;

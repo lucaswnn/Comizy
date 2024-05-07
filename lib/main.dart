@@ -1,5 +1,5 @@
-import 'package:comizy/src/screen/home.dart';
-import 'package:comizy/src/screen/init_screen.dart';
+import 'package:comizy/src/screen/home/home.dart';
+import 'package:comizy/src/screen/home/init_screen.dart';
 import 'package:comizy/src/theme/theme.dart';
 import 'package:comizy/src/state/state.dart';
 

@@ -15,4 +15,11 @@ class Shop extends BasicMarketItem {
       required this.location,
       required String type})
       : super(name: name, type: type, id: id);
+
+  Shop.empty()
+      : address = '',
+        location = const LatLng(0, 0),
+        super(name: '', type: '', id: -1);
+
+  bool get isEmpty => id == -1 ? true : false;
 }

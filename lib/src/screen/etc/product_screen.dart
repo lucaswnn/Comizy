@@ -171,6 +171,18 @@ class CurrentProductScreen extends StatelessWidget {
                 Navigator.popUntil(context, ModalRoute.withName('/init'));
               },
               icon: const Icon(Icons.location_on)),
+          IconButton(
+              color: Colors.white,
+              onPressed: () {
+                state.addProductOnCart(product);
+                const message = 'Produto adicionado ao carrinho';
+                const snackBar = SnackBar(content: Text(message));
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+                Future.delayed(const Duration(milliseconds: 500))
+                    .whenComplete(() => Navigator.pop(context));
+              },
+              icon: const Icon(Icons.add_shopping_cart)),
         ],
       ),
     );

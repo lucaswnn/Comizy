@@ -1,4 +1,4 @@
-import 'package:comizy/src/screen/shop_screen.dart';
+import 'package:comizy/src/screen/etc/shop_screen.dart';
 import 'package:comizy/src/state/state.dart';
 import 'package:comizy/src/tad/selling.dart';
 import 'package:comizy/src/tad/shop.dart';

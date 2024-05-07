@@ -1,4 +1,4 @@
-import 'package:comizy/src/screen/home.dart';
+import 'package:comizy/src/screen/home/home.dart';
 import 'package:comizy/src/util/geo_util.dart';
 import 'package:flutter/material.dart';
 

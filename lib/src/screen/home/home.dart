@@ -1,13 +1,14 @@
-import 'package:comizy/src/screen/product_screen.dart';
-import 'package:comizy/src/screen/shop_screen.dart';
+import 'package:comizy/src/screen/cart/cart_screen.dart';
+import 'package:comizy/src/screen/etc/product_screen.dart';
+import 'package:comizy/src/screen/etc/shop_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:comizy/src/state/state.dart';
 import 'package:comizy/src/search/search.dart';
-import 'package:comizy/src/screen/list_screen.dart';
-import 'package:comizy/src/screen/map_screen.dart';
-import 'package:comizy/src/screen/user_screen.dart';
+import 'package:comizy/src/screen/home/list_screen.dart';
+import 'package:comizy/src/screen/home/map_screen.dart';
+import 'package:comizy/src/screen/home/user_screen.dart';
 
 class MyHome extends StatefulWidget {
   const MyHome({super.key});
@@ -210,7 +211,12 @@ class _MyHomeState extends State<MyHome> {
           ? FloatingActionButton(
               elevation: 6.0,
               shape: const CircleBorder(),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const CartScreen()));
+              },
               child: const Icon(Icons.shopping_cart),
             )
           : null,

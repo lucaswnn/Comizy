@@ -1,5 +1,5 @@
-import 'package:comizy/src/screen/filtered_category_screen.dart';
-import 'package:comizy/src/screen/shop_screen.dart';
+import 'package:comizy/src/screen/list/filtered_category_screen.dart';
+import 'package:comizy/src/screen/etc/shop_screen.dart';
 import 'package:comizy/src/state/state.dart';
 import 'package:comizy/src/tad/basic_market_item.dart';
 import 'package:comizy/src/tad/selling.dart';
@@ -18,12 +18,7 @@ class _ListScreenState extends State<ListScreen> {
   Map<int, Selling> _products = {};
   Map<int, Selling> _shops = {};
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  void loadList(MyAppState state) {
+  void _loadList(MyAppState state) {
     _products.clear();
     _shops.clear();
 
@@ -31,20 +26,27 @@ class _ListScreenState extends State<ListScreen> {
       _products = state.currentShop!.associatedProducts;
     } else if (state.settedState == SettedState.currentProductSetted) {
       _shops = state.currentProduct!.associatedShops;
-      }
     }
-  
-  ListView shopListViewBuilder() {
+  }
+
+  Widget _shopListViewBuilder() {
+    if (_shops.isEmpty) {
+      return _emptyView(
+        'Produto sem lojas associadas',
+        Icons.remove_shopping_cart_outlined,
+      );
+    }
+
     return ListView.builder(
       padding: const EdgeInsets.all(8),
       itemCount: _shops.length,
       itemBuilder: (BuildContext context, int index) {
-        return shopListTile(index);
+        return _shopListTile(index);
       },
     );
   }
 
-  ListTile shopListTile(int index) {
+  ListTile _shopListTile(int index) {
     final id = _shops.keys.elementAt(index);
     final shop = _shops[id]!.shop;
 
@@ -70,8 +72,15 @@ class _ListScreenState extends State<ListScreen> {
     );
   }
 
-  GridView categoryGridViewBuilder() {
+  Widget _categoryGridViewBuilder() {
     final categories = _getCategorySet().toList();
+
+    if (categories.isEmpty) {
+      return _emptyView(
+        'Loja sem produtos associados',
+        Icons.no_food,
+      );
+    }
 
     return GridView.builder(
         gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
@@ -79,7 +88,7 @@ class _ListScreenState extends State<ListScreen> {
         itemCount: categories.length,
         padding: const EdgeInsets.all(8.0),
         itemBuilder: (context, index) {
-          return categoryTile(index, categories);
+          return _categoryTile(index, categories);
         });
   }
 
@@ -93,7 +102,7 @@ class _ListScreenState extends State<ListScreen> {
     return categories;
   }
 
-  Padding categoryTile(int index, List<Category> categories) {
+  Padding _categoryTile(int index, List<Category> categories) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: ElevatedButton(
@@ -131,34 +140,55 @@ class _ListScreenState extends State<ListScreen> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final state = Provider.of<MyAppState>(context, listen: true);
-    loadList(state);
-
-    if (state.settedState == SettedState.currentShopSetted) {
-      return categoryGridViewBuilder();
-    } else if (state.settedState == SettedState.currentProductSetted) {
-      return shopListViewBuilder();
-    } else {
-      return const Center(
-          child: Column(
+  Center _emptyView(String message, IconData iconData) {
+    return Center(
+      child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
-            Icons.manage_search,
-            size: 50,
+            iconData,
+            size: 35,
           ),
-          SizedBox(
-            height: 20,
-          ),
+          const SizedBox(height: 15),
           Text(
-            'Pesquise algo para encontrar as melhores condições',
-            style: TextStyle(fontSize: 20),
+            message,
             textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 20),
           ),
         ],
-      ));
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final state = Provider.of<MyAppState>(context, listen: true);
+    _loadList(state);
+
+    if (state.settedState == SettedState.currentShopSetted) {
+      return _categoryGridViewBuilder();
+    } else if (state.settedState == SettedState.currentProductSetted) {
+      return _shopListViewBuilder();
+    } else {
+      return const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.manage_search,
+              size: 50,
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Text(
+              'Pesquise algo para encontrar as melhores condições',
+              style: TextStyle(fontSize: 20),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      );
     }
   }
 }

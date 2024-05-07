@@ -6,7 +6,7 @@ class BasicMarketItem {
   final int id;
   double? rating;
 
-  BasicMarketItem({required this.name, required type, required this.id}) {
+  BasicMarketItem({required this.name, required String type, required this.id}) {
     category = Category(type: type);
   }
 }
