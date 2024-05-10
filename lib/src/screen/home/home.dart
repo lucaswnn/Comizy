@@ -208,16 +208,19 @@ class _MyHomeState extends State<MyHome> {
         actions: actionButtons,
       ),
       floatingActionButton: state.showAppBar
-          ? FloatingActionButton(
-              elevation: 6.0,
-              shape: const CircleBorder(),
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const CartScreen()));
-              },
-              child: const Icon(Icons.shopping_cart),
+          ? Padding(
+              padding: const EdgeInsets.only(bottom: 50.0),
+              child: FloatingActionButton(
+                elevation: 6.0,
+                shape: const CircleBorder(),
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const CartScreen()));
+                },
+                child: const Icon(Icons.shopping_cart),
+              ),
             )
           : null,
 

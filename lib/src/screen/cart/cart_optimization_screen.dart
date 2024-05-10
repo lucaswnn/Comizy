@@ -74,6 +74,7 @@ class CartOptimizationScreen extends StatelessWidget {
 
     if (bestShop == null) {
       _cheapestShop = Shop.empty();
+      _cheapestShopPrice = -1;
     } else {
       _cheapestShop = bestShop;
       _cheapestShopPrice = minimumValue;
@@ -110,7 +111,10 @@ class CartOptimizationScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text('Menor preço possível'),
+              const Text(
+                'Menor preço possível',
+                style: TextStyle(fontSize: 20),
+              ),
               const SizedBox(height: 5),
               Text(minimumPriceFormatted),
               const SizedBox(height: 5),
@@ -140,34 +144,67 @@ class CartOptimizationScreen extends StatelessWidget {
   }
 
   SizedBox _cheapestShopCard() {
-    final minimumPriceFormatted = realFormattedValue(_cheapestShopPrice);
+    final wasCheapestShopFound = _cheapestShopPrice != -1;
 
-    return SizedBox(
-      width: 300,
-      height: 200,
-      child: Card(
-        color: Colors.white,
-        surfaceTintColor: Colors.white,
-        elevation: 8.0,
-        shadowColor: Colors.black,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text('Loja com menor custo geral'),
-              const SizedBox(height: 5),
-              Text(minimumPriceFormatted),
-              const SizedBox(height: 5),
-              ListTile(
-                title: Text(_cheapestShop.name),
-                subtitle: Text(_cheapestShop.address),
-              )
-            ],
+    if (!wasCheapestShopFound) {
+      return const SizedBox(
+        width: 300,
+        height: 200,
+        child: Card(
+          color: Colors.white,
+          surfaceTintColor: Colors.white,
+          elevation: 8.0,
+          shadowColor: Colors.black,
+          child: Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Loja com menor custo geral',
+                  style: TextStyle(fontSize: 20),
+                ),
+                SizedBox(height: 5),
+                Text(
+                    'Não foi encontrada uma loja que contém todos os produtos do carrinho'),
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    } else {
+      final minimumPriceFormatted = realFormattedValue(_cheapestShopPrice);
+
+      return SizedBox(
+        width: 300,
+        height: 200,
+        child: Card(
+          color: Colors.white,
+          surfaceTintColor: Colors.white,
+          elevation: 8.0,
+          shadowColor: Colors.black,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  'Loja com menor custo geral',
+                  style: TextStyle(fontSize: 20),
+                ),
+                const SizedBox(height: 5),
+                Text(minimumPriceFormatted),
+                const SizedBox(height: 5),
+                ListTile(
+                  title: Text(_cheapestShop.name),
+                  subtitle: Text(_cheapestShop.address),
+                )
+              ],
+            ),
+          ),
+        ),
+      );
+    }
   }
 
   @override

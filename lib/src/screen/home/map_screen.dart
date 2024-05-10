@@ -30,7 +30,7 @@ class _MapScreenState extends State<MapScreen> {
     super.initState();
     final state = context.read<MyAppState>();
     _mapController = state.mapController;
-    setCurrentLocationOnMap(state);
+    _setCurrentLocationOnMap(state);
   }
 
   @override
@@ -39,7 +39,7 @@ class _MapScreenState extends State<MapScreen> {
     super.dispose();
   }
 
-  Future<void> setCurrentLocationOnMap(MyAppState state) async {
+  Future<void> _setCurrentLocationOnMap(MyAppState state) async {
     _currentLocation = await getCurrentLocation();
 
     if (_currentLocation == null) {
@@ -47,8 +47,8 @@ class _MapScreenState extends State<MapScreen> {
     }
     state.setCurrentLocation(_currentLocation!);
 
-    _currentLocCircleMarker.add(createLocCircleMarker());
-    _currentLocMarker.add(createLocMarker());
+    _currentLocCircleMarker.add(_createLocCircleMarker());
+    _currentLocMarker.add(_createLocMarker());
 
     _mapController.move(
       LatLng(
@@ -59,7 +59,7 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  CircleMarker createLocCircleMarker() {
+  CircleMarker _createLocCircleMarker() {
     return CircleMarker(
       point: LatLng(_currentLocation!.latitude!, _currentLocation!.longitude!),
       radius:
@@ -71,7 +71,7 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  Marker createLocMarker() {
+  Marker _createLocMarker() {
     return Marker(
       width: 40.0,
       height: 40.0,
@@ -90,7 +90,7 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  ShopMarker createShopMarker(Shop shop) {
+  ShopMarker _createShopMarker(Shop shop) {
     final state = context.read<MyAppState>();
 
     Selling? minimumSelling;
@@ -100,42 +100,43 @@ class _MapScreenState extends State<MapScreen> {
     }
 
     return ShopMarker(
-        width: 40,
-        height: 40,
-        anchorPos: AnchorPos.align(AnchorAlign.center),
-        shopData: shop,
-        point: shop.location,
-        builder: (context) {
-          Color iconColor = const Color.fromARGB(255, 184, 184, 184);
-          if (minimumSelling != null) {
-            if (shop.id == minimumSelling.shop.id) {
-              iconColor = Colors.blue;
-            }
+      width: 40,
+      height: 40,
+      anchorPos: AnchorPos.align(AnchorAlign.center),
+      shopData: shop,
+      point: shop.location,
+      builder: (context) {
+        Color iconColor = const Color.fromARGB(255, 184, 184, 184);
+        if (minimumSelling != null) {
+          if (shop.id == minimumSelling.shop.id) {
+            iconColor = Colors.blue;
           }
+        }
 
-          return IconButton(
-            icon: Icon(
-              Icons.location_on_sharp,
-              shadows: const [
-                Shadow(
-                  color: Colors.black,
-                  blurRadius: 3,
-                ),
-              ],
-              color: iconColor,
-            ),
-            iconSize: 30,
-            padding: EdgeInsets.zero,
-            alignment: Alignment.center,
-            onPressed: () => ShopScreen.showShopScreen(context, shop),
-          );
-        });
+        return IconButton(
+          icon: Icon(
+            Icons.location_on_sharp,
+            shadows: const [
+              Shadow(
+                color: Colors.black,
+                blurRadius: 3,
+              ),
+            ],
+            color: iconColor,
+          ),
+          iconSize: 30,
+          padding: EdgeInsets.zero,
+          alignment: Alignment.center,
+          onPressed: () => ShopScreen.showShopScreen(context, shop),
+        );
+      },
+    );
   }
 
-  void loadShops(List<Shop> shops) {
+  void _loadShops(List<Shop> shops) {
     _clearShops();
     for (var shop in shops) {
-      _markers.add(createShopMarker(shop));
+      _markers.add(_createShopMarker(shop));
     }
   }
 
@@ -145,14 +146,16 @@ class _MapScreenState extends State<MapScreen> {
   Widget build(BuildContext context) {
     final state = context.watch<MyAppState>();
     if (state.settedState == SettedState.currentShopSetted) {
-      loadShops([state.currentShop!]);
+      _loadShops([state.currentShop!]);
     } else if (state.settedState == SettedState.currentProductSetted) {
       final returnList = state.currentProduct!.associatedShops.entries
           .map((entry) => entry.value.shop)
           .toList();
-      loadShops(returnList);
+      _loadShops(returnList);
     } else {
-      _clearShops();
+      final returnList =
+          state.market.shops.entries.map((entry) => entry.value).toList();
+      _loadShops(returnList);
     }
 
     return FlutterMap(
