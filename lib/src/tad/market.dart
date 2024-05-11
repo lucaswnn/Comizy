@@ -66,8 +66,6 @@ class Market {
 
   Future<void> _associateItems(LatLng latLng, double radius) async {
     try {
-      final location = await getCurrentLocation();
-      final latLng = LatLng(location!.latitude!, location.longitude!);
       final sellingListFromServer =
           await DbAccess.getSellingListInRadius(latLng, radius);
 

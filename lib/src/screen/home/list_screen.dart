@@ -19,8 +19,8 @@ class _ListScreenState extends State<ListScreen> {
   Map<int, Selling> _shops = {};
 
   void _loadList(MyAppState state) {
-    _products.clear();
-    _shops.clear();
+    _products = {};
+    _shops = {};
 
     if (state.settedState == SettedState.currentShopSetted) {
       _products = state.currentShop!.associatedProducts;
@@ -162,7 +162,7 @@ class _ListScreenState extends State<ListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final state = Provider.of<MyAppState>(context, listen: true);
+    final state = context.watch<MyAppState>();
     _loadList(state);
 
     if (state.settedState == SettedState.currentShopSetted) {

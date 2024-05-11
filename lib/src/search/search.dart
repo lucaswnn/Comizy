@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:comizy/src/db/db_access.dart';
 import 'package:comizy/src/screen/etc/shop_screen.dart';
 import 'package:comizy/src/search/register_form.dart';
