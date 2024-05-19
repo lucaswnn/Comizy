@@ -3,8 +3,6 @@ import 'package:comizy/src/db/db_access.dart';
 import 'package:comizy/src/screen/etc/shop_screen.dart';
 import 'package:comizy/src/search/register_form.dart';
 import 'package:comizy/src/tad/basic_market_item.dart';
-import 'package:comizy/src/util/geo_util.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 
@@ -14,8 +12,9 @@ import 'package:comizy/src/tad/product.dart';
 import 'package:comizy/src/tad/shop.dart';
 
 class MySearchDelegate extends SearchDelegate {
-  List<BasicMarketItem> suggestions = [];
-  List<BasicMarketItem> results = [];
+  Set<SearchSuggestionType> _suggestionsOnScreen = {};
+  List<BasicMarketItem> _suggestions = [];
+  List<BasicMarketItem> _results = [];
 
   @override
   String? get searchFieldLabel => 'Procurar...';
@@ -28,8 +27,8 @@ class MySearchDelegate extends SearchDelegate {
           if (query.isEmpty) {
             close(context, null);
           } else {
-            suggestions = [];
-            results = [];
+            _suggestions = [];
+            _results = [];
             query = '';
           }
         },
@@ -54,13 +53,14 @@ class MySearchDelegate extends SearchDelegate {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    suggestions = [];
+    _suggestions = [];
+    _suggestionsOnScreen = {};
     final state = context.watch<MyAppState>();
     state.resetSearchFilterState();
     state.loadMarket();
 
     if (query.isNotEmpty) {
-      suggestions = [
+      _suggestions = [
         ...state.market.shops.values.toList(),
         ...state.market.products.values.toList()
       ].where((searchResult) {
@@ -69,22 +69,62 @@ class MySearchDelegate extends SearchDelegate {
         return result.contains(input);
       }).toList()
         ..sort((a, b) => a.name.compareTo(b.name));
+
+      _suggestionsOnScreen = _suggestions
+          .map((item) => SearchSuggestionType(
+              name: item.name, type: item is Shop ? 'Loja' : 'Produto'))
+          .toSet();
     }
 
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(4.0),
       child: suggestionsListViewBuilder(),
+    );
+  }
+
+  ListView suggestionsListViewBuilder() {
+    return ListView.builder(
+      itemCount: min(_suggestionsOnScreen.length, 10),
+      itemBuilder: (context, index) {
+        final state = context.watch<MyAppState>();
+        final suggestion = _suggestionsOnScreen.elementAt(index);
+        return suggestionsListTile(suggestion, state, context);
+      },
+    );
+  }
+
+  ListTile suggestionsListTile(
+    SearchSuggestionType suggestion,
+    MyAppState state,
+    BuildContext context,
+  ) {
+    return ListTile(
+      title: Text(suggestion.name),
+      subtitle: Text(suggestion.type),
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10))),
+      onTap: () {
+        query = suggestion.name;
+        if (suggestion.type == 'Loja') {
+          state.setSearchFilterState(SearchFilterLabel.shopQuery, true);
+          state.setSearchFilterState(SearchFilterLabel.productQuery, false);
+        } else if (suggestion.type == 'Produto') {
+          state.setSearchFilterState(SearchFilterLabel.shopQuery, false);
+          state.setSearchFilterState(SearchFilterLabel.productQuery, true);
+        }
+        showResults(context);
+      },
     );
   }
 
   @override
   Widget buildResults(BuildContext context) {
     final state = context.watch<MyAppState>();
-    results = [];
+    _results = [];
 
-    results
+    _results
       ..addAll(
-        suggestions.where(
+        _suggestions.where(
           (searchResult) {
             final result = searchResult.name.toLowerCase();
             final input = query.toLowerCase();
@@ -95,7 +135,7 @@ class MySearchDelegate extends SearchDelegate {
         ),
       )
       ..addAll(
-        suggestions.where(
+        _suggestions.where(
           (searchResult) {
             final result = searchResult.name.toLowerCase();
             final input = query.toLowerCase();
@@ -107,7 +147,7 @@ class MySearchDelegate extends SearchDelegate {
       )
       ..sort((a, b) => a.name.compareTo(b.name));
     if (query.isNotEmpty) {
-      if (results.isEmpty) {
+      if (_results.isEmpty) {
         // cria histórico de pesquisa na tabela avulsa
         DbAccess.addGenericSearchHistory(state.currentLocation, query);
 
@@ -128,11 +168,11 @@ class MySearchDelegate extends SearchDelegate {
         const SearchFilterButtons(),
         const SizedBox(height: 15),
         ListView.builder(
-          itemCount: min(results.length, 10),
+          itemCount: min(_results.length, 8),
           shrinkWrap: true,
           itemBuilder: (context, index) {
             final state = context.watch<MyAppState>();
-            final result = results[index];
+            final result = _results[index];
             if (state.queryState[SearchFilterLabel.shopQuery]!) {
               return resultsShopListTile(result, state, context);
             } else {
@@ -146,37 +186,29 @@ class MySearchDelegate extends SearchDelegate {
 
   ListTile resultsShopListTile(
       BasicMarketItem result, MyAppState state, BuildContext context) {
-    final myLocation = LatLng(
-        state.currentLocation!.latitude!, state.currentLocation!.longitude!);
-    double actualDistance;
-    if (result is Shop) {
-      actualDistance = calculateDistance(myLocation, result.location);
+    if (result is! Shop) {
+      return const ListTile();
     } else {
-      actualDistance = 0;
-    }
-
-    return ListTile(
-      title: Text(result.name),
-      subtitle:
-          Text('Distância atual: ${actualDistance.toStringAsFixed(2)} km'),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Text(
-            result.category.type,
-            style: const TextStyle(fontSize: 15),
-          ),
-          const SizedBox(
-            width: 10,
-          ),
-          Icon(result.category.iconData),
-        ],
-      ),
-      shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(10))),
-      onTap: () {
-        if (result is Shop) {
+      return ListTile(
+        title: Text(result.name),
+        subtitle: Text(result.address),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Text(
+              result.category.type,
+              style: const TextStyle(fontSize: 15),
+            ),
+            const SizedBox(
+              width: 10,
+            ),
+            Icon(result.category.iconData),
+          ],
+        ),
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10))),
+        onTap: () {
           // cria histórico de pesquisa na tabela pesquisa_loja
           DbAccess.addGenericSearchHistory(state.currentLocation, result.name);
 
@@ -189,9 +221,9 @@ class MySearchDelegate extends SearchDelegate {
               ),
             ),
           );
-        }
-      },
-    );
+        },
+      );
+    }
   }
 
   ListTile resultsProductListTile(
@@ -229,41 +261,6 @@ class MySearchDelegate extends SearchDelegate {
             ),
           );
         }
-      },
-    );
-  }
-
-  ListView suggestionsListViewBuilder() {
-    return ListView.builder(
-      itemCount: min(suggestions.length, 10),
-      itemBuilder: (context, index) {
-        final state = context.watch<MyAppState>();
-        final suggestion = suggestions[index];
-        return suggestionsListTile(suggestion, state, context);
-      },
-    );
-  }
-
-  ListTile suggestionsListTile(
-    BasicMarketItem suggestion,
-    MyAppState state,
-    BuildContext context,
-  ) {
-    return ListTile(
-      title: Text(suggestion.name),
-      subtitle: Text(suggestion is Shop ? 'Loja' : 'Produto'),
-      shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(10))),
-      onTap: () {
-        query = suggestion.name;
-        if (suggestion is Shop) {
-          state.setSearchFilterState(SearchFilterLabel.shopQuery, true);
-          state.setSearchFilterState(SearchFilterLabel.productQuery, false);
-        } else if (suggestion is Product) {
-          state.setSearchFilterState(SearchFilterLabel.shopQuery, false);
-          state.setSearchFilterState(SearchFilterLabel.productQuery, true);
-        }
-        showResults(context);
       },
     );
   }
@@ -385,4 +382,22 @@ class FilterButton extends StatelessWidget {
       ),
     );
   }
+}
+
+class SearchSuggestionType {
+  final String name;
+  final String type;
+
+  const SearchSuggestionType({required this.name, required this.type});
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SearchSuggestionType &&
+          runtimeType == other.runtimeType &&
+          name == other.name &&
+          type == other.type;
+
+  @override
+  int get hashCode => Object.hash(name, type);
 }

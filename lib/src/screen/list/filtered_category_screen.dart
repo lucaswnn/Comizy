@@ -47,7 +47,7 @@ class _FilteredCategoryScreenState extends State<FilteredCategoryScreen> {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(8),
         child: Stack(
           fit: StackFit.expand,
           children: widgetStack,
@@ -80,7 +80,8 @@ class _FilteredCategoryScreenState extends State<FilteredCategoryScreen> {
       }
       return filteredProducts;
     } catch (error) {
-      const debugOrigin = 'filtered_category_screen:FilteredCategoryScreenState.getProductsFromCategory';
+      const debugOrigin =
+          'filtered_category_screen:FilteredCategoryScreenState.getProductsFromCategory';
       log('comizy: exception on $debugOrigin: $error');
       return [];
     }
@@ -101,16 +102,9 @@ class _FilteredCategoryScreenState extends State<FilteredCategoryScreen> {
     return ListTile(
       title: Text(productName),
       leading: Icon(products[index].product.category.iconData),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            productValue,
-            style: const TextStyle(fontSize: 15),
-          ),
-          const SizedBox(width: 10),
-          const Icon(Icons.attach_money)
-        ],
+      trailing: Text(
+        productValue,
+        style: const TextStyle(fontSize: 15),
       ),
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(10))),
@@ -134,8 +128,8 @@ class _FilteredCategoryScreenState extends State<FilteredCategoryScreen> {
                     ),
                     child: Column(
                       children: [
-                        _commonCard(context, productValue, shopName,
-                            state, shopLocation, lastUpdate, productName)
+                        _commonCard(context, productValue, shopName, state,
+                            shopLocation, lastUpdate, productName)
                       ],
                     ),
                   ),
@@ -157,8 +151,7 @@ class _FilteredCategoryScreenState extends State<FilteredCategoryScreen> {
     String lastUpdate,
     String productName,
   ) {
-
-        final registerType = 'Preço de $productName em $shopName';
+    final registerType = 'Preço de $productName em $shopName';
 
     return Card(
       color: Colors.white,

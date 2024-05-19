@@ -38,7 +38,7 @@ class _ListScreenState extends State<ListScreen> {
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.all(4),
       itemCount: _shops.length,
       itemBuilder: (BuildContext context, int index) {
         return _shopListTile(index);
@@ -55,16 +55,9 @@ class _ListScreenState extends State<ListScreen> {
       leading: Icon(shop.category.iconData),
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(10))),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            _shops[id]!.realFormattedValue,
-            style: const TextStyle(fontSize: 15),
-          ),
-          const SizedBox(width: 10),
-          const Icon(Icons.attach_money)
-        ],
+      trailing: Text(
+        _shops[id]!.realFormattedValue,
+        style: const TextStyle(fontSize: 15),
       ),
       onTap: () {
         ShopScreen.showShopScreen(context, shop);
