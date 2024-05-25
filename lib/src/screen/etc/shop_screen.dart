@@ -13,19 +13,18 @@ class ShopScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final state = context.watch<MyAppState>();
+    final state = context.read<MyAppState>();
 
-    final String shopName = shop.name;
     final LatLng shopLocation = shop.location;
 
-    return _buildMainShopScaffold(context, state, shopName, shopLocation);
+    return _buildMainShopScaffold(context, state, shopLocation);
   }
 
-  Scaffold _buildMainShopScaffold(BuildContext context, MyAppState state,
-      String shopName, LatLng shopLocation) {
+  Scaffold _buildMainShopScaffold(
+      BuildContext context, MyAppState state, LatLng shopLocation) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(shopName),
+        title: Text(shop.name),
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
@@ -38,7 +37,7 @@ class ShopScreen extends StatelessWidget {
         child: ConstrainedBox(
           constraints: const BoxConstraints(
             minWidth: 100,
-            maxWidth: 200,
+            maxWidth: 300,
             minHeight: 100,
             maxHeight: 300,
           ),
@@ -46,7 +45,6 @@ class ShopScreen extends StatelessWidget {
             children: [
               _mainCard(
                 context,
-                shopName,
                 state,
                 shopLocation,
               ),
@@ -59,7 +57,6 @@ class ShopScreen extends StatelessWidget {
 
   Card _mainCard(
     BuildContext context,
-    String shopName,
     MyAppState state,
     LatLng shopLocation,
   ) {
@@ -104,7 +101,7 @@ class ShopScreen extends StatelessWidget {
           const SizedBox(height: 20),
           state.currentShop != null
               ? _mainBottomButtons(context, state, shopLocation)
-              : _commonBottomButtons(context, state, shopLocation),
+              : _commonBottomButtons(context, state),
         ],
       ),
     );
@@ -135,7 +132,7 @@ class ShopScreen extends StatelessWidget {
               color: Colors.white,
               onPressed: () {
                 state.setHomeIndex(1);
-                state.mapController.move(shopLocation, 13.0);
+                state.mapController.move(shop.location, 13.0);
                 state.pageViewController.jumpToPage(1);
                 Navigator.popUntil(context, ModalRoute.withName('/init'));
               },
@@ -145,8 +142,7 @@ class ShopScreen extends StatelessWidget {
     );
   }
 
-  Container _commonBottomButtons(
-      BuildContext context, MyAppState state, LatLng shopLocation) {
+  Container _commonBottomButtons(BuildContext context, MyAppState state) {
     return Container(
       height: 42,
       decoration: const BoxDecoration(
@@ -161,8 +157,17 @@ class ShopScreen extends StatelessWidget {
           IconButton(
               color: Colors.white,
               onPressed: () {
+                state.setCurrentShop(shop);
+                state.setHomeIndex(0);
+                state.pageViewController.jumpToPage(0);
+                Navigator.popUntil(context, ModalRoute.withName('/init'));
+              },
+              icon: const Icon(Icons.list)),
+          IconButton(
+              color: Colors.white,
+              onPressed: () {
                 state.setHomeIndex(1);
-                state.mapController.move(shopLocation, 13.0);
+                state.mapController.move(shop.location, 13.0);
                 state.pageViewController.jumpToPage(1);
                 Navigator.popUntil(context, ModalRoute.withName('/init'));
               },

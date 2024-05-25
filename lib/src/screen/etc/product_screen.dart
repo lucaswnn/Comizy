@@ -45,7 +45,7 @@ class CurrentProductScreen extends StatelessWidget {
         child: ConstrainedBox(
           constraints: const BoxConstraints(
             minWidth: 100,
-            maxWidth: 200,
+            maxWidth: 300,
             minHeight: 100,
             maxHeight: 400,
           ),

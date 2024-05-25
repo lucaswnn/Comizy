@@ -65,7 +65,7 @@ class RegisterFormState extends State<RegisterForm> {
                     decoration: InputDecoration(
                       filled: true,
                       hintText: _hintText,
-                      hintMaxLines: 3,
+                      hintMaxLines: 5,
                       hintStyle: TextStyle(color: Colors.grey.shade600),
                       fillColor: Colors.grey.shade200,
                       border: OutlineInputBorder(

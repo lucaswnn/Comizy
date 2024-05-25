@@ -90,46 +90,81 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
+  IconButton _buildLocationIconButton({
+    required Shop shop,
+    required double size,
+    required Color iconColor,
+    Color shadowColor = Colors.black,
+  }) {
+    return IconButton(
+      icon: Icon(
+        Icons.location_on_sharp,
+        shadows: [
+          Shadow(
+            color: shadowColor,
+            blurRadius: 3,
+          ),
+        ],
+        color: iconColor,
+      ),
+      iconSize: size,
+      padding: EdgeInsets.zero,
+      onPressed: () => ShopScreen.showShopScreen(context, shop),
+    );
+  }
+
+  ShopMarker _buildShopMarker(
+      {required Shop shop,
+      required double size,
+      required Color color,
+      Color shadowColor = Colors.black}) {
+    return ShopMarker(
+      width: size,
+      height: size,
+      //anchorPos: AnchorPos.align(AnchorAlign.center),
+      shopData: shop,
+      point: shop.location,
+      anchorPos: AnchorPos.align(AnchorAlign.top),
+      builder: (context) {
+        return _buildLocationIconButton(
+          shop: shop,
+          size: size,
+          iconColor: color,
+          shadowColor: shadowColor,
+        );
+      },
+    );
+  }
+
   ShopMarker _createShopMarker(Shop shop) {
     final state = context.read<MyAppState>();
 
-    Selling? minimumSelling;
-    if (state.settedState == SettedState.currentProductSetted) {
+    if (state.settedState == SettedState.currentShopSetted &&
+        shop.id == state.currentShop!.id) {
+      return _buildShopMarker(
+        shop: state.currentShop!,
+        size: 40,
+        color: const Color.fromARGB(255, 252, 62, 49),
+        shadowColor: Colors.white,
+      );
+    } else if (state.settedState == SettedState.currentProductSetted) {
+      Selling? minimumSelling;
       minimumSelling =
           state.market.getMinSellingValue(state.currentProduct!.id);
+      if (minimumSelling != null && shop.id == minimumSelling.shop.id) {
+        return _buildShopMarker(
+          shop: minimumSelling.shop,
+          size: 40,
+          color: const Color.fromARGB(255, 31, 46, 255),
+          shadowColor: Colors.white,
+        );
+      }
     }
 
-    return ShopMarker(
-      width: 40,
-      height: 40,
-      anchorPos: AnchorPos.align(AnchorAlign.center),
-      shopData: shop,
-      point: shop.location,
-      builder: (context) {
-        Color iconColor = const Color.fromARGB(255, 184, 184, 184);
-        if (minimumSelling != null) {
-          if (shop.id == minimumSelling.shop.id) {
-            iconColor = Colors.blue;
-          }
-        }
-
-        return IconButton(
-          icon: Icon(
-            Icons.location_on_sharp,
-            shadows: const [
-              Shadow(
-                color: Colors.black,
-                blurRadius: 3,
-              ),
-            ],
-            color: iconColor,
-          ),
-          iconSize: 30,
-          padding: EdgeInsets.zero,
-          alignment: Alignment.center,
-          onPressed: () => ShopScreen.showShopScreen(context, shop),
-        );
-      },
+    return _buildShopMarker(
+      shop: shop,
+      size: 30,
+      color: const Color.fromARGB(255, 158, 158, 158),
     );
   }
 

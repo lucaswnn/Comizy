@@ -1,4 +1,4 @@
-import 'package:comizy/src/screen/list/filtered_category_screen.dart';
+import 'package:comizy/src/screen/list/filtered_subcategory_screen.dart';
 import 'package:comizy/src/screen/etc/shop_screen.dart';
 import 'package:comizy/src/state/state.dart';
 import 'package:comizy/src/tad/basic_market_item.dart';
@@ -52,12 +52,23 @@ class _ListScreenState extends State<ListScreen> {
 
     return ListTile(
       title: Text(shop.name),
+      subtitle: Text(shop.address),
       leading: Icon(shop.category.iconData),
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(10))),
-      trailing: Text(
-        _shops[id]!.realFormattedValue,
-        style: const TextStyle(fontSize: 15),
+      trailing: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            _shops[id]!.realFormattedValue,
+            style: const TextStyle(fontSize: 15),
+          ),
+          const SizedBox(height: 3),
+          Text(
+            _shops[id]!.lastUpdateFormatted,
+            style: const TextStyle(fontSize: 11),
+          ),
+        ],
       ),
       onTap: () {
         ShopScreen.showShopScreen(context, shop);
@@ -66,9 +77,9 @@ class _ListScreenState extends State<ListScreen> {
   }
 
   Widget _categoryGridViewBuilder() {
-    final categories = _getCategorySet().toList();
+    final subCategories = _getSubCategorySet().toList();
 
-    if (categories.isEmpty) {
+    if (subCategories.isEmpty) {
       return _emptyView(
         'Loja sem produtos associados',
         Icons.no_food,
@@ -77,58 +88,64 @@ class _ListScreenState extends State<ListScreen> {
 
     return GridView.builder(
         gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: 150),
-        itemCount: categories.length,
-        padding: const EdgeInsets.all(8.0),
+          maxCrossAxisExtent: 200,
+          childAspectRatio: 1.5,
+        ),
+        itemCount: subCategories.length,
+        padding: const EdgeInsets.all(4.0),
         itemBuilder: (context, index) {
-          return _categoryTile(index, categories);
+          return _categoryTile(index, subCategories);
         });
   }
 
-  Set<Category> _getCategorySet() {
-    Set<Category> categories = {};
+  Set<SubCategory> _getSubCategorySet() {
+    Set<SubCategory> subCategories = {};
 
     for (var selling in _products.values) {
-      categories.add(selling.product.category);
+      subCategories.add(selling.product.subCategory);
     }
 
-    return categories;
+    return subCategories;
   }
 
-  Padding _categoryTile(int index, List<Category> categories) {
+  Padding _categoryTile(int index, List<SubCategory> subCategories) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(6.0),
       child: ElevatedButton(
         style: ButtonStyle(
-            backgroundColor:
-                MaterialStateProperty.all<Color>(categories[index].color),
-            shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16))),
-            foregroundColor: MaterialStateProperty.all<Color>(Colors.black)),
+          backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+          shape: MaterialStateProperty.all(
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))),
+          foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
+          elevation: MaterialStateProperty.all<double>(8.0),
+          shadowColor:
+              MaterialStateProperty.all<Color>(subCategories[index].color),
+        ),
         onPressed: () {
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) =>
-                  FilteredCategoryScreen(category: categories[index]),
+                  FilteredSubCategoryScreen(subCategory: subCategories[index]),
             ),
           );
         },
         child: Center(
-            child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              categories[index].iconData,
-              weight: 1.5,
-              size: 30,
-            ),
-            Text(
-              categories[index].type,
-              style: const TextStyle(fontSize: 15),
-            ),
-          ],
-        )),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                subCategories[index].iconData,
+                weight: 1.5,
+                size: 30,
+              ),
+              Text(
+                subCategories[index].subtype,
+                style: const TextStyle(fontSize: 15),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -163,23 +180,26 @@ class _ListScreenState extends State<ListScreen> {
     } else if (state.settedState == SettedState.currentProductSetted) {
       return _shopListViewBuilder();
     } else {
-      return const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.manage_search,
-              size: 50,
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Text(
-              'Pesquise algo para encontrar as melhores condições',
-              style: TextStyle(fontSize: 20),
-              textAlign: TextAlign.center,
-            ),
-          ],
+      return const Padding(
+        padding: EdgeInsets.all(8.0),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.manage_search,
+                size: 50,
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Text(
+                'Pesquise algo para encontrar as melhores condições',
+                style: TextStyle(fontSize: 20),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
       );
     }

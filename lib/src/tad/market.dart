@@ -20,11 +20,13 @@ class Market {
         final id = item['ID_PRODUTO'];
         final name = item['NOME_PRODUTO'];
         final type = item['CATEGORIA_PRODUTO'];
+        final subtype = item['subcategoria_produto'];
 
         final product = Product(
           id: id,
           name: name,
           type: type,
+          subtype: subtype,
         );
         products[id] = product;
       }

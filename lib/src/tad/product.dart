@@ -9,7 +9,8 @@ class Product extends BasicMarketItem {
     required int id,
     required String name,
     required String type,
-  }) : super(id: id, name: name, type: type);
+    required String subtype,
+  }) : super(id: id, name: name, type: type, subtype: subtype);
 
   double meanValue() {
     if (associatedShops.isEmpty) {

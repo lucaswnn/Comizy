@@ -154,7 +154,7 @@ class MySearchDelegate extends SearchDelegate {
         return noSearchStatus(context);
       }
       return Padding(
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+        padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
         child: resultsListViewBuilder(),
       );
     } else {
@@ -309,20 +309,15 @@ class MySearchDelegate extends SearchDelegate {
   }
 }
 
-class SearchFilterButtons extends StatefulWidget {
+class SearchFilterButtons extends StatelessWidget {
   const SearchFilterButtons({super.key});
 
-  @override
-  State<SearchFilterButtons> createState() => _SearchFilterButtonsState();
-}
-
-class _SearchFilterButtonsState extends State<SearchFilterButtons> {
   @override
   Widget build(BuildContext context) {
     final state = context.watch<MyAppState>();
 
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         FilterButton(
             isActive: state.queryState[SearchFilterLabel.productQuery]!,
@@ -333,9 +328,8 @@ class _SearchFilterButtonsState extends State<SearchFilterButtons> {
             },
             text: 'Produto'),
         const SizedBox(
-          width: 1,
+          width: 20,
           height: 30,
-          child: ColoredBox(color: Colors.grey),
         ),
         FilterButton(
             isActive: state.queryState[SearchFilterLabel.shopQuery]!,
