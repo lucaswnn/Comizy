@@ -3,6 +3,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart';
 import 'dart:developer' as developer;
 
+// calcula distância por meio de duas coordenadas
 double calculateDistance(LatLng latLng1, LatLng latLng2) {
   double p = 0.017453292519943295;
   double lat1 = latLng1.latitude, lat2 = latLng2.latitude;
@@ -14,6 +15,7 @@ double calculateDistance(LatLng latLng1, LatLng latLng2) {
   return 12742 * asin(sqrt(a));
 }
 
+// checa permissões de localização do GPS
 Future<bool> checkGPSPermission() async {
   final location = Location();
   PermissionStatus permissionGranted;
@@ -29,6 +31,7 @@ Future<bool> checkGPSPermission() async {
   return true;
 }
 
+// checa se a localização está ativada
 Future<bool> checkGPSEnabled() async {
   bool serviceEnabled;
   final location = Location();
@@ -43,6 +46,7 @@ Future<bool> checkGPSEnabled() async {
   return true;
 }
 
+// captura a localização atual
 Future<LocationData?> getCurrentLocation() async {
   try {
     final isGPSEnabled = await checkGPSEnabled();

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
+// classe base dos itens de mercado
 class BasicMarketItem {
   final String name;
-  late Category category;
-  late SubCategory subCategory;
+  late final Category category;
+  late final SubCategory subCategory;
   final int id;
-  double? rating;
 
   BasicMarketItem({
     required this.name,
@@ -16,10 +16,11 @@ class BasicMarketItem {
         subCategory = SubCategory(subtype: subtype);
 }
 
+// classe para categorizar item de mercado
 class Category {
   final String type;
-  late IconData iconData;
-  late Color color;
+  late final IconData iconData;
+  late final Color color;
 
   Category({
     required this.type,
@@ -59,6 +60,7 @@ class Category {
   int get hashCode => type.hashCode;
 }
 
+// classe para categorias específicas
 class SubCategory {
   final String subtype;
   late IconData iconData;
@@ -96,6 +98,7 @@ class SubCategory {
   int get hashCode => subtype.hashCode;
 }
 
+// classe de par ícone e cor para categorias
 class CategoryTuple<IconData, Color> {
   final IconData iconData;
   final Color color;

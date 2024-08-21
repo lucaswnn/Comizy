@@ -1,8 +1,9 @@
-import 'package:comizy/src/tad/basic_market_item.dart';
-import 'package:comizy/src/tad/selling.dart';
+import 'package:comizy/tad/basic_market_item.dart';
+import 'package:comizy/tad/selling.dart';
 
 import 'package:latlong2/latlong.dart';
 
+// classe de loja
 class Shop extends BasicMarketItem {
   final String address;
   final LatLng location;
@@ -15,11 +16,4 @@ class Shop extends BasicMarketItem {
       required this.location,
       required String type})
       : super(name: name, type: type, id: id);
-
-  Shop.empty()
-      : address = '',
-        location = const LatLng(0, 0),
-        super(name: '', type: '', id: -1);
-
-  bool get isEmpty => id == -1 ? true : false;
 }

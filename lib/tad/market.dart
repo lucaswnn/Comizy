@@ -1,17 +1,18 @@
 import 'dart:developer';
-
-import 'package:comizy/src/db/db_access.dart';
-import 'package:comizy/src/tad/product.dart';
-import 'package:comizy/src/tad/selling.dart';
-import 'package:comizy/src/tad/shop.dart';
-import 'package:comizy/src/util/geo_util.dart';
-
 import 'package:latlong2/latlong.dart';
 
+import 'package:comizy/db/db_access.dart';
+import 'package:comizy/tad/product.dart';
+import 'package:comizy/tad/selling.dart';
+import 'package:comizy/tad/shop.dart';
+import 'package:comizy/util/geo_util.dart';
+
+// classe que associa lojas com produtos
 class Market {
   final Map<int, Shop> shops = {};
   final Map<int, Product> products = {};
 
+  // carrega produtos com base em um local e um raio de busca
   Future<void> _addProductsInRadius(LatLng latLng, double radius) async {
     final productsListFromServer =
         await DbAccess.getProductListInRadius(latLng, radius);
@@ -20,7 +21,7 @@ class Market {
         final id = item['ID_PRODUTO'];
         final name = item['NOME_PRODUTO'];
         final type = item['CATEGORIA_PRODUTO'];
-        final subtype = item['subcategoria_produto'];
+        final subtype = item['SUBCATEGORIA_PRODUTO'];
 
         final product = Product(
           id: id,
@@ -31,11 +32,13 @@ class Market {
         products[id] = product;
       }
     } catch (error) {
+      products.clear();
       const debugOrigin = 'market:Market._addProductsInRadius';
       log('comizy: exception on $debugOrigin: $error');
     }
   }
 
+  // carrega lojas com base em um local e um raio de busca
   Future<void> _addShopsInRadius(LatLng latLng, double radius) async {
     final shopsListFromServer =
         await DbAccess.getShopListInRadius(latLng, radius);
@@ -61,11 +64,13 @@ class Market {
         shops[id] = shop;
       }
     } catch (error) {
+      shops.clear();
       const debugOrigin = 'market:Market._addShopsInRadius';
       log('comizy: exception on $debugOrigin: $error');
     }
   }
 
+  // associa os pares de loja e produto do banco de dados com base em um local e um raio de busca
   Future<void> _associateItems(LatLng latLng, double radius) async {
     try {
       final sellingListFromServer =
@@ -75,14 +80,13 @@ class Market {
         final shopId = item['ID_LOJA'];
         final productId = item['ID_PRODUTO'];
         final value = item['VALOR_VENDA'];
-        final lastUpdate = item['ULTIMA_ATUALIZACAO_VENDA'];
 
+        // associa loja e produto
         if (shops.containsKey(shopId) && products.containsKey(productId)) {
           final selling = Selling(
             shop: shops[shopId]!,
             product: products[productId]!,
             value: value,
-            lastUpdate: lastUpdate,
           );
 
           shops[shopId]!.associatedProducts[productId] = selling;
@@ -90,56 +94,28 @@ class Market {
         }
       }
     } catch (error) {
+      products.clear();
+      shops.clear();
       const debugOrigin = 'market:Market._associateItems';
       log('comizy: exception on $debugOrigin: $error');
     }
   }
 
+  // carrega produtos e lojas com base em um local e um raio de busca
   Future<void> getFullMarketInRadius(double radius) async {
     final location = await getCurrentLocation();
     final latLng = LatLng(location!.latitude!, location.longitude!);
     await _addProductsInRadius(latLng, radius);
     await _addShopsInRadius(latLng, radius);
     await _associateItems(latLng, radius);
+    if(shops.isEmpty){throw EmptyMarketException();}
   }
+}
 
-  Selling? getMinSellingValue(int productId) {
-    if (products.containsKey(productId)) {
-      double minValue = double.infinity;
-      int minValueId = -1;
-      final productOcurrences = products[productId]!.associatedShops;
+class EmptyMarketException implements Exception {
+  EmptyMarketException();
 
-      for (var id in productOcurrences.keys) {
-        if (productOcurrences[id]!.value < minValue) {
-          minValue = productOcurrences[id]!.value;
-          minValueId = id;
-        }
-      }
-
-      if (minValueId != -1) {
-        return productOcurrences[minValueId];
-      }
-    }
-    return null;
-  }
-
-  Selling? getMaxSellingValue(int productId) {
-    if (products.containsKey(productId)) {
-      double maxValue = double.negativeInfinity;
-      int maxValueId = -1;
-      final productOcurrences = products[productId]!.associatedShops;
-
-      for (var id in productOcurrences.keys) {
-        if (productOcurrences[id]!.value > maxValue) {
-          maxValue = productOcurrences[id]!.value;
-          maxValueId = id;
-        }
-      }
-
-      if (maxValueId != -1) {
-        return productOcurrences[maxValueId];
-      }
-    }
-    return null;
-  }
+  @override
+  String toString() =>
+      'Mercado inexistente';
 }

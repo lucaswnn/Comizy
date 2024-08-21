@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'package:comizy/src/tad/product.dart';
-import 'package:comizy/src/tad/shop.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart';
+
+import 'package:comizy/tad/product.dart';
+import 'package:comizy/tad/shop.dart';
 
 class DbAccess {
   static const baseIpv4 = 'https://comizy.link:3000';
