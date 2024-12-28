@@ -1,3 +1,7 @@
+import 'dart:developer';
+
+import 'package:comizy/db/db_access.dart';
+import 'package:comizy/tad/user.dart';
 import 'package:comizy/theme/theme.dart';
 import 'package:flutter/material.dart';
 
@@ -40,8 +44,24 @@ class _LoginForm extends StatelessWidget {
         child: const Text('Entrar'),
       ),
       ElevatedButton(
-        onPressed: () {
-          Navigator.of(context).pushNamed('/register');
+        onPressed: () async {
+          // Navigator.of(context).pushNamed('/register');
+          const user = User(
+              id: 0,
+              name: 'lucas',
+              email: 'lucas@',
+              password: '123123',
+              telephone: '5532999999999');
+
+          final content = await DbAccess.userRegister(user);
+          if (content == null) {
+            log('Falha ao cadastrar novo usuário');
+            return;
+          }
+
+          if (content.response.statusCode == 403) {
+            log('Usuário já cadastrado');
+          }
         },
         style: _formButtonStyle,
         child: const Text('Cadastrar'),

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:comizy/tad/user.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
@@ -96,25 +97,39 @@ class DbAccess {
   }
 
   // corpo de uma requisição post
-  static Future<void> _httpPost(
+  static Future<RouteContent?> _httpPost(
     String url,
     Map<String, dynamic> data,
     String debugOrigin,
   ) async {
     try {
-      var response = await http.post(
+      final response = await http.post(
         Uri.parse(url),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(data),
       );
-      if (response.statusCode != 200) {
-        log('comizy: error on $debugOrigin: ${response.statusCode}\n${response.body}');
-      }
+
+      log('comizy: $debugOrigin: ${response.statusCode}\n${response.body}');
+      return RouteContent(data: {}, response: response);
     } catch (error) {
       log('comizy: exception on $debugOrigin: $error');
     }
+    return null;
+  }
+
+  static Future<RouteContent?> userRegister(User user) async {
+    String url = '$baseIpv4/autenticacao/registro';
+    Map<String, dynamic> data = {
+      'nome_usuario': user.name,
+      'email_usuario': user.email,
+      'senha': user.password,
+      'telefone_usuario': user.telephone,
+    };
+
+    return
+        await _httpPost(url, data, 'db_access:DbAccess.userRegister');
   }
 
   // método para adicionar produto no servidor
@@ -171,4 +186,10 @@ class DbAccess {
     Map<String, dynamic> data = {'p_query': query};
     await _httpPost(url, data, 'db_access:DbAccess.genericPost');
   }
+}
+
+class RouteContent {
+  final Map<String, dynamic> data;
+  final http.Response response;
+  const RouteContent({required this.data, required this.response});
 }

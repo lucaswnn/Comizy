@@ -7,5 +7,4 @@ class HomeScreen extends StatelessWidget{
   Widget build(BuildContext context) {
     return const Material(child: Center(child: Text('ola'),));
   }
-
 }
