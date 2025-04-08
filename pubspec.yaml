@@ -1,24 +1,25 @@
 name: comizy
 description: A new Flutter project.
 
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 version: 0.0.1+1
 
 environment:
-  sdk: '>=2.19.4 <4.0.0'
+  sdk: ">=2.19.4 <4.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
 
   provider: ^6.0.0
-  flutter_map: ^5.0.0
   latlong2: ^0.9.0
   location: ^5.0.0
   url_launcher: ^6.1.12
   http: ^1.1.0
   intl: ^0.19.0
+  flutter_web_plugins:
+    sdk: flutter
 
 dev_dependencies:
   flutter_test:
@@ -28,3 +29,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/
