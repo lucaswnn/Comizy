@@ -1,8 +1,10 @@
 class AppRoutes {
   const AppRoutes._();
 
-  static const String landingPage = '/init';
-  static const String itemsPage = '/home';
-  static const String searchPage = '/procurar';
-  static const String chartPage = '/carrinho';
+  static const String landingPage = '/boas_vindas';
+  static const String locationGetterPage = '/localize_sua_regiao';
+  static const String homePage = '/home';
+  static const String searchPage = '/home/pesquisa';
+  static const String chartPage = '/home/carrinho';
+  static const String chartConfirmPage = '/home/carrinho/confirmar';
 }
