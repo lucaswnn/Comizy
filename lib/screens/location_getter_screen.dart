@@ -29,7 +29,7 @@ class _LocationGetterScreenState extends State<LocationGetterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Escolha a Localização'),
+        title: const Text('Escolha a Localização'),
       ),
       body: Column(
         children: [
@@ -71,7 +71,6 @@ class _LocationGetterScreenState extends State<LocationGetterScreen> {
                 final centerLatLng = _mapController.camera.center;
                 final message =
                     'Latitude: ${centerLatLng.latitude}, Longitude: ${centerLatLng.longitude}';
-                print(message);
                 SnackbarHelper.showSnackBar(message);
               },
               child: const Text('Confirmar'),

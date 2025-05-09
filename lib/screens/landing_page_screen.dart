@@ -1,9 +1,14 @@
+import 'package:comizy/services/user_change_notifier.dart';
 import 'package:comizy/utils/input_formatters.dart';
+import 'package:comizy/utils/navigation_helper.dart';
+import 'package:comizy/utils/snackbar_helper.dart';
 import 'package:comizy/values/app_assets.dart';
 import 'package:comizy/values/app_colors.dart';
+import 'package:comizy/values/app_routes.dart';
 import 'package:comizy/values/app_strings.dart';
 import 'package:comizy/widgets/layout_builder_wrapper.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LandingPageScreen extends StatelessWidget {
   const LandingPageScreen({super.key});
@@ -203,7 +208,14 @@ class _LandingPageFormState extends State<_LandingPageForm> {
               ),
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
-                  print(_dropDownButtonChoice);
+                  context.read<UserChangeNotifier>().createUser(
+                        name: _nameController.text,
+                        number: _numberController.text,
+                        city: _dropDownButtonChoice!,
+                      );
+
+                  SnackbarHelper.showSnackBar('Dados enviados com sucesso!');
+                  NavigationHelper.pushReplacementNamed(AppRoutes.homePage);
                 }
               },
               child: const Text(

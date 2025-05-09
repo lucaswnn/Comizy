@@ -1,3 +1,4 @@
+import 'package:comizy/screens/home/home_screen.dart';
 import 'package:comizy/screens/location_getter_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:comizy/values/app_routes.dart';
@@ -29,6 +30,9 @@ class Routes {
 
       case AppRoutes.locationGetterPage:
         return getRoute(widget: const LocationGetterScreen());
+
+      case AppRoutes.homePage:
+        return getRoute(widget: const HomeScreen());
 
       /// An invalid route. User shouldn't see this,
       /// it's for debugging purpose only.
