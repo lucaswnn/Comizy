@@ -13,9 +13,9 @@ class ProductListTile extends StatefulWidget {
 
 class _ProductListTileState extends State<ProductListTile> {
   bool _isAdded = false;
-  Icon _iconSetted = const Icon(Icons.add);
-  final _addIcon = const Icon(Icons.add);
-  final _removeIcon = const Icon(Icons.remove);
+  Icon _iconSetted = const Icon(Icons.add_circle_outline);
+  final _addIcon = const Icon(Icons.add_circle_outline);
+  final _removeIcon = const Icon(Icons.remove_circle_outline);
 
   void _onIconPressed() {
     setState(
@@ -36,15 +36,20 @@ class _ProductListTileState extends State<ProductListTile> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: Container(
-        width: 50,
-        height: 50,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(5),
-            image: DecorationImage(image: AssetImage(widget.product.asset))),
+      contentPadding: const EdgeInsets.all(5.0),
+      leading: Material(
+        elevation: 2,
+        child: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              image: DecorationImage(image: AssetImage(widget.product.asset))),
+        ),
       ),
-      title: Text(widget.product.name),
-      subtitle: Text(widget.product.description),
+      title: Text(widget.product.name, style: const TextStyle(fontSize: 14)),
+      subtitle: Text(widget.product.description,
+          style: const TextStyle(fontSize: 12)),
       trailing: IconButton(onPressed: _onIconPressed, icon: _iconSetted),
     );
   }

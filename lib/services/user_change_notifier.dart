@@ -4,7 +4,13 @@ import 'package:flutter/material.dart';
 
 class UserChangeNotifier extends ChangeNotifier {
   User? _user;
-  User? get user => _user ?? (throw UserIsNullException('failed to get user in UserChangeNotifier: _user == null'));
+  User? get user =>
+      _user ??
+      const User(
+          name: 'name',
+          number: 'number',
+          city:
+              'city'); //(throw UserIsNullException('failed to get user in UserChangeNotifier: _user == null'));
 
   void createUser({
     required String name,

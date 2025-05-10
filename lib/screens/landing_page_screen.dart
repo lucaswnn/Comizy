@@ -144,6 +144,7 @@ class _LandingPageFormState extends State<_LandingPageForm> {
         children: [
           TextFormField(
             controller: _nameController,
+            cursorColor: Colors.white,
             decoration: const InputDecoration(
               hintText: 'Diga-nos seu nome',
               icon: Icon(Icons.person),
@@ -161,6 +162,7 @@ class _LandingPageFormState extends State<_LandingPageForm> {
           TextFormField(
             controller: _numberController,
             inputFormatters: [TelephoneNumberInputFormatter()],
+            cursorColor: Colors.white,
             decoration: const InputDecoration(
               hintText: 'Diga-nos seu telefone',
               icon: Icon(Icons.phone),
@@ -198,13 +200,13 @@ class _LandingPageFormState extends State<_LandingPageForm> {
             items: _dropDownMenuEntries,
             onChanged: (value) => setState(() => _dropDownButtonChoice = value),
           ),
-          const SizedBox(height: 15),
+          const SizedBox(height: 25),
           Align(
             alignment: Alignment.center,
             child: ElevatedButton(
               style: const ButtonStyle(
                 side: WidgetStatePropertyAll(BorderSide.none),
-                textStyle: WidgetStatePropertyAll(TextStyle(fontSize: 18)),
+                textStyle: WidgetStatePropertyAll(TextStyle(fontSize: 15)),
               ),
               onPressed: () {
                 if (_formKey.currentState!.validate()) {

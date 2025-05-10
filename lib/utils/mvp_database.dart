@@ -12,7 +12,10 @@ final mvpProducts = List<Product>.generate(
     final type = typeValues[random.nextInt(typeValues.length)];
     final subtypeValues = ProductSecondaryType.values;
     final subtype = subtypeValues[random.nextInt(subtypeValues.length)];
-    final productType = ProductType(mainType: type, secondaryType: subtype);
+    final productType = ProductType(
+      mainType: type,
+      secondaryType: subtype,
+    );
     return Product(
         name: 'Produto $index',
         description: 'Possui o tipo $type e subtipo $subtype',

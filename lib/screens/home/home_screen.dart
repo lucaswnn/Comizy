@@ -21,8 +21,28 @@ class _HomeScreenState extends State<HomeScreen> {
     UserPageview(),
   ];
   final _bottomNavItems = const [
-    BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Produtos'),
-    BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Usuário'),
+    NavigationDestination(
+      selectedIcon: Icon(
+        Icons.list_outlined,
+        color: Colors.black,
+      ),
+      icon: Icon(
+        Icons.list,
+        color: Colors.white,
+      ),
+      label: 'Produtos',
+    ),
+    NavigationDestination(
+      selectedIcon: Icon(
+        Icons.person_outline,
+        color: Colors.black,
+      ),
+      icon: Icon(
+        Icons.person,
+        color: Colors.white,
+      ),
+      label: 'Usuário',
+    ),
   ];
   int _currentNavIndex = 0;
 
@@ -50,14 +70,14 @@ class _HomeScreenState extends State<HomeScreen> {
           children: _pageViews,
           onPageChanged: (index) => setState(() => _currentNavIndex = index),
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          selectedItemColor: Colors.white,
-          unselectedItemColor: Colors.white,
-          unselectedFontSize: 10,
+        bottomNavigationBar: NavigationBar(
+          height: 60,
+          labelTextStyle: const WidgetStatePropertyAll(
+              TextStyle(color: Colors.white, fontSize: 12)),
           backgroundColor: AppColors.primaryColor,
-          items: _bottomNavItems,
-          currentIndex: _currentNavIndex,
-          onTap: (index) => setState(
+          destinations: _bottomNavItems,
+          selectedIndex: _currentNavIndex,
+          onDestinationSelected: (index) => setState(
             () {
               _currentNavIndex = index;
               _pageController.animateToPage(
