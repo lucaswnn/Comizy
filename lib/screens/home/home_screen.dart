@@ -1,8 +1,10 @@
 import 'package:comizy/screens/home/products_pageview.dart';
 import 'package:comizy/screens/home/user_pageview.dart';
 import 'package:comizy/services/user_change_notifier.dart';
+import 'package:comizy/utils/navigation_helper.dart';
 import 'package:comizy/values/app_assets.dart';
 import 'package:comizy/values/app_colors.dart';
+import 'package:comizy/values/app_routes.dart';
 import 'package:comizy/widgets/layout_builder_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -20,6 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
     ProductsPageView(),
     UserPageview(),
   ];
+
   final _bottomNavItems = const [
     NavigationDestination(
       selectedIcon: Icon(
@@ -44,7 +47,16 @@ class _HomeScreenState extends State<HomeScreen> {
       label: 'Usuário',
     ),
   ];
+
   int _currentNavIndex = 0;
+
+  final _searchButton = IconButton(
+    onPressed: () => NavigationHelper.pushNamed(AppRoutes.searchPage),
+    icon: const Icon(
+      Icons.search,
+      color: Colors.white,
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -59,6 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
             'Bem-vindo(a), ${user.name}',
             style: const TextStyle(fontSize: 14, color: Colors.white),
           ),
+          actions: _currentNavIndex == 0 ? [_searchButton] : null,
           leading: Container(
             decoration: const BoxDecoration(
                 image: DecorationImage(

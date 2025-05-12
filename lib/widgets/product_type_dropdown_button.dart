@@ -1,4 +1,5 @@
 import 'package:comizy/tads/product_type.dart';
+import 'package:comizy/values/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class ProductTypeDropdownButton extends StatefulWidget {
@@ -118,7 +119,8 @@ class _ProductTypeDropdownButtonState extends State<ProductTypeDropdownButton> {
 
   @override
   void dispose() {
-    _removeDropdown();
+    _overlayEntry?.remove();
+    _overlayEntry = null;
     super.dispose();
   }
 
@@ -131,14 +133,13 @@ class _ProductTypeDropdownButtonState extends State<ProductTypeDropdownButton> {
         child: Container(
           padding: const EdgeInsets.all(5),
           decoration: BoxDecoration(
-            color: Colors.grey.shade200,
+            color: AppColors.primaryColor,
             shape: BoxShape.rectangle,
             borderRadius: _isExpanded
                 ? BorderRadius.only(
                     topLeft: Radius.circular(_borderRadius),
                     topRight: Radius.circular(_borderRadius))
                 : BorderRadius.circular(_borderRadius),
-            border: Border.all(color: Colors.grey),
           ),
           child: ConstrainedBox(
             constraints: const BoxConstraints(minWidth: 150),
@@ -148,16 +149,19 @@ class _ProductTypeDropdownButtonState extends State<ProductTypeDropdownButton> {
               children: [
                 Row(
                   children: [
+                    const SizedBox(width: 5),
                     Icon(
                       _selected.icon,
-                      color: Colors.black,
+                      color: Colors.white,
                       size: 20,
                     ),
                     const SizedBox(width: 8),
-                    Text(_selected.label, style: const TextStyle(fontSize: 12)),
+                    Text(_selected.label,
+                        style:
+                            const TextStyle(fontSize: 12, color: Colors.white)),
                   ],
                 ),
-                const Icon(Icons.arrow_drop_down, color: Colors.black),
+                const Icon(Icons.arrow_drop_down, color: Colors.white),
               ],
             ),
           ),
