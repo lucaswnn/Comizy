@@ -12,24 +12,52 @@ class ProductListTile extends StatefulWidget {
 }
 
 class _ProductListTileState extends State<ProductListTile> {
-  bool _isAdded = false;
-  Icon _iconSetted = const Icon(Icons.add_circle_outline);
+  int _quantity = 0;
   final _addIcon = const Icon(Icons.add_circle_outline);
   final _removeIcon = const Icon(Icons.remove_circle_outline);
 
-  void _onIconPressed() {
+  void _onAddIconPressed() {
+    final productCartNotifier = context.read<ProductCartChangeNotifier>();
     setState(
       () {
-        final productCartNotifier = context.read<ProductCartChangeNotifier>();
-        if (_isAdded) {
-          productCartNotifier.removeProduct(widget.product);
-          _iconSetted = _addIcon;
-        } else {
-          productCartNotifier.addProduct(widget.product);
-          _iconSetted = _removeIcon;
-        }
-        _isAdded = !_isAdded;
+        _quantity++;
+        productCartNotifier.addProduct(widget.product);
       },
+    );
+  }
+
+  void _onRemoveIconPressed() {
+    final productCartNotifier = context.read<ProductCartChangeNotifier>();
+    if (_quantity >= 1) {
+      setState(
+        () {
+          _quantity--;
+          productCartNotifier.removeProduct(widget.product);
+        },
+      );
+    }
+  }
+
+  Widget _buildButtons() {
+    if (_quantity == 0) {
+      return IconButton(
+        onPressed: _onAddIconPressed,
+        icon: _addIcon,
+      );
+    }
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        IconButton(
+          onPressed: _onRemoveIconPressed,
+          icon: _removeIcon,
+        ),
+        Text('$_quantity'),
+        IconButton(
+          onPressed: _onAddIconPressed,
+          icon: _addIcon,
+        ),
+      ],
     );
   }
 
@@ -50,7 +78,7 @@ class _ProductListTileState extends State<ProductListTile> {
       title: Text(widget.product.name, style: const TextStyle(fontSize: 14)),
       subtitle: Text(widget.product.description,
           style: const TextStyle(fontSize: 12)),
-      trailing: IconButton(onPressed: _onIconPressed, icon: _iconSetted),
+      trailing: _buildButtons(),
     );
   }
 }
