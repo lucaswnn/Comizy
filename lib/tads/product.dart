@@ -12,4 +12,7 @@ class Product {
     required this.productType,
     required this.asset,
   });
+
+  @override
+  String toString() => name;
 }

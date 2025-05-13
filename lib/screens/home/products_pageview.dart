@@ -60,7 +60,9 @@ class _ProductsPageViewState extends State<ProductsPageView> {
               shrinkWrap: true,
               itemCount: _currentProducts.length,
               itemBuilder: (_, index) {
-                return ProductListTile(product: _currentProducts[index]);
+                return ProductListTile(
+                    key: ValueKey(_currentProducts[index].name),
+                    product: _currentProducts[index]);
               },
             ),
           ),

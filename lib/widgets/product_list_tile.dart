@@ -15,6 +15,7 @@ class _ProductListTileState extends State<ProductListTile> {
   int _quantity = 0;
   final _addIcon = const Icon(Icons.add_circle_outline);
   final _removeIcon = const Icon(Icons.remove_circle_outline);
+  final _clearIcon = const Icon(Icons.clear);
 
   void _onAddIconPressed() {
     final productCartNotifier = context.read<ProductCartChangeNotifier>();
@@ -28,14 +29,31 @@ class _ProductListTileState extends State<ProductListTile> {
 
   void _onRemoveIconPressed() {
     final productCartNotifier = context.read<ProductCartChangeNotifier>();
-    if (_quantity >= 1) {
+    if (_quantity > 1) {
       setState(
         () {
           _quantity--;
           productCartNotifier.removeProduct(widget.product);
         },
       );
+    } else if (_quantity == 1) {
+      setState(
+        () {
+          _quantity = 0;
+          productCartNotifier.clearProduct(widget.product);
+        },
+      );
     }
+  }
+
+  void _onClearIconPressed() {
+    final productCartNotifier = context.read<ProductCartChangeNotifier>();
+    setState(
+      () {
+        _quantity = 0;
+        productCartNotifier.clearProduct(widget.product);
+      },
+    );
   }
 
   Widget _buildButtons() {
@@ -57,12 +75,21 @@ class _ProductListTileState extends State<ProductListTile> {
           onPressed: _onAddIconPressed,
           icon: _addIcon,
         ),
+        IconButton(
+          onPressed: _onClearIconPressed,
+          icon: _clearIcon,
+        )
       ],
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    _quantity = context.select(
+      (ProductCartChangeNotifier notifier) =>
+          notifier.getProductQuantity(widget.product),
+    );
+
     return ListTile(
       contentPadding: const EdgeInsets.all(5.0),
       leading: Material(
