@@ -6,6 +6,7 @@ import 'package:comizy/values/app_assets.dart';
 import 'package:comizy/values/app_colors.dart';
 import 'package:comizy/values/app_routes.dart';
 import 'package:comizy/widgets/layout_builder_wrapper.dart';
+import 'package:comizy/widgets/products_fab.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -64,6 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return LayoutBuilderWrapper(
       child: Scaffold(
+        floatingActionButton: const ProductsFAB(),
         appBar: AppBar(
           backgroundColor: AppColors.primaryColor,
           automaticallyImplyLeading: false,

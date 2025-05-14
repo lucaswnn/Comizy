@@ -9,11 +9,15 @@ class SnackbarHelper {
 
   static GlobalKey<ScaffoldMessengerState> get key => _key;
 
-  static void showSnackBar(String? message) {
+  static void showSnackBar(
+    String? message, {
+    Duration duration = const Duration(seconds: 2),
+  }) {
     _key.currentState
       ?..removeCurrentSnackBar()
       ..showSnackBar(
         SnackBar(
+          duration: duration,
           content: Text(message ?? ''),
         ),
       );

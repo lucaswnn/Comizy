@@ -1,3 +1,4 @@
+import 'package:comizy/screens/cart_screen.dart';
 import 'package:comizy/screens/home/home_screen.dart';
 import 'package:comizy/screens/location_getter_screen.dart';
 import 'package:comizy/screens/search_screen.dart';
@@ -37,6 +38,9 @@ class Routes {
 
       case AppRoutes.searchPage:
         return getRoute(widget: const SearchScreen());
+
+      case AppRoutes.cartPage:
+        return getRoute(widget: const CartScreen());
 
       /// An invalid route. User shouldn't see this,
       /// it's for debugging purpose only.

@@ -5,6 +5,6 @@ class AppRoutes {
   static const String locationGetterPage = '/localize_sua_regiao';
   static const String homePage = '/home';
   static const String searchPage = '/home/pesquisa';
-  static const String chartPage = '/home/carrinho';
-  static const String chartConfirmPage = '/home/carrinho/confirmar';
+  static const String cartPage = '/home/carrinho';
+  static const String cartConfirmPage = '/home/carrinho/confirmar';
 }
