@@ -1,5 +1,8 @@
+import 'package:comizy/services/database_dao.dart';
 import 'package:comizy/services/product_cart_change_notifier.dart';
+import 'package:comizy/services/user_change_notifier.dart';
 import 'package:comizy/tads/product.dart';
+import 'package:comizy/tads/user.dart';
 import 'package:comizy/values/app_colors.dart';
 import 'package:comizy/widgets/layout_builder_wrapper.dart';
 import 'package:comizy/widgets/product_list_tile.dart';
@@ -15,6 +18,7 @@ class CartScreen extends StatefulWidget {
 
 class _CartScreenState extends State<CartScreen> {
   Map<Product, int> _cart = {};
+  late final User _user;
 
   Widget _contentBuilder() {
     final products = _cart.keys.toList();
@@ -41,10 +45,41 @@ class _CartScreenState extends State<CartScreen> {
       );
     }
 
-    return ListView.builder(
-      itemCount: products.length,
-      itemBuilder: (_, index) => ProductListTile(product: products[index]),
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          ListView.builder(
+            shrinkWrap: true,
+            itemCount: products.length,
+            itemBuilder: (_, index) =>
+                ProductListTile(product: products[index]),
+          ),
+          const SizedBox(height: 10),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              shadowColor: AppColors.secondaryColor,
+              backgroundColor: Colors.white,
+              foregroundColor: AppColors.primaryColor,
+              elevation: 3,
+            ),
+            onPressed: _onSubmitButtonPressed,
+            child: const Text('Enviar orçamento'),
+          ),
+          const SizedBox(height: 10),
+        ],
+      ),
     );
+  }
+
+  Future<void> _onSubmitButtonPressed() async => DatabaseDAO.sendCartData(
+        _user,
+        _cart,
+      );
+
+  @override
+  void initState() {
+    super.initState();
+    _user = context.read<UserChangeNotifier>().user!;
   }
 
   @override
@@ -53,15 +88,19 @@ class _CartScreenState extends State<CartScreen> {
 
     return LayoutBuilderWrapper(
       child: Scaffold(
-          appBar: AppBar(
-            iconTheme: const IconThemeData(color: Colors.white),
-            backgroundColor: AppColors.primaryColor,
-            title: const Text(
-              'Meu carrinho',
-              style: TextStyle(color: Colors.white, fontSize: 14),
-            ),
+        appBar: AppBar(
+          iconTheme: const IconThemeData(color: Colors.white),
+          backgroundColor: AppColors.primaryColor,
+          title: const Text(
+            'Meu carrinho',
+            style: TextStyle(color: Colors.white, fontSize: 14),
           ),
-          body: _contentBuilder()),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: _contentBuilder(),
+        ),
+      ),
     );
   }
 }
