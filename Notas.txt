@@ -1,0 +1,25 @@
+Senha banco de dados supabase
+nNFhnY88VqDAp_7
+
+vamos pensar
+vou oferecer os itens mais baratos
+vou querer lucrar sem prejuizo
+
+supondo Min o menor preço possível dos itens somados
+supondo Max o menor custo ao fazer a compra da seguinte forma:
+ - Existe alguma loja que tenha todos os itens do carrinho: encontrar o menor preço de uma compra em somente uma loja
+ - Caso não exista essa loja, encontrar a loja com maior quantidade de itens e fazer o preço Max_1. Seja R_1 os itens restantes: encontrar o menor custo dos R_1 itens em uma loja apenas e assim sucessivamente. Max = soma(Max_i)
+
+Meus possíveis custos:
+t*Min = taxa para compra no crédito
+C = custo fixo genérico diluído
+E = taxa de entrega
+
+Faturamento mínimo:
+Fmin = faturamento mínimo
+Fmin = Min*(t + 1) + C + E
+
+Lucro:
+L = lucro
+B = lucro básico
+L = mínimo(Fmin + B; Max)
