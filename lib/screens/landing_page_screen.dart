@@ -103,11 +103,12 @@ class _LandingPageFormState extends State<_LandingPageForm> {
 
   final List<DropdownMenuItem<String>> _dropDownMenuEntries = const [
     DropdownMenuItem(
-        value: 'São João del Rei - MG',
-        child: Text(
-          'São João del Rei - MG',
-          style: TextStyle(color: Colors.white, fontSize: 14),
-        )),
+      value: 'São João del Rei - MG',
+      child: Text(
+        'São João del Rei - MG',
+        style: TextStyle(color: Colors.white, fontSize: 14),
+      ),
+    ),
   ];
 
   @override
