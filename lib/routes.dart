@@ -1,11 +1,11 @@
-import 'package:comizy/screens/cart_screen.dart';
+import 'package:comizy/screens/auth/create_account_screen.dart';
+import 'package:comizy/screens/auth/login_screen.dart';
 import 'package:comizy/screens/home/home_screen.dart';
-import 'package:comizy/screens/location_getter_screen.dart';
 import 'package:comizy/screens/search_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:comizy/values/app_routes.dart';
 import 'package:comizy/utils/invalid_route.dart';
-import 'package:comizy/screens/landing_page_screen.dart';
+import 'package:comizy/screens/auth/landing_page_screen.dart';
 
 // Class that handles the app routes.
 class Routes {
@@ -30,17 +30,17 @@ class Routes {
       case AppRoutes.landingPage:
         return getRoute(widget: const LandingPageScreen());
 
-      case AppRoutes.locationGetterPage:
-        return getRoute(widget: const LocationGetterScreen());
+      case AppRoutes.createAccount:
+        return getRoute(widget: const CreateAccountScreen());
+
+      case AppRoutes.login:
+        return getRoute(widget: const LoginScreen());
 
       case AppRoutes.homePage:
         return getRoute(widget: const HomeScreen());
 
       case AppRoutes.searchPage:
         return getRoute(widget: const SearchScreen());
-
-      case AppRoutes.cartPage:
-        return getRoute(widget: const CartScreen());
 
       /// An invalid route. User shouldn't see this,
       /// it's for debugging purpose only.

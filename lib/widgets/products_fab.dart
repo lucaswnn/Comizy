@@ -1,7 +1,5 @@
 import 'package:comizy/services/product_cart_change_notifier.dart';
-import 'package:comizy/utils/navigation_helper.dart';
 import 'package:comizy/values/app_colors.dart';
-import 'package:comizy/values/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -15,7 +13,7 @@ class ProductsFAB extends StatefulWidget {
 class _ProductsFABState extends State<ProductsFAB> {
   int _cartSize = 0;
 
-  void _onPressed() => NavigationHelper.pushNamed(AppRoutes.cartPage);
+  void _onPressed() {}
 
   @override
   Widget build(BuildContext context) {

@@ -8,14 +8,12 @@ class UserChangeNotifier extends ChangeNotifier {
       _user ??
       const User(
           name: 'name',
-          number: 'number',
-          city:
-              'city'); //(throw UserIsNullException('failed to get user in UserChangeNotifier: _user == null'));
+          number: 'number'
+          ); //(throw UserIsNullException('failed to get user in UserChangeNotifier: _user == null'));
 
   void createUser({
     required String name,
     required String number,
-    required String city,
   }) {
     if (_user != null) {
       throw UserAlreadyCreatedException(
@@ -24,7 +22,6 @@ class UserChangeNotifier extends ChangeNotifier {
     _user = User(
       name: name,
       number: number,
-      city: city,
     );
     notifyListeners();
   }
