@@ -100,6 +100,24 @@ class _LandingPageFormState extends State<_LandingPageForm> {
   final _nameController = TextEditingController();
   final _numberController = TextEditingController();
   String? _dropDownButtonChoice;
+  bool? _enabled = true;
+
+  void _setEnabled(bool? value) {
+    setState(() => _enabled = value);
+  }
+
+  void _submitForm() {
+    if (_formKey.currentState!.validate()) {
+      context.read<UserChangeNotifier>().createUser(
+            name: _nameController.text,
+            number: _numberController.text,
+            city: _dropDownButtonChoice!,
+          );
+
+      SnackbarHelper.showSnackBar('Dados enviados com sucesso!');
+      NavigationHelper.pushReplacementNamed(AppRoutes.homePage);
+    }
+  }
 
   final List<DropdownMenuItem<String>> _dropDownMenuEntries = const [
     DropdownMenuItem(
@@ -202,6 +220,13 @@ class _LandingPageFormState extends State<_LandingPageForm> {
             onChanged: (value) => setState(() => _dropDownButtonChoice = value),
           ),
           const SizedBox(height: 25),
+          Row(
+            children: [
+              Checkbox(value: _enabled, onChanged: _setEnabled),
+              Text('teste')
+            ],
+          ),
+          const SizedBox(height: 10),
           Align(
             alignment: Alignment.center,
             child: ElevatedButton(
@@ -209,18 +234,7 @@ class _LandingPageFormState extends State<_LandingPageForm> {
                 side: WidgetStatePropertyAll(BorderSide.none),
                 textStyle: WidgetStatePropertyAll(TextStyle(fontSize: 15)),
               ),
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  context.read<UserChangeNotifier>().createUser(
-                        name: _nameController.text,
-                        number: _numberController.text,
-                        city: _dropDownButtonChoice!,
-                      );
-
-                  SnackbarHelper.showSnackBar('Dados enviados com sucesso!');
-                  NavigationHelper.pushReplacementNamed(AppRoutes.homePage);
-                }
-              },
+              onPressed: (_enabled ?? false) ? _submitForm : null,
               child: const Text(
                 'Faça um teste gratuito!',
                 style: TextStyle(color: Colors.black),
