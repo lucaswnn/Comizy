@@ -74,12 +74,14 @@ class _LoginFormState extends State<_LoginForm> {
         icon: icon,
         iconColor: Colors.white,
         suffixIcon: isPassword
-            ? IconButton(
-                onPressed: () {
-                  setState(() => _showPassword = !_showPassword);
-                },
-                icon: const Icon(Icons.remove_red_eye),
-              )
+            ? ExcludeFocus(
+              child: IconButton(
+                  onPressed: () {
+                    setState(() => _showPassword = !_showPassword);
+                  },
+                  icon: const Icon(Icons.remove_red_eye),
+                ),
+            )
             : null,
         suffixIconColor: Colors.white,
         hintStyle: const TextStyle(color: Colors.white, fontSize: 14),

@@ -4,7 +4,6 @@ import 'package:comizy/services/user_change_notifier.dart';
 import 'package:comizy/tads/product.dart';
 import 'package:comizy/tads/user.dart';
 import 'package:comizy/values/app_colors.dart';
-import 'package:comizy/widgets/layout_builder_wrapper.dart';
 import 'package:comizy/widgets/product_list_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -86,20 +85,18 @@ class _CartScreenState extends State<CartScreen> {
   Widget build(BuildContext context) {
     _cart = context.watch<ProductCartChangeNotifier>().products;
 
-    return LayoutBuilderWrapper(
-      child: Scaffold(
-        appBar: AppBar(
-          iconTheme: const IconThemeData(color: Colors.white),
-          backgroundColor: AppColors.primaryColor,
-          title: const Text(
-            'Meu carrinho',
-            style: TextStyle(color: Colors.white, fontSize: 14),
-          ),
+    return Scaffold(
+      appBar: AppBar(
+        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: AppColors.primaryColor,
+        title: const Text(
+          'Meu carrinho',
+          style: TextStyle(color: Colors.white, fontSize: 14),
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: _contentBuilder(),
-        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: _contentBuilder(),
       ),
     );
   }

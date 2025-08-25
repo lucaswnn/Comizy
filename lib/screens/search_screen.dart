@@ -3,7 +3,6 @@ import 'dart:math';
 
 import 'package:comizy/utils/mvp_database.dart';
 import 'package:comizy/values/app_colors.dart';
-import 'package:comizy/widgets/layout_builder_wrapper.dart';
 import 'package:comizy/widgets/product_list_tile.dart';
 import 'package:flutter/material.dart';
 
@@ -69,29 +68,24 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilderWrapper(
-      child: Container(
-        color: Colors.white,
-        child: Scaffold(
-          appBar: AppBar(
-            iconTheme: const IconThemeData(color: Colors.white),
-            backgroundColor: AppColors.primaryColor,
-            title: TextField(
-              cursorColor: Colors.black,
-              decoration: const InputDecoration(
-                  hintText: 'Digite o item que você procura',
-                  isDense: true,
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.all(Radius.circular(15.0)))),
-              controller: _textController,
-            ),
-          ),
-          body: _buildResults(),
+    return Scaffold(
+      appBar: AppBar(
+        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: AppColors.primaryColor,
+        title: TextField(
+          cursorColor: Colors.black,
+          decoration: const InputDecoration(
+              hintText: 'Digite o item que você procura',
+              isDense: true,
+              filled: true,
+              fillColor: Colors.white,
+              border: OutlineInputBorder(
+                  borderSide: BorderSide.none,
+                  borderRadius: BorderRadius.all(Radius.circular(15.0)))),
+          controller: _textController,
         ),
       ),
+      body: _buildResults(),
     );
   }
 }

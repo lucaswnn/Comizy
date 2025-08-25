@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:comizy/tads/product.dart';
 import 'package:comizy/tads/product_type.dart';
+import 'package:comizy/tads/showcase.dart';
 import 'package:comizy/values/app_assets.dart';
 
 final mvpProducts = List<Product>.generate(
@@ -22,4 +23,15 @@ final mvpProducts = List<Product>.generate(
         productType: productType,
         asset: AppAssets.simpleLogoSmall);
   },
+);
+
+final sampleShowcase = Showcase.withProducts(
+  products: List.generate(
+    2,
+    (int index) {
+      final r = Random();
+      return mvpProducts[r.nextInt(mvpProducts.length)];
+    },
+  ),
+  showcaseLimit: 2,
 );

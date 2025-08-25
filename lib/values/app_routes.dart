@@ -6,4 +6,6 @@ class AppRoutes {
   static const String searchPage = '/home/pesquisa';
   static const String login = '/login';
   static const String createAccount = '/criar_conta';
+  static const String tutorial = '/tutorial';
+  static const String chooseFirstProducts = '/tutorial/produtos';
 }

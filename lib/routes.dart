@@ -1,5 +1,7 @@
+import 'package:comizy/screens/auth/choose_first_products_screen.dart';
 import 'package:comizy/screens/auth/create_account_screen.dart';
 import 'package:comizy/screens/auth/login_screen.dart';
+import 'package:comizy/screens/auth/tutorial_screen.dart';
 import 'package:comizy/screens/home/home_screen.dart';
 import 'package:comizy/screens/search_screen.dart';
 import 'package:flutter/material.dart';
@@ -35,6 +37,12 @@ class Routes {
 
       case AppRoutes.login:
         return getRoute(widget: const LoginScreen());
+
+      case AppRoutes.tutorial:
+        return getRoute(widget: const TutorialScreen());
+
+      case AppRoutes.chooseFirstProducts:
+        return getRoute(widget: const ChooseFirstProductsScreen());
 
       case AppRoutes.homePage:
         return getRoute(widget: const HomeScreen());

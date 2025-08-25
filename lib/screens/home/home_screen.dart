@@ -5,8 +5,6 @@ import 'package:comizy/utils/navigation_helper.dart';
 import 'package:comizy/values/app_assets.dart';
 import 'package:comizy/values/app_colors.dart';
 import 'package:comizy/values/app_routes.dart';
-import 'package:comizy/widgets/layout_builder_wrapper.dart';
-import 'package:comizy/widgets/products_fab.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -63,45 +61,42 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final user = context.read<UserChangeNotifier>().user!;
 
-    return LayoutBuilderWrapper(
-      child: Scaffold(
-        floatingActionButton: const ProductsFAB(),
-        appBar: AppBar(
-          backgroundColor: AppColors.primaryColor,
-          automaticallyImplyLeading: false,
-          title: Text(
-            'Bem-vindo(a), ${user.name}',
-            style: const TextStyle(fontSize: 14, color: Colors.white),
-          ),
-          actions: _currentNavIndex == 0 ? [_searchButton] : null,
-          leading: Container(
-            decoration: const BoxDecoration(
-                image: DecorationImage(
-                    image: AssetImage(AppAssets.simpleLogoSmall))),
-          ),
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: AppColors.primaryColor,
+        automaticallyImplyLeading: false,
+        title: Text(
+          'Bem-vindo(a), ${user.name}',
+          style: const TextStyle(fontSize: 14, color: Colors.white),
         ),
-        body: PageView(
-          controller: _pageController,
-          children: _pageViews,
-          onPageChanged: (index) => setState(() => _currentNavIndex = index),
+        actions: _currentNavIndex == 0 ? [_searchButton] : null,
+        leading: Container(
+          decoration: const BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage(AppAssets.simpleLogoSmall))),
         ),
-        bottomNavigationBar: NavigationBar(
-          height: 60,
-          labelTextStyle: const WidgetStatePropertyAll(
-              TextStyle(color: Colors.white, fontSize: 12)),
-          backgroundColor: AppColors.primaryColor,
-          destinations: _bottomNavItems,
-          selectedIndex: _currentNavIndex,
-          onDestinationSelected: (index) => setState(
-            () {
-              _currentNavIndex = index;
-              _pageController.animateToPage(
-                _currentNavIndex,
-                duration: Durations.medium1,
-                curve: Curves.ease,
-              );
-            },
-          ),
+      ),
+      body: PageView(
+        controller: _pageController,
+        children: _pageViews,
+        onPageChanged: (index) => setState(() => _currentNavIndex = index),
+      ),
+      bottomNavigationBar: NavigationBar(
+        height: 60,
+        labelTextStyle: const WidgetStatePropertyAll(
+            TextStyle(color: Colors.white, fontSize: 12)),
+        backgroundColor: AppColors.primaryColor,
+        destinations: _bottomNavItems,
+        selectedIndex: _currentNavIndex,
+        onDestinationSelected: (index) => setState(
+          () {
+            _currentNavIndex = index;
+            _pageController.animateToPage(
+              _currentNavIndex,
+              duration: Durations.medium1,
+              curve: Curves.ease,
+            );
+          },
         ),
       ),
     );

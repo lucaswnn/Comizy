@@ -72,7 +72,7 @@ class _CreateAccountFormState extends State<_CreateAccountForm> {
           );
 
       SnackbarHelper.showSnackBar('Dados enviados com sucesso!');
-      NavigationHelper.pushReplacementNamed(AppRoutes.homePage);
+      NavigationHelper.pushReplacementNamed(AppRoutes.tutorial);
     }
   }
 
@@ -105,11 +105,13 @@ class _CreateAccountFormState extends State<_CreateAccountForm> {
         icon: icon,
         iconColor: Colors.white,
         suffixIcon: isPassword
-            ? IconButton(
-                onPressed: () {
-                  setState(() => _showPassword = !_showPassword);
-                },
-                icon: const Icon(Icons.remove_red_eye),
+            ? ExcludeFocus(
+                child: IconButton(
+                  onPressed: () {
+                    setState(() => _showPassword = !_showPassword);
+                  },
+                  icon: const Icon(Icons.remove_red_eye),
+                ),
               )
             : null,
         suffixIconColor: Colors.white,
@@ -182,9 +184,11 @@ class _CreateAccountFormState extends State<_CreateAccountForm> {
           Row(
             children: [
               Checkbox(value: _enabled, onChanged: _setEnabled),
-              TextButton(
-                onPressed: _showTerms,
-                child: const Text(AppStrings.acceptTermsOfUse),
+              Flexible(
+                child: TextButton(
+                  onPressed: _showTerms,
+                  child: const Text(AppStrings.acceptTermsOfUse),
+                ),
               ),
             ],
           ),
