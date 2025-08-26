@@ -1,7 +1,9 @@
 import 'dart:math';
 
+import 'package:comizy/tads/offer.dart';
 import 'package:comizy/tads/product.dart';
 import 'package:comizy/tads/product_type.dart';
+import 'package:comizy/tads/shop.dart';
 import 'package:comizy/tads/showcase.dart';
 import 'package:comizy/values/app_assets.dart';
 
@@ -25,7 +27,24 @@ final mvpProducts = List<Product>.generate(
   },
 );
 
-final sampleShowcase = Showcase.withProducts(
+final mvpOffers = List<Offer>.generate(
+  50,
+  (index) {
+    final r = Random();
+    return Offer(
+      product: mvpProducts[r.nextInt(mvpProducts.length)],
+      shop: mvpShops[r.nextInt(mvpShops.length)],
+      price: r.nextDouble() * 100,
+    );
+  },
+);
+
+final mvpShops = List<Shop>.generate(
+  50,
+  (index) => Shop(name: 'Loja $index'),
+);
+
+final mvpShowcase = Showcase.withProducts(
   products: List.generate(
     2,
     (int index) {

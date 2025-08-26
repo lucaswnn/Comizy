@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:comizy/exceptions/showcase_exception.dart';
 import 'package:comizy/tads/product.dart';
 
@@ -17,7 +19,7 @@ class Showcase {
         : addProducts(products);
   }
 
-  List<Product> get products => _products;
+  UnmodifiableListView<Product> get products => UnmodifiableListView(_products);
 
   void addProduct(Product product) {
     _showcaseLimit == _products.length
