@@ -1,5 +1,5 @@
 import 'package:comizy/screens/home/pageviews/offer_register_list_pageview.dart';
-import 'package:comizy/screens/home/pageviews/products_pageview.dart';
+import 'package:comizy/screens/home/pageviews/main_pageview.dart';
 import 'package:comizy/screens/home/pageviews/user_pageview.dart';
 import 'package:comizy/services/change_notifiers/user_change_notifier.dart';
 import 'package:comizy/utils/navigation_helper.dart';

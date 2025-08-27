@@ -1,5 +1,9 @@
+import 'package:comizy/services/change_notifiers/navigation_change_notifier.dart';
 import 'package:comizy/tads/product.dart';
+import 'package:comizy/utils/navigation_helper.dart';
+import 'package:comizy/values/app_routes.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ProductListTile extends StatelessWidget {
   final Product product;
@@ -24,7 +28,10 @@ class ProductListTile extends StatelessWidget {
         product.description,
         style: const TextStyle(fontSize: 12),
       ),
-      onTap: () {},
+      onTap: () {
+        context.read<NavigationChangeNotifier>().currentProduct = product;
+        NavigationHelper.pushNamed(AppRoutes.productDetails);
+      },
     );
   }
 }

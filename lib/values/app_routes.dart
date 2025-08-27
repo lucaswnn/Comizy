@@ -9,4 +9,6 @@ class AppRoutes {
   static const String tutorial = '/tutorial';
   static const String chooseFirstProducts = '/tutorial/produtos';
   static const String offerRegister = '/home/cadastro_oferta';
+  static const String productDetails = '/home/detalhes_produto';
+  static const String shopDetails = '/home/detalhes_loja';
 }

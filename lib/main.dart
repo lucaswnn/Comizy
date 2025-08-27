@@ -1,5 +1,6 @@
 import 'package:comizy/app.dart';
 import 'package:comizy/services/change_notifiers/market_change_notifier.dart';
+import 'package:comizy/services/change_notifiers/navigation_change_notifier.dart';
 import 'package:comizy/services/change_notifiers/offer_register_change_notifier.dart';
 import 'package:comizy/services/database_dao.dart';
 import 'package:comizy/services/change_notifiers/showcase_change_notifier.dart';
@@ -19,6 +20,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => ShowcaseChangeNotifier()),
         ChangeNotifierProvider(create: (_) => MarketChangeNotifier()),
         ChangeNotifierProvider(create: (_) => OfferRegisterChangeNotifier()),
+        ChangeNotifierProvider(create: (_) => NavigationChangeNotifier()),
       ],
       child: const MyApp(),
     ),

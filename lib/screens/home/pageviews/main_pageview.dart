@@ -3,6 +3,7 @@ import 'package:comizy/services/change_notifiers/showcase_change_notifier.dart';
 import 'package:comizy/tads/market.dart';
 import 'package:comizy/tads/showcase.dart';
 import 'package:comizy/widgets/product_list_tile.dart';
+import 'package:comizy/widgets/shop_list_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -42,9 +43,9 @@ class _ProductsPageViewState extends State<ProductsPageView> {
         const SizedBox(height: 10),
         ListView.builder(
           shrinkWrap: true,
-          itemCount: _market.products.length,
+          itemCount: _market.shops.length,
           itemBuilder: (_, index) =>
-              ProductListTile(product: _market.products[index]),
+              ShopListTile(shop: _market.shops[index]),
         ),
       ],
     );

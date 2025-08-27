@@ -4,7 +4,9 @@ import 'package:comizy/screens/auth/login_screen.dart';
 import 'package:comizy/screens/auth/tutorial_screen.dart';
 import 'package:comizy/screens/home/home_screen.dart';
 import 'package:comizy/screens/home/offer_register_screen.dart';
-import 'package:comizy/screens/search_screen.dart';
+import 'package:comizy/screens/home/product_detail_screen.dart';
+import 'package:comizy/screens/home/search_screen.dart';
+import 'package:comizy/screens/home/shop_detail_screen.dart';
 import 'package:comizy/tads/offer.dart';
 import 'package:flutter/material.dart';
 import 'package:comizy/values/app_routes.dart';
@@ -52,8 +54,14 @@ class Routes {
       case AppRoutes.searchPage:
         return getRoute(widget: const SearchScreen());
 
+      case AppRoutes.productDetails:
+        return getRoute(widget: const ProductDetailScreen());
+      
+      case AppRoutes.shopDetails:
+        return getRoute(widget: const ShopDetailScreen());
+
       case AppRoutes.offerRegister:
-      return getRoute<Offer>(widget: const OfferRegisterScreen());
+        return getRoute<Offer>(widget: const OfferRegisterScreen());
 
       /// An invalid route. User shouldn't see this,
       /// it's for debugging purpose only.
