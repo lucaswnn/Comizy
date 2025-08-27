@@ -8,4 +8,5 @@ class AppRoutes {
   static const String createAccount = '/criar_conta';
   static const String tutorial = '/tutorial';
   static const String chooseFirstProducts = '/tutorial/produtos';
+  static const String offerRegister = '/home/cadastro_oferta';
 }

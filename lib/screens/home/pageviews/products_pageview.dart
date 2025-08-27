@@ -1,7 +1,7 @@
-import 'package:comizy/services/showcase_change_notifier.dart';
-import 'package:comizy/tads/product.dart';
+import 'package:comizy/services/change_notifiers/market_change_notifier.dart';
+import 'package:comizy/services/change_notifiers/showcase_change_notifier.dart';
+import 'package:comizy/tads/market.dart';
 import 'package:comizy/tads/showcase.dart';
-import 'package:comizy/utils/mvp_database.dart';
 import 'package:comizy/widgets/product_list_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -14,11 +14,12 @@ class ProductsPageView extends StatefulWidget {
 }
 
 class _ProductsPageViewState extends State<ProductsPageView> {
-  final List<Product> _currentProducts = mvpProducts;
+  late final Market _market;
   late final Showcase _showcase;
 
   @override
   void initState() {
+    _market = context.read<MarketChangeNotifier>().market;
     _showcase = context.read<ShowcaseChangeNotifier>().showcase;
     super.initState();
   }
@@ -41,9 +42,9 @@ class _ProductsPageViewState extends State<ProductsPageView> {
         const SizedBox(height: 10),
         ListView.builder(
           shrinkWrap: true,
-          itemCount: _currentProducts.length,
+          itemCount: _market.products.length,
           itemBuilder: (_, index) =>
-              ProductListTile(product: _currentProducts[index]),
+              ProductListTile(product: _market.products[index]),
         ),
       ],
     );

@@ -7,7 +7,7 @@ import 'package:comizy/tads/shop.dart';
 import 'package:comizy/tads/showcase.dart';
 import 'package:comizy/values/app_assets.dart';
 
-final mvpProducts = List<Product>.generate(
+final testProducts = List<Product>.generate(
   50,
   (index) {
     final random = Random();
@@ -27,30 +27,42 @@ final mvpProducts = List<Product>.generate(
   },
 );
 
-final mvpOffers = List<Offer>.generate(
+final testOffers = List<Offer>.generate(
   50,
   (index) {
     final r = Random();
     return Offer(
-      product: mvpProducts[r.nextInt(mvpProducts.length)],
-      shop: mvpShops[r.nextInt(mvpShops.length)],
+      product: testProducts[r.nextInt(testProducts.length)],
+      shop: testShops[r.nextInt(testShops.length)],
       price: r.nextDouble() * 100,
     );
   },
 );
 
-final mvpShops = List<Shop>.generate(
+final testShops = List<Shop>.generate(
   50,
   (index) => Shop(name: 'Loja $index'),
 );
 
-final mvpShowcase = Showcase.withProducts(
+final testShowcase = Showcase.withProducts(
   products: List.generate(
     2,
     (int index) {
       final r = Random();
-      return mvpProducts[r.nextInt(mvpProducts.length)];
+      return testProducts[r.nextInt(testProducts.length)];
     },
   ),
   showcaseLimit: 2,
+);
+
+final testOfferRegisters = List<Offer>.generate(
+  10,
+  (index) {
+    final r = Random();
+    return Offer(
+      product: testProducts[r.nextInt(testProducts.length)],
+      shop: testShops[r.nextInt(testShops.length)],
+      price: 0,
+    );
+  },
 );

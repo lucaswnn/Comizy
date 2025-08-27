@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:comizy/utils/mvp_database.dart';
+import 'package:comizy/utils/test_database.dart';
 import 'package:comizy/values/app_colors.dart';
 import 'package:comizy/widgets/product_list_tile.dart';
 import 'package:flutter/material.dart';
@@ -40,7 +40,7 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   void _filterSuggestions(String query) => setState(() {
-        _suggestions = mvpProducts
+        _suggestions = testProducts
             .where((product) =>
                 product.name.toLowerCase().contains(query) && query.isNotEmpty)
             .map((filteredProduct) => ProductListTile(product: filteredProduct))

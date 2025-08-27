@@ -1,5 +1,7 @@
 import 'dart:collection';
 import 'package:comizy/tads/offer.dart';
+import 'package:comizy/tads/product.dart';
+import 'package:comizy/tads/shop.dart';
 
 class Market {
   final List<Offer> _offers = [];
@@ -16,7 +18,15 @@ class Market {
     _offers.addAll(offers);
   }
 
-  operator[](int index) => _offers[index];
+  operator [](int index) => _offers[index];
+
+  List<Offer> productOffers(Product product) =>
+      _offers.where((offer) => offer.product == product).toList();
+
+  List<Product> get products =>
+      _offers.map((offer) => offer.product).toSet().toList();
+
+  List<Shop> get shops => _offers.map((offer) => offer.shop).toSet().toList();
 
   UnmodifiableListView<Offer> get offers => UnmodifiableListView(_offers);
 }

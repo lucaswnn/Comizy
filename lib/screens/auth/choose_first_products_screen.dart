@@ -1,6 +1,6 @@
-import 'package:comizy/services/showcase_change_notifier.dart';
+import 'package:comizy/services/change_notifiers/showcase_change_notifier.dart';
 import 'package:comizy/tads/product.dart';
-import 'package:comizy/utils/mvp_database.dart';
+import 'package:comizy/utils/test_database.dart';
 import 'package:comizy/utils/navigation_helper.dart';
 import 'package:comizy/values/app_routes.dart';
 import 'package:flutter/material.dart';
@@ -107,7 +107,7 @@ class _ChooseFirstProductsScreenState extends State<ChooseFirstProductsScreen> {
 }
 
 class ProductSearchDelegate extends SearchDelegate<Product?> {
-  final List<Product> _products = mvpProducts;
+  final List<Product> _products = testProducts;
 
   @override
   List<Widget>? buildActions(BuildContext context) {

@@ -1,6 +1,7 @@
-import 'package:comizy/screens/home/products_pageview.dart';
-import 'package:comizy/screens/home/user_pageview.dart';
-import 'package:comizy/services/user_change_notifier.dart';
+import 'package:comizy/screens/home/pageviews/offer_register_list_pageview.dart';
+import 'package:comizy/screens/home/pageviews/products_pageview.dart';
+import 'package:comizy/screens/home/pageviews/user_pageview.dart';
+import 'package:comizy/services/change_notifiers/user_change_notifier.dart';
 import 'package:comizy/utils/navigation_helper.dart';
 import 'package:comizy/values/app_assets.dart';
 import 'package:comizy/values/app_colors.dart';
@@ -19,6 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final _pageController = PageController();
   final _pageViews = const <Widget>[
     ProductsPageView(),
+    OfferRegisterListPageview(),
     UserPageview(),
   ];
 
@@ -33,6 +35,17 @@ class _HomeScreenState extends State<HomeScreen> {
         color: Colors.white,
       ),
       label: 'Produtos',
+    ),
+    NavigationDestination(
+      selectedIcon: Icon(
+        Icons.playlist_add,
+        color: Colors.black,
+      ),
+      icon: Icon(
+        Icons.playlist_add,
+        color: Colors.white,
+      ),
+      label: 'Cadastros',
     ),
     NavigationDestination(
       selectedIcon: Icon(

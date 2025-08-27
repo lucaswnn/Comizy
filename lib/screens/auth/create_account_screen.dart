@@ -1,4 +1,4 @@
-import 'package:comizy/services/user_change_notifier.dart';
+import 'package:comizy/services/change_notifiers/user_change_notifier.dart';
 import 'package:comizy/utils/input_formatters.dart';
 import 'package:comizy/utils/navigation_helper.dart';
 import 'package:comizy/utils/snackbar_helper.dart';

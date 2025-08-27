@@ -3,7 +3,9 @@ import 'package:comizy/screens/auth/create_account_screen.dart';
 import 'package:comizy/screens/auth/login_screen.dart';
 import 'package:comizy/screens/auth/tutorial_screen.dart';
 import 'package:comizy/screens/home/home_screen.dart';
+import 'package:comizy/screens/home/offer_register_screen.dart';
 import 'package:comizy/screens/search_screen.dart';
+import 'package:comizy/tads/offer.dart';
 import 'package:flutter/material.dart';
 import 'package:comizy/values/app_routes.dart';
 import 'package:comizy/utils/invalid_route.dart';
@@ -16,11 +18,11 @@ class Routes {
   // Route generator
   static Route<dynamic> generateRoute(RouteSettings settings) {
     // Additional function to generate the route widget.
-    Route<dynamic> getRoute({
+    Route<T> getRoute<T>({
       required Widget widget,
       bool fullscreenDialog = false,
     }) {
-      return MaterialPageRoute<void>(
+      return MaterialPageRoute<T>(
         builder: (context) => widget,
         settings: settings,
         fullscreenDialog: fullscreenDialog,
@@ -49,6 +51,9 @@ class Routes {
 
       case AppRoutes.searchPage:
         return getRoute(widget: const SearchScreen());
+
+      case AppRoutes.offerRegister:
+      return getRoute<Offer>(widget: const OfferRegisterScreen());
 
       /// An invalid route. User shouldn't see this,
       /// it's for debugging purpose only.

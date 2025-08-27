@@ -7,11 +7,11 @@ class NavigationHelper {
 
   static GlobalKey<NavigatorState> get key => _key;
 
-  static Future<T?>? pushNamed<T extends Object?>(
+  static Future<T?> pushNamed<T extends Object?>(
     String routeName, {
     Object? arguments,
   }) {
-    return _key.currentState?.pushNamed<T?>(
+    return _key.currentState!.pushNamed<T?>(
       routeName,
       arguments: arguments,
     );
