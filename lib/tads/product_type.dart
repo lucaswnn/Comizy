@@ -1,41 +1,51 @@
 import 'package:flutter/material.dart';
 
-enum ProductMainType {
+enum ProductCategory {
   drink('Não alcoólicos', Icons.no_drinks),
   alcoholic('Alcoólicos', Icons.local_drink);
 
   final String label;
   final IconData icon;
 
-  const ProductMainType(this.label, this.icon);
+  const ProductCategory(this.label, this.icon);
+
+  @override
+  toString() => label;
 }
 
-enum ProductSecondaryType {
-  whiskey,
-  vodka,
-  softDrink,
-  water,
-  gin,
+enum ProductSubcategory {
+  whiskey('Whisky'),
+  vodka('Vodka'),
+  softDrink('Refrigerante'),
+  water('Água'),
+  gin('Gin');
+
+  final String label;
+
+  const ProductSubcategory(this.label);
+
+  @override
+  toString() => label;
 }
 
 class ProductType {
-  final ProductMainType mainType;
-  final ProductSecondaryType secondaryType;
+  final ProductCategory mainCategory;
+  final ProductSubcategory subcategory;
 
   const ProductType({
-    required this.mainType,
-    required this.secondaryType,
+    required this.mainCategory,
+    required this.subcategory,
   });
 
-  static const Map<ProductMainType, Set<ProductSecondaryType>> mainTypeMap = {
-    ProductMainType.drink: {
-      ProductSecondaryType.softDrink,
-      ProductSecondaryType.water,
+  static const Map<ProductCategory, Set<ProductSubcategory>> mainTypeMap = {
+    ProductCategory.drink: {
+      ProductSubcategory.softDrink,
+      ProductSubcategory.water,
     },
-    ProductMainType.alcoholic: {
-      ProductSecondaryType.gin,
-      ProductSecondaryType.vodka,
-      ProductSecondaryType.whiskey,
+    ProductCategory.alcoholic: {
+      ProductSubcategory.gin,
+      ProductSubcategory.vodka,
+      ProductSubcategory.whiskey,
     },
   };
 }

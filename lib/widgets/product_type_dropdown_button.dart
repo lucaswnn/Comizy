@@ -3,9 +3,9 @@ import 'package:comizy/values/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class ProductTypeDropdownButton extends StatefulWidget {
-  final List<ProductMainType> mainTypes;
-  final void Function(ProductMainType) onChanged;
-  final ProductMainType firstSelected;
+  final List<ProductCategory> mainTypes;
+  final void Function(ProductCategory) onChanged;
+  final ProductCategory firstSelected;
 
   const ProductTypeDropdownButton({
     super.key,
@@ -23,7 +23,7 @@ class _ProductTypeDropdownButtonState extends State<ProductTypeDropdownButton> {
   final LayerLink _layerLink = LayerLink();
   OverlayEntry? _overlayEntry;
   bool _isExpanded = false;
-  late ProductMainType _selected;
+  late ProductCategory _selected;
   final double _borderRadius = 20;
 
   @override
@@ -49,7 +49,7 @@ class _ProductTypeDropdownButtonState extends State<ProductTypeDropdownButton> {
     });
   }
 
-  void _onSelected(ProductMainType type) {
+  void _onSelected(ProductCategory type) {
     _overlayEntry?.remove();
     _overlayEntry = null;
     setState(() {

@@ -35,8 +35,19 @@ class Market {
       .map((offer) => offer.product)
       .toSet()
       .toList();
-  
-  List<Offer> shopOffers(Shop shop) => _offers.where((offer)=> offer.shop == shop).toList();
+
+  List<Offer> shopOffers(Shop shop) =>
+      _offers.where((offer) => offer.shop == shop).toList();
+
+  List<Offer> shopOffersByCategory(
+    Shop shop,
+    ProductCategory category,
+  ) =>
+      _offers
+          .where((offer) =>
+              offer.shop == shop &&
+              offer.product.productType.mainCategory == category)
+          .toList();
 
   List<ProductType> shopProductTypes(Shop shop) =>
       shopProducts(shop).map((product) => product.productType).toSet().toList();

@@ -11,13 +11,13 @@ final testProducts = List<Product>.generate(
   50,
   (index) {
     final random = Random();
-    final typeValues = ProductMainType.values;
+    final typeValues = ProductCategory.values;
     final type = typeValues[random.nextInt(typeValues.length)];
-    final subtypeValues = ProductSecondaryType.values;
+    final subtypeValues = ProductSubcategory.values;
     final subtype = subtypeValues[random.nextInt(subtypeValues.length)];
     final productType = ProductType(
-      mainType: type,
-      secondaryType: subtype,
+      mainCategory: type,
+      subcategory: subtype,
     );
     return Product(
         name: 'Produto $index',
