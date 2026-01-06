@@ -30,4 +30,8 @@ class NavigationHelper {
   static void pop<T extends Object?>([T? result]) {
     return _key.currentState?.pop(result);
   }
+
+  static void popUntilRoute(String routeName){
+    return _key.currentState?.popUntil(ModalRoute.withName(routeName));
+  }
 }

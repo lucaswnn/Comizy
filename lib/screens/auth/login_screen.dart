@@ -75,13 +75,13 @@ class _LoginFormState extends State<_LoginForm> {
         iconColor: Colors.white,
         suffixIcon: isPassword
             ? ExcludeFocus(
-              child: IconButton(
+                child: IconButton(
                   onPressed: () {
                     setState(() => _showPassword = !_showPassword);
                   },
                   icon: const Icon(Icons.remove_red_eye),
                 ),
-            )
+              )
             : null,
         suffixIconColor: Colors.white,
         hintStyle: const TextStyle(color: Colors.white, fontSize: 14),
@@ -104,6 +104,7 @@ class _LoginFormState extends State<_LoginForm> {
     return Form(
       key: _formKey,
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _formattedTextFormField(
@@ -118,6 +119,17 @@ class _LoginFormState extends State<_LoginForm> {
             validator: Validators.passwordValidator,
             icon: const Icon(Icons.lock),
             isPassword: true,
+          ),
+          TextButton(
+            onPressed: () =>
+                NavigationHelper.pushNamed(AppRoutes.forgotPassword),
+            child: const Text(
+              'Esqueci minha senha',
+              style: TextStyle(
+                  color: Colors.white,
+                  decoration: TextDecoration.underline,
+                  decorationColor: Colors.white),
+            ),
           ),
           const SizedBox(height: 10),
           Align(

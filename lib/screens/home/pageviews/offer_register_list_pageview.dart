@@ -18,7 +18,7 @@ class _OfferRegisterListPageviewState extends State<OfferRegisterListPageview> {
 
   @override
   void initState() {
-    _offers = context.read<OfferRegisterChangeNotifier>().offerRegisters;
+    _offers = context.read<OfferRegisterChangeNotifier>().avaibleOfferRegisters;
     super.initState();
   }
 
@@ -35,8 +35,9 @@ class _OfferRegisterListPageviewState extends State<OfferRegisterListPageview> {
             final changedOffer = await NavigationHelper.pushNamed<Offer>(
                 AppRoutes.offerRegister);
             if (changedOffer != null) {
-              setState(() => _offers =
-                  context.read<OfferRegisterChangeNotifier>().offerRegisters);
+              setState(() => _offers = context
+                  .read<OfferRegisterChangeNotifier>()
+                  .avaibleOfferRegisters);
             }
           },
         ),

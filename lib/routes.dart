@@ -1,5 +1,6 @@
 import 'package:comizy/screens/auth/choose_first_products_screen.dart';
 import 'package:comizy/screens/auth/create_account_screen.dart';
+import 'package:comizy/screens/auth/forgot_password_screen.dart';
 import 'package:comizy/screens/auth/login_screen.dart';
 import 'package:comizy/screens/auth/tutorial_screen.dart';
 import 'package:comizy/screens/home/home_screen.dart';
@@ -8,6 +9,7 @@ import 'package:comizy/screens/home/product_detail_screen.dart';
 import 'package:comizy/screens/home/search_screen.dart';
 import 'package:comizy/screens/home/shop/shop_category_screen.dart';
 import 'package:comizy/screens/home/shop/shop_screen.dart';
+import 'package:comizy/screens/home/user/pending_points_screen.dart';
 import 'package:comizy/tads/offer.dart';
 import 'package:flutter/material.dart';
 import 'package:comizy/values/app_routes.dart';
@@ -43,6 +45,9 @@ class Routes {
       case AppRoutes.login:
         return getRoute(widget: const LoginScreen());
 
+      case AppRoutes.forgotPassword:
+        return getRoute(widget: const ForgotPasswordScreen());
+
       case AppRoutes.tutorial:
         return getRoute(widget: const TutorialScreen());
 
@@ -57,15 +62,18 @@ class Routes {
 
       case AppRoutes.productDetails:
         return getRoute(widget: const ProductDetailScreen());
-      
+
       case AppRoutes.shopDetails:
         return getRoute(widget: const ShopScreen());
-      
+
       case AppRoutes.shopDetailsCategory:
         return getRoute(widget: const ShopCategoryScreen());
 
       case AppRoutes.offerRegister:
         return getRoute<Offer>(widget: const OfferRegisterScreen());
+      
+      case AppRoutes.pendingPoints:
+        return getRoute(widget: const PendingPointsScreen());
 
       /// An invalid route. User shouldn't see this,
       /// it's for debugging purpose only.

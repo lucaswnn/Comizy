@@ -23,6 +23,12 @@ class _OfferRegisterScreenState extends State<OfferRegisterScreen> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    _priceController.dispose();
+    super.dispose();
+  }
+
   void _saveOffer() {
     if (_formKey.currentState!.validate()) {
       final price = double.parse(_priceController.text.replaceAll(',', '.'));
@@ -30,6 +36,7 @@ class _OfferRegisterScreenState extends State<OfferRegisterScreen> {
         product: _offer.product,
         shop: _offer.shop,
         price: price,
+        date: DateTime.now(),
       );
 
       context.read<OfferRegisterChangeNotifier>().registerCurrentOffer();

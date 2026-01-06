@@ -5,11 +5,13 @@ class Offer {
   final Product product;
   final Shop shop;
   final double price;
+  final DateTime date;
 
   const Offer({
     required this.product,
     required this.shop,
     required this.price,
+    required this.date,
   });
 
   @override

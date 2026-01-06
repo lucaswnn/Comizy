@@ -89,10 +89,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   image: AssetImage(AppAssets.simpleLogoSmall))),
         ),
       ),
-      body: PageView(
-        controller: _pageController,
-        children: _pageViews,
-        onPageChanged: (index) => setState(() => _currentNavIndex = index),
+      body: SafeArea(
+        child: PageView(
+          controller: _pageController,
+          children: _pageViews,
+          onPageChanged: (index) => setState(() => _currentNavIndex = index),
+        ),
       ),
       bottomNavigationBar: NavigationBar(
         height: 60,

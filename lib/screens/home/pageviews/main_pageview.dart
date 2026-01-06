@@ -27,16 +27,37 @@ class _ProductsPageViewState extends State<ProductsPageView> {
 
   @override
   Widget build(BuildContext context) {
+    final showcaseProducts = [
+      ..._showcase.fixedProducts,
+      ..._showcase.tempProducts,
+    ];
+    final showcaseOffers = _showcase.tempOffers;
+
     return ListView(
       children: [
         SizedBox(
           height: 200,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            itemCount: _showcase.productCount,
+            itemCount: showcaseProducts.length,
             itemBuilder: (_, index) => SizedBox(
               width: 200,
-              child: Center(child: ProductListTile(product: _showcase[index])),
+              child: Center(
+                  child: ProductListTile(product: showcaseProducts[index])),
+            ),
+          ),
+        ),
+        const SizedBox(height: 10),
+        SizedBox(
+          height: 200,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: showcaseOffers.length,
+            itemBuilder: (_, index) => SizedBox(
+              width: 200,
+              child: Center(
+                  child:
+                      ProductListTile(product: showcaseOffers[index].product)),
             ),
           ),
         ),
@@ -44,8 +65,7 @@ class _ProductsPageViewState extends State<ProductsPageView> {
         ListView.builder(
           shrinkWrap: true,
           itemCount: _market.shops.length,
-          itemBuilder: (_, index) =>
-              ShopListTile(shop: _market.shops[index]),
+          itemBuilder: (_, index) => ShopListTile(shop: _market.shops[index]),
         ),
       ],
     );

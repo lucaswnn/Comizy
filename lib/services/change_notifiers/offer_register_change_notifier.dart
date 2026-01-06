@@ -3,14 +3,16 @@ import 'package:comizy/utils/test_database.dart';
 import 'package:flutter/material.dart';
 
 class OfferRegisterChangeNotifier extends ChangeNotifier {
-  final Set<Offer> _offerRegisters = testOfferRegisters.toSet();
+  final Map<Offer, OfferRegisterInfo> _offerRegisters = {
+    for (var x in testOfferRegisters.toSet()) x: OfferRegisterInfo.avaible
+  };
   Offer? _currentOffer;
 
-  Offer? get currentOffer => _currentOffer ?? _offerRegisters.first;
+  Offer? get currentOffer => _currentOffer;
 
   Offer? _getOriginalOffer(Offer offer) {
     try {
-      return _offerRegisters.firstWhere((other) =>
+      return _offerRegisters.keys.firstWhere((other) =>
           other.product == offer.product && other.shop == offer.shop);
     } on StateError catch (_) {
       return null;
@@ -24,15 +26,32 @@ class OfferRegisterChangeNotifier extends ChangeNotifier {
     }
   }
 
-  List<Offer> get offerRegisters => _offerRegisters.toList();
+  List<Offer> get avaibleOfferRegisters => _offerRegisters.keys
+      .where((offer) => _offerRegisters[offer] == OfferRegisterInfo.avaible)
+      .toList();
+
+  List<Offer> get pendingOfferRegisters => _offerRegisters.keys
+      .where((offer) => _offerRegisters[offer] == OfferRegisterInfo.pending)
+      .toList();
+
+  List<Offer> get refusedOfferRegisters => _offerRegisters.keys
+      .where((offer) => _offerRegisters[offer] == OfferRegisterInfo.refused)
+      .toList();
 
   void registerCurrentOffer() {
     if (_currentOffer != null) {
       final originalOffer = _getOriginalOffer(_currentOffer!);
       if (originalOffer != null) {
         _offerRegisters.remove(originalOffer);
+        _offerRegisters[_currentOffer!] = OfferRegisterInfo.pending;
         notifyListeners();
       }
     }
   }
+}
+
+enum OfferRegisterInfo {
+  avaible,
+  pending,
+  refused,
 }

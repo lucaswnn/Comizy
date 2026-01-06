@@ -1,60 +1,81 @@
 import 'dart:collection';
 
-import 'package:comizy/exceptions/showcase_exception.dart';
+import 'package:comizy/tads/offer.dart';
 import 'package:comizy/tads/product.dart';
 
 class Showcase {
-  final List<Product> _products = [];
-  int _showcaseLimit;
+  final List<Product> _fixedProducts = [];
+  final Map<Product, DateTime> _tempProducts = {};
+  final Map<Offer, DateTime> _tempOffers = {};
 
-  Showcase({required int showcaseLimit}) : _showcaseLimit = showcaseLimit;
-
-  Showcase.withProducts({
-    required List<Product> products,
-    required int showcaseLimit,
-  }) : _showcaseLimit = showcaseLimit {
-    showcaseLimit < products.length
-        ? throw ShowcaseOverflowException(
-            'Número de produtos (${products.length}) excede o limite do vitrine ($showcaseLimit).')
-        : addProducts(products);
+  Showcase.withProductsAndOffers({
+    required List<Product> fixedProducts,
+    required Map<Product, DateTime> tempProducts,
+    required Map<Offer, DateTime> tempOffers,
+  }) {
+    addFixedProducts(fixedProducts);
+    addTempProducts(tempProducts);
+    addTempOffers(tempOffers);
+    _organizeShowcase();
   }
 
-  UnmodifiableListView<Product> get products => UnmodifiableListView(_products);
-
-  void addProduct(Product product) {
-    _showcaseLimit == _products.length
-        ? throw ShowcaseOverflowException(
-            'Número máximo de produtos na vitrine atingido ($_showcaseLimit).')
-        : _products.add(product);
-  }
-
-  void removeProduct(Product product) {
-    _products.remove(product);
+  void _organizeShowcase(){
+    for(var fixedProduct in _fixedProducts){
+      _tempProducts.removeWhere((p, _)=>p==fixedProduct);
+    }
+    for(var tempProduct in _tempProducts.keys){
+      _tempOffers.removeWhere((o,_)=>o.product==tempProduct);
+    }
   }
 
   void clearShowcase() {
-    _products.clear();
+    clearFixedProducts();
+    clearTempProducts();
+    clearTempOffers();
   }
 
-  void addProducts(List<Product> products) {
-    _showcaseLimit < _products.length + products.length
-        ? throw ShowcaseOverflowException(
-            'Número de produtos (${_products.length + products.length}) excede o limite do vitrine ($_showcaseLimit).')
-        : _products.addAll(products);
+  UnmodifiableListView<Product> get fixedProducts =>
+      UnmodifiableListView(_fixedProducts);
+
+  void addFixedProduct(Product product) => _fixedProducts.add(product);
+
+  void addFixedProducts(List<Product> products) =>
+      _fixedProducts.addAll(products);
+
+  void removeFixedProduct(Product product) => _fixedProducts.remove(product);
+
+  void clearFixedProducts() => _fixedProducts.clear();
+
+  bool containsFixedProduct(Product product) {
+    return _fixedProducts.contains(product);
   }
 
-  int get productCount => _products.length;
+  UnmodifiableListView<Product> get tempProducts =>
+      UnmodifiableListView(_tempProducts.keys);
 
-  void modifyShowcaseLimit(int increment) {
-    increment + _showcaseLimit < 0
-        ? throw ShowcaseOverflowException(
-            'O incremento ($increment) não pode reduzir o limite da vitrine ($_showcaseLimit) para um valor negativo.')
-        : _showcaseLimit += increment;
-  }
+  void addTempProduct(Product product, DateTime date) =>
+      _tempProducts[product] = date;
 
-  bool containsProduct(Product product) {
-    return _products.contains(product);
-  }
+  void addTempProducts(Map<Product, DateTime> products) =>
+      _tempProducts.addAll(products);
 
-  operator[](int index)=> _products[index];
+  void removeTempProduct(Product product) => _tempProducts.remove(product);
+
+  void clearTempProducts() => _tempProducts.clear();
+
+  bool containsTempProduct(Product product) =>
+      _tempProducts.containsKey(product);
+
+  UnmodifiableListView<Offer> get tempOffers =>
+      UnmodifiableListView(_tempOffers.keys);
+
+  void addTempOffer(Offer offer, DateTime date) => _tempOffers[offer] = date;
+
+  void addTempOffers(Map<Offer, DateTime> offers) => _tempOffers.addAll(offers);
+
+  void removeTempOffer(Offer offer) => _tempOffers.remove(offer);
+
+  void clearTempOffers() => _tempOffers.clear();
+
+  bool containsTempOffer(Offer offer) => _tempOffers.containsKey(offer);
 }
