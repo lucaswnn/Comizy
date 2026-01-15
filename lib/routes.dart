@@ -1,20 +1,19 @@
-import 'package:comizy/screens/auth/choose_first_products_screen.dart';
-import 'package:comizy/screens/auth/create_account_screen.dart';
-import 'package:comizy/screens/auth/forgot_password_screen.dart';
-import 'package:comizy/screens/auth/login_screen.dart';
-import 'package:comizy/screens/auth/tutorial_screen.dart';
-import 'package:comizy/screens/home/home_screen.dart';
-import 'package:comizy/screens/home/offer_register_screen.dart';
-import 'package:comizy/screens/home/product_detail_screen.dart';
-import 'package:comizy/screens/home/search_screen.dart';
-import 'package:comizy/screens/home/shop/shop_category_screen.dart';
-import 'package:comizy/screens/home/shop/shop_screen.dart';
-import 'package:comizy/screens/home/user/pending_points_screen.dart';
-import 'package:comizy/tads/offer.dart';
+import 'package:comizy/pages/detailed_product_page.dart';
+import 'package:comizy/pages/user_section/app_info_page.dart';
+import 'package:comizy/pages/edit_product_price_page.dart';
+import 'package:comizy/pages/help_request_section/leaderboard_page.dart';
+import 'package:comizy/pages/user_section/logout_page.dart';
+import 'package:comizy/pages/main_pageview.dart';
+import 'package:comizy/pages/set_location_map_page.dart';
+import 'package:comizy/pages/set_location_page.dart';
+import 'package:comizy/pages/help_request_section/product_help_request_page.dart';
+import 'package:comizy/pages/product_page.dart';
+import 'package:comizy/pages/search_section/search_page.dart';
+import 'package:comizy/pages/user_section/user_personal_data_page.dart';
+import 'package:comizy/pages/user_section/user_points_page.dart';
 import 'package:flutter/material.dart';
 import 'package:comizy/values/app_routes.dart';
 import 'package:comizy/utils/invalid_route.dart';
-import 'package:comizy/screens/auth/landing_page_screen.dart';
 
 // Class that handles the app routes.
 class Routes {
@@ -36,44 +35,44 @@ class Routes {
 
     // Switch between routes.
     switch (settings.name) {
-      case AppRoutes.landingPage:
-        return getRoute(widget: const LandingPageScreen());
+      case AppRoutes.mainPage:
+        return getRoute(widget: const MainPageView());
 
-      case AppRoutes.createAccount:
-        return getRoute(widget: const CreateAccountScreen());
-
-      case AppRoutes.login:
-        return getRoute(widget: const LoginScreen());
-
-      case AppRoutes.forgotPassword:
-        return getRoute(widget: const ForgotPasswordScreen());
-
-      case AppRoutes.tutorial:
-        return getRoute(widget: const TutorialScreen());
-
-      case AppRoutes.chooseFirstProducts:
-        return getRoute(widget: const ChooseFirstProductsScreen());
-
-      case AppRoutes.homePage:
-        return getRoute(widget: const HomeScreen());
+      case AppRoutes.setLocationPage:
+        return getRoute(widget: const SetLocationPage());
 
       case AppRoutes.searchPage:
-        return getRoute(widget: const SearchScreen());
+        return getRoute(widget: const SearchPage());
 
-      case AppRoutes.productDetails:
-        return getRoute(widget: const ProductDetailScreen());
+      case AppRoutes.productPage:
+        return getRoute(widget: const ProductPage());
 
-      case AppRoutes.shopDetails:
-        return getRoute(widget: const ShopScreen());
+      case AppRoutes.detailedProductPage:
+        return getRoute(widget: const DetailedProductPage());
 
-      case AppRoutes.shopDetailsCategory:
-        return getRoute(widget: const ShopCategoryScreen());
+      case AppRoutes.productHelpRequestPage:
+        return getRoute(widget: const ProductHelpRequestPage());
 
-      case AppRoutes.offerRegister:
-        return getRoute<Offer>(widget: const OfferRegisterScreen());
-      
-      case AppRoutes.pendingPoints:
-        return getRoute(widget: const PendingPointsScreen());
+      case AppRoutes.editProductPricePage:
+        return getRoute(widget: const EditProductPricePage());
+
+      case AppRoutes.userPointsPage:
+        return getRoute(widget: const UserPointsPage());
+
+      case AppRoutes.userPersonalDataPage:
+        return getRoute(widget: const UserPersonalDataPage());
+
+      case AppRoutes.appInfoPage:
+        return getRoute(widget: const AppInfoPage());
+
+      case AppRoutes.logoutPage:
+        return getRoute(widget: const LogoutPage());
+
+      case AppRoutes.leaderboardPage:
+        return getRoute(widget: const LeaderboardPage());
+
+      case AppRoutes.setLocationMapPage:
+        return getRoute(widget: const SetLocationMapPage());
 
       /// An invalid route. User shouldn't see this,
       /// it's for debugging purpose only.

@@ -1,28 +1,27 @@
 import 'package:comizy/app.dart';
-import 'package:comizy/services/change_notifiers/market_change_notifier.dart';
-import 'package:comizy/services/change_notifiers/navigation_change_notifier.dart';
-import 'package:comizy/services/change_notifiers/offer_register_change_notifier.dart';
-import 'package:comizy/services/database_dao.dart';
-import 'package:comizy/services/change_notifiers/showcase_change_notifier.dart';
-import 'package:comizy/services/change_notifiers/user_change_notifier.dart';
+import 'package:comizy/services/change_notifiers/help_request_notifier.dart';
+import 'package:comizy/services/change_notifiers/location_notifier.dart';
+import 'package:comizy/services/change_notifiers/market_notifier.dart';
+import 'package:comizy/services/change_notifiers/other_users_notifier.dart';
+import 'package:comizy/services/change_notifiers/product_notifier.dart';
+import 'package:comizy/services/change_notifiers/showcase_notifier.dart';
+import 'package:comizy/services/change_notifiers/main_user_notifier.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:provider/provider.dart';
 
-void main() async {
-  usePathUrlStrategy();
-  await DatabaseDAO.initialize();
-
+void main() {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => UserChangeNotifier()),
-        ChangeNotifierProvider(create: (_) => ShowcaseChangeNotifier()),
-        ChangeNotifierProvider(create: (_) => MarketChangeNotifier()),
-        ChangeNotifierProvider(create: (_) => OfferRegisterChangeNotifier()),
-        ChangeNotifierProvider(create: (_) => NavigationChangeNotifier()),
+        ChangeNotifierProvider(create: (_) => MainUserNotifier()),
+        ChangeNotifierProvider(create: (_) => LocationNotifier()),
+        ChangeNotifierProvider(create: (_) => ShowcaseNotifier()),
+        ChangeNotifierProvider(create: (_) => ProductNotifier()),
+        ChangeNotifierProvider(create: (_) => MarketNotifier()),
+        ChangeNotifierProvider(create: (_) => HelpRequestNotifier()),
+        ChangeNotifierProvider(create: (_) => OtherUsersNotifier()),
       ],
-      child: const MyApp(),
+      child: const App(),
     ),
   );
 }

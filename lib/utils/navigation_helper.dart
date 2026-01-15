@@ -31,7 +31,9 @@ class NavigationHelper {
     return _key.currentState?.pop(result);
   }
 
-  static void popUntilRoute(String routeName){
-    return _key.currentState?.popUntil(ModalRoute.withName(routeName));
+  static void popUntilNamed(String routeName) {
+    return _key.currentState?.popUntil(
+      (route) => route.settings.name == routeName,
+    );
   }
 }

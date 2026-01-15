@@ -1,20 +1,28 @@
+import 'package:comizy/tads/price.dart';
 import 'package:comizy/tads/product.dart';
 import 'package:comizy/tads/shop.dart';
 
-class Offer {
+class Offer implements Comparable<Offer> {
   final Product product;
   final Shop shop;
-  final double price;
-  final DateTime date;
+  final Price price;
 
   const Offer({
     required this.product,
     required this.shop,
     required this.price,
-    required this.date,
   });
 
   @override
   String toString() =>
-      '${product.name} - ${shop.name} - \$${price.toStringAsFixed(2)}';
+      '${product.name} - ${shop.name} - $price';
+      
+        @override
+        int compareTo(Offer other) {
+          final productComparison = product.name.compareTo(other.product.name);
+          if (productComparison != 0) return productComparison;
+          final shopComparison = shop.name.compareTo(other.shop.name);
+          if (shopComparison != 0) return shopComparison;
+          return price.value.compareTo(other.price.value);
+        }
 }

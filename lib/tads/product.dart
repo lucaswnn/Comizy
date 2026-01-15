@@ -1,6 +1,6 @@
 import 'package:comizy/tads/product_type.dart';
 
-class Product {
+class Product implements Comparable<Product> {
   final String name;
   final String description;
   final ProductType productType;
@@ -15,4 +15,9 @@ class Product {
 
   @override
   String toString() => name;
+
+  @override
+  int compareTo(Product other) {
+    return name.compareTo(other.name);
+  }
 }

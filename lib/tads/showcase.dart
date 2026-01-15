@@ -1,81 +1,61 @@
-import 'dart:collection';
-
-import 'package:comizy/tads/offer.dart';
 import 'package:comizy/tads/product.dart';
+import 'package:comizy/test/mocks.dart';
+
+enum ShowcaseAddStatus {
+  success,
+  alreadyExists,
+  limitReached,
+}
+
+enum ShowcaseRemoveStatus {
+  success,
+  productNotFound,
+  notEnoughTime,
+}
 
 class Showcase {
-  final List<Product> _fixedProducts = [];
-  final Map<Product, DateTime> _tempProducts = {};
-  final Map<Offer, DateTime> _tempOffers = {};
+  final Map<Product, ShowcaseProductInfo> showcaseProducts;
+  final int maxShowcaseProducts;
+  final int maxShowcaseDays;
 
-  Showcase.withProductsAndOffers({
-    required List<Product> fixedProducts,
-    required Map<Product, DateTime> tempProducts,
-    required Map<Offer, DateTime> tempOffers,
-  }) {
-    addFixedProducts(fixedProducts);
-    addTempProducts(tempProducts);
-    addTempOffers(tempOffers);
-    _organizeShowcase();
-  }
+  Showcase()
+      : showcaseProducts = mockShowcaseProductsInfo,
+        maxShowcaseProducts = mockMaxShowcaseProducts,
+        maxShowcaseDays = mockShowcaseProductPeriod;
 
-  void _organizeShowcase(){
-    for(var fixedProduct in _fixedProducts){
-      _tempProducts.removeWhere((p, _)=>p==fixedProduct);
+  bool get isShowcaseFull => showcaseProducts.length >= maxShowcaseProducts;
+
+  ShowcaseAddStatus addShowcaseProduct(Product product) {
+    if (showcaseProducts.length >= maxShowcaseProducts) {
+      return ShowcaseAddStatus.limitReached;
     }
-    for(var tempProduct in _tempProducts.keys){
-      _tempOffers.removeWhere((o,_)=>o.product==tempProduct);
+    if (showcaseProducts.containsKey(product)) {
+      return ShowcaseAddStatus.alreadyExists;
     }
+    showcaseProducts[product] = ShowcaseProductInfo(addedAt: DateTime.now());
+    return ShowcaseAddStatus.success;
   }
 
-  void clearShowcase() {
-    clearFixedProducts();
-    clearTempProducts();
-    clearTempOffers();
+  ShowcaseRemoveStatus removeShowcaseProduct(Product product) {
+    if (!showcaseProducts.containsKey(product)) {
+      print('Product not found in showcase: ${product.name}');
+      return ShowcaseRemoveStatus.productNotFound;
+    }
+    final addedAt = showcaseProducts[product]!.addedAt;
+    if (DateTime.now().difference(addedAt).inDays < maxShowcaseDays) {
+      print(
+          'Product cannot be removed yet: ${product.name} - added at $addedAt');
+      return ShowcaseRemoveStatus.notEnoughTime;
+    }
+    showcaseProducts.remove(product);
+    return ShowcaseRemoveStatus.success;
   }
+}
 
-  UnmodifiableListView<Product> get fixedProducts =>
-      UnmodifiableListView(_fixedProducts);
+class ShowcaseProductInfo {
+  final DateTime addedAt;
 
-  void addFixedProduct(Product product) => _fixedProducts.add(product);
-
-  void addFixedProducts(List<Product> products) =>
-      _fixedProducts.addAll(products);
-
-  void removeFixedProduct(Product product) => _fixedProducts.remove(product);
-
-  void clearFixedProducts() => _fixedProducts.clear();
-
-  bool containsFixedProduct(Product product) {
-    return _fixedProducts.contains(product);
-  }
-
-  UnmodifiableListView<Product> get tempProducts =>
-      UnmodifiableListView(_tempProducts.keys);
-
-  void addTempProduct(Product product, DateTime date) =>
-      _tempProducts[product] = date;
-
-  void addTempProducts(Map<Product, DateTime> products) =>
-      _tempProducts.addAll(products);
-
-  void removeTempProduct(Product product) => _tempProducts.remove(product);
-
-  void clearTempProducts() => _tempProducts.clear();
-
-  bool containsTempProduct(Product product) =>
-      _tempProducts.containsKey(product);
-
-  UnmodifiableListView<Offer> get tempOffers =>
-      UnmodifiableListView(_tempOffers.keys);
-
-  void addTempOffer(Offer offer, DateTime date) => _tempOffers[offer] = date;
-
-  void addTempOffers(Map<Offer, DateTime> offers) => _tempOffers.addAll(offers);
-
-  void removeTempOffer(Offer offer) => _tempOffers.remove(offer);
-
-  void clearTempOffers() => _tempOffers.clear();
-
-  bool containsTempOffer(Offer offer) => _tempOffers.containsKey(offer);
+  ShowcaseProductInfo({
+    required this.addedAt,
+  });
 }

@@ -1,21 +1,15 @@
 class AppRoutes {
-  const AppRoutes._();
-
-  static const String landingPage = '/pagina_inicial';
-  static const String login = '$landingPage/login';
-  static const String createAccount = '$landingPage/criar_conta';
-  static const String forgotPassword = '$landingPage/esqueci_senha';
-  static const String tutorial = '/tutorial';
-  static const String chooseFirstProducts = '$tutorial/produtos';
-  static const String homePage = '/home';
-  static const String searchPage = '$homePage/pesquisa';
-  static const String offerRegister = '$homePage/cadastro_oferta';
-  static const String productDetails = '$homePage/detalhes_produto';
-  static const String shopDetails = '$homePage/detalhes_loja';
-  static const String shopDetailsCategory = '$shopDetails/categoria';
-  static const String userRoot = '$homePage/usuario';
-  static const String buyPoints = '$userRoot/compra_pontos';
-  static const String mainShowcaseProducts = '$userRoot/vitrine';
-  static const String userData = '$userRoot/meus_dados';
-  static const String pendingPoints = '$userRoot/pontos_pendentes';
+  static const String mainPage = '/main_page';
+  static const String setLocationPage = '/set_location_page';
+  static const String setLocationMapPage = '/set_location_map_page';
+  static const String searchPage = '/search_page';
+  static const String productPage = '/product_page';
+  static const String detailedProductPage = '/detailed_product_page';
+  static const String productHelpRequestPage = '/product_help_request_page';
+  static const String editProductPricePage = '/edit_product_price_page';
+  static const String userPointsPage = '/user_points_page';
+  static const String userPersonalDataPage = '/user_personal_data_page';
+  static const String appInfoPage = '/app_info_page';
+  static const String logoutPage = '/logout_page';
+  static const String leaderboardPage = '/ranking_page';
 }
