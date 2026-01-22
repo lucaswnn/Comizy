@@ -8,7 +8,7 @@ class IconSwitcher extends StatefulWidget {
 }
 
 class _IconSwitcherState extends State<IconSwitcher> {
-  final icons = const [
+  final _icons = const [
     Icons.book,
     Icons.movie,
     Icons.music_note,
@@ -17,7 +17,7 @@ class _IconSwitcherState extends State<IconSwitcher> {
     Icons.podcasts,
   ];
 
-  int index = 0;
+  int _index = 0;
 
   @override
   void initState() {
@@ -26,7 +26,7 @@ class _IconSwitcherState extends State<IconSwitcher> {
       await Future.delayed(const Duration(seconds: 1));
       if (!mounted) return false;
       setState(() {
-        index = (index + 1) % icons.length;
+        _index = (_index + 1) % _icons.length;
       });
       return true;
     });
@@ -46,8 +46,8 @@ class _IconSwitcherState extends State<IconSwitcher> {
         );
       },
       child: Icon(
-        icons[index],
-        key: ValueKey(icons[index]),
+        _icons[_index],
+        key: ValueKey(_icons[_index]),
         size: 48,
       ),
     );

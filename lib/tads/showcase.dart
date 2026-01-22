@@ -38,13 +38,10 @@ class Showcase {
 
   ShowcaseRemoveStatus removeShowcaseProduct(Product product) {
     if (!showcaseProducts.containsKey(product)) {
-      print('Product not found in showcase: ${product.name}');
       return ShowcaseRemoveStatus.productNotFound;
     }
     final addedAt = showcaseProducts[product]!.addedAt;
     if (DateTime.now().difference(addedAt).inDays < maxShowcaseDays) {
-      print(
-          'Product cannot be removed yet: ${product.name} - added at $addedAt');
       return ShowcaseRemoveStatus.notEnoughTime;
     }
     showcaseProducts.remove(product);

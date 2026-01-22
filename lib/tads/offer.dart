@@ -5,24 +5,42 @@ import 'package:comizy/tads/shop.dart';
 class Offer implements Comparable<Offer> {
   final Product product;
   final Shop shop;
-  final Price price;
 
   const Offer({
     required this.product,
     required this.shop,
-    required this.price,
   });
 
   @override
-  String toString() =>
-      '${product.name} - ${shop.name} - $price';
-      
-        @override
-        int compareTo(Offer other) {
-          final productComparison = product.name.compareTo(other.product.name);
-          if (productComparison != 0) return productComparison;
-          final shopComparison = shop.name.compareTo(other.shop.name);
-          if (shopComparison != 0) return shopComparison;
-          return price.value.compareTo(other.price.value);
-        }
+  String toString() => '${product.name} - ${shop.name}';
+
+  @override
+  int compareTo(Offer other) {
+    final productComparison = product.name.compareTo(other.product.name);
+    if (productComparison != 0) return productComparison;
+    return shop.name.compareTo(other.shop.name);
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Offer &&
+          runtimeType == other.runtimeType &&
+          product == other.product &&
+          shop == other.shop);
+
+  @override
+  int get hashCode => Object.hash(product, shop);
+}
+
+class OfferInfo {
+  final DateTime lastUpdated;
+  final bool needsUpdate;
+  final Price price;
+
+  const OfferInfo({
+    required this.lastUpdated,
+    required this.needsUpdate,
+    required this.price,
+  });
 }

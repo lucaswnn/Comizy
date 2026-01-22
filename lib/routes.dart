@@ -1,6 +1,6 @@
 import 'package:comizy/pages/detailed_product_page.dart';
 import 'package:comizy/pages/user_section/app_info_page.dart';
-import 'package:comizy/pages/edit_product_price_page.dart';
+import 'package:comizy/pages/help_request_section/edit_product_price_page.dart';
 import 'package:comizy/pages/help_request_section/leaderboard_page.dart';
 import 'package:comizy/pages/user_section/logout_page.dart';
 import 'package:comizy/pages/main_pageview.dart';
@@ -72,7 +72,7 @@ class Routes {
         return getRoute(widget: const LeaderboardPage());
 
       case AppRoutes.setLocationMapPage:
-        return getRoute(widget: const SetLocationMapPage());
+        return getRoute(widget: SetLocationMapPage());
 
       /// An invalid route. User shouldn't see this,
       /// it's for debugging purpose only.

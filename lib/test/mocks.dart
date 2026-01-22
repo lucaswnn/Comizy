@@ -8,6 +8,7 @@ import 'package:comizy/tads/product_type.dart';
 import 'package:comizy/tads/shop.dart';
 import 'package:comizy/tads/showcase.dart';
 import 'package:comizy/tads/user.dart';
+import 'package:latlong2/latlong.dart';
 
 final mockProductTypes = ProductType.mainTypeMap.entries
     .expand(
@@ -34,7 +35,14 @@ final mockProducts = List<Product>.generate(mockNumberOfProducts, (i) {
 final mockNumberOfShops = 4;
 
 final mockShops = List<Shop>.generate(mockNumberOfShops, (i) {
-  return Shop(name: 'Loja $i');
+  final actualLocation = const LatLng(-21.112631949836327, -44.23889486864758);
+  return Shop(
+    name: 'Loja $i',
+    location: LatLng(
+      actualLocation.latitude + (Random().nextDouble() - 0.5) * 0.05,
+      actualLocation.longitude + (Random().nextDouble() - 0.5) * 0.05,
+    ),
+  );
 });
 
 final mockOffers = mockShops.expand((shop) {
@@ -45,13 +53,21 @@ final mockOffers = mockShops.expand((shop) {
     return Offer(
       product: product,
       shop: shop,
-      price: Price((random.nextDouble() * 100).roundToDouble()),
     );
   });
 }).toList();
 
-final mockMarketOffers = mockOffers.fold<Set<Offer>>({}, (market, offer) {
-  market.add(offer);
+final mockMarketOffers =
+    mockOffers.fold<Map<Offer, OfferInfo>>({}, (market, offer) {
+  market[offer] = OfferInfo(
+    lastUpdated: DateTime.now().subtract(
+      Duration(
+        days: Random().nextInt(15),
+      ),
+    ),
+    needsUpdate: Random().nextBool(),
+    price: Price((Random().nextDouble() * 100).roundToDouble()),
+  );
   return market;
 });
 
@@ -70,8 +86,16 @@ final mockNumberOfHelpRequests = 10;
 
 final mockHelpRequests = List.generate(mockNumberOfHelpRequests, (i) {
   final random = Random();
+  final offers = mockMarketOffers.entries
+      .where((e) => e.value.needsUpdate)
+      .map((e) => e.key)
+      .toList();
+  final products = offers.fold<Set<Product>>({}, (set, offer) {
+    set.add(offer.product);
+    return set;
+  }).toList();
   return HelpRequest(
-    product: mockProducts[random.nextInt(mockProducts.length)],
+    product: products[random.nextInt(products.length)],
     mainOrderer: mockUsers[random.nextInt(mockUsers.length)],
     numberOfOrderes: random.nextInt(mockNumberOfHelpRequests - 1) + 1,
   );

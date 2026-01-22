@@ -28,7 +28,7 @@ enum ProductSubcategory {
   toString() => label;
 }
 
-class ProductType {
+class ProductType implements Comparable<ProductType> {
   final ProductCategory mainCategory;
   final ProductSubcategory subcategory;
 
@@ -48,4 +48,14 @@ class ProductType {
       ProductSubcategory.whiskey,
     },
   };
+  
+  @override
+  int compareTo(ProductType other) {
+    final mainCategoryComparison =
+        mainCategory.index.compareTo(other.mainCategory.index);
+    if (mainCategoryComparison != 0) {
+      return mainCategoryComparison;
+    }
+    return subcategory.index.compareTo(other.subcategory.index);
+  }
 }

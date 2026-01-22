@@ -6,27 +6,24 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 
-class SetLocationMapPage extends StatefulWidget {
-  const SetLocationMapPage({super.key});
+class SetLocationMapPage extends StatelessWidget {
+  SetLocationMapPage({super.key});
 
-  @override
-  State<SetLocationMapPage> createState() => _MapWidgetState();
-}
-
-class _MapWidgetState extends State<SetLocationMapPage> {
   final MapController _mapController = MapController();
-  LatLng _desiredLocation = LocationNotifier.defaultLocation;
 
   @override
   Widget build(BuildContext context) {
     final locationNotifier = context.read<LocationNotifier>();
     final settedLocation = locationNotifier.settedLocation;
-    final readedLocation = locationNotifier.currentLocation;
-    var currentLocation = readedLocation;
-    double initialZoom = 16;
-    if (currentLocation == null) {
-      currentLocation = LocationNotifier.defaultLocation;
-      initialZoom = 6;
+    final currentLocation = locationNotifier.currentLocation;
+    LatLng initialCenter = LocationNotifier.defaultLocation;
+    double initialZoom = 6;
+    if (currentLocation != null) {
+      initialCenter = currentLocation;
+      initialZoom = 14;
+    } else if (settedLocation != null) {
+      initialCenter = settedLocation;
+      initialZoom = 14;
     }
 
     final markers = [
@@ -41,7 +38,7 @@ class _MapWidgetState extends State<SetLocationMapPage> {
             size: 40,
           ),
         ),
-      if (readedLocation != null)
+      if (currentLocation != null)
         Marker(
           point: currentLocation,
           width: 40,
@@ -66,13 +63,8 @@ class _MapWidgetState extends State<SetLocationMapPage> {
                 FlutterMap(
                   mapController: _mapController,
                   options: MapOptions(
-                    initialCenter: currentLocation,
+                    initialCenter: initialCenter,
                     initialZoom: initialZoom,
-                    onPositionChanged: (camera, hasGesture) {
-                      if (hasGesture) {
-                        setState(() => _desiredLocation = camera.center);
-                      }
-                    },
                   ),
                   children: [
                     TileLayer(
@@ -98,8 +90,8 @@ class _MapWidgetState extends State<SetLocationMapPage> {
           const SizedBox(height: 10),
           ElevatedButton(
             onPressed: () {
-              locationNotifier.setCustomLocation(_desiredLocation);
-              NavigationHelper.popUntilNamed(AppRoutes.mainPage);
+              locationNotifier.setCustomLocation(_mapController.camera.center);
+              NavigationHelper.pushReplacementNamed(AppRoutes.mainPage);
             },
             child: const Text('Definir localização'),
           ),

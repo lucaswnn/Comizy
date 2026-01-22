@@ -36,4 +36,15 @@ class NavigationHelper {
       (route) => route.settings.name == routeName,
     );
   }
+
+  static Future<T?> pushNamedAndClearStack<T extends Object?>(
+    String routeName, {
+    Object? arguments,
+  }) {
+    return _key.currentState!.pushNamedAndRemoveUntil<T>(
+      routeName,
+      (_) => false,
+      arguments: arguments,
+    );
+  }
 }

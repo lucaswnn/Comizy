@@ -16,16 +16,16 @@ class MainPageView extends StatefulWidget {
 }
 
 class _MainPageViewState extends State<MainPageView> {
-  final pageController = PageController();
+  final _pageController = PageController();
 
-  final List<Widget> pages = const [
+  final List<Widget> _pages = const [
     HomePage(),
     ShowcasePage(),
     HelpRequestPage(),
     UserPage(),
   ];
 
-  final List<NavigationDestination> navItems = const [
+  final List<NavigationDestination> _navItems = const [
     NavigationDestination(
         icon: Icon(
           Icons.abc,
@@ -48,11 +48,11 @@ class _MainPageViewState extends State<MainPageView> {
         label: 'User'),
   ];
 
-  int currentNavIndex = 0;
+  int _currentNavIndex = 0;
 
   @override
   void dispose() {
-    pageController.dispose();
+    _pageController.dispose();
     super.dispose();
   }
 
@@ -60,7 +60,7 @@ class _MainPageViewState extends State<MainPageView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const MainAppBar(),
-      floatingActionButton: currentNavIndex == 2
+      floatingActionButton: _currentNavIndex == 2
           ? FloatingActionButton(
               onPressed: () {
                 NavigationHelper.pushNamed(AppRoutes.leaderboardPage);
@@ -69,18 +69,18 @@ class _MainPageViewState extends State<MainPageView> {
             )
           : null,
       body: PageView(
-        controller: pageController,
-        onPageChanged: (i) => setState(() => currentNavIndex = i),
-        children: pages,
+        controller: _pageController,
+        onPageChanged: (i) => setState(() => _currentNavIndex = i),
+        children: _pages,
       ),
       bottomNavigationBar: NavigationBar(
-        destinations: navItems,
-        selectedIndex: currentNavIndex,
+        destinations: _navItems,
+        selectedIndex: _currentNavIndex,
         onDestinationSelected: (index) => setState(
           () {
-            currentNavIndex = index;
-            pageController.animateToPage(
-              currentNavIndex,
+            _currentNavIndex = index;
+            _pageController.animateToPage(
+              _currentNavIndex,
               duration: Durations.medium1,
               curve: Curves.ease,
             );

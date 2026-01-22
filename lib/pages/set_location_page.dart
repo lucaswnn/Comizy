@@ -22,33 +22,7 @@ class SetLocationPage extends StatelessWidget {
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              ElevatedButton(
-                onPressed: () async {
-                  try {
-                    await context.read<LocationNotifier>().setCurrentLocation();
-                    if (!context.mounted) return;
-                    NavigationHelper.pop();
-                  } catch (e) {
-                    showDialog(
-                      context: context,
-                      builder: (_) => AlertDialog(
-                        content: const Text(
-                            'Não foi possível obter a localização atual. '
-                            'Tente configurar as permissões do uso de localização.'),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              NavigationHelper.pop();
-                            },
-                            child: const Text('OK'),
-                          )
-                        ],
-                      ),
-                    );
-                  }
-                },
-                child: const Text('Usar localização atual'),
-              ),
+              const SetCurrentLocationButton(),
               const SizedBox(height: 10),
               ElevatedButton(
                 onPressed: () {
@@ -60,6 +34,51 @@ class SetLocationPage extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class SetCurrentLocationButton extends StatelessWidget {
+  const SetCurrentLocationButton({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isSettingLocation =
+        context.select<LocationNotifier, bool>((x) => x.isSettingLocation);
+
+    if (isSettingLocation) {
+      return const CircularProgressIndicator();
+    }
+
+    return ElevatedButton(
+      onPressed: () {
+        context.read<LocationNotifier>().setCurrentLocation(
+          onSuccess: () {
+            NavigationHelper.pop();
+          },
+          onFailure: () {
+            showDialog(
+              context: context,
+              builder: (_) => AlertDialog(
+                content: const Text(
+                    'Não foi possível obter a localização atual. '
+                    'Tente configurar as permissões do uso de localização.'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      NavigationHelper.pop();
+                    },
+                    child: const Text('OK'),
+                  )
+                ],
+              ),
+            );
+          },
+        );
+      },
+      child: const Text('Usar localização atual'),
     );
   }
 }

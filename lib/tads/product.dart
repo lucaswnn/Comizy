@@ -20,4 +20,14 @@ class Product implements Comparable<Product> {
   int compareTo(Product other) {
     return name.compareTo(other.name);
   }
+
+  static int compareByType(Product a, Product b) {
+    final typeComparison = a.productType.compareTo(b.productType);
+    if (typeComparison != 0) {
+      return typeComparison;
+    }
+    return a.name.compareTo(b.name);
+  }
+
+  
 }

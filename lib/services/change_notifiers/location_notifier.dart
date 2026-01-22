@@ -21,6 +21,9 @@ class LocationNotifier with ChangeNotifier {
   bool _isCurrentLocation = false;
   bool get isCurrentLocation => _isCurrentLocation;
 
+  bool _isSettingLocation = false;
+  bool get isSettingLocation => _isSettingLocation;
+
   void setCustomLocation(LatLng loc) {
     _settedLocation = loc;
     _isCurrentLocation = false;
@@ -80,15 +83,26 @@ class LocationNotifier with ChangeNotifier {
     }
   }
 
-  Future<void> setCurrentLocation() async {
+  Future<void> setCurrentLocation({
+    required VoidCallback onSuccess,
+    required VoidCallback onFailure,
+  }) async {
+    _isSettingLocation = true;
+    notifyListeners();
+
     final hasGPS = await ensureGPS();
     if (!hasGPS) {
-      throw NoGPSException();
+      _isSettingLocation = false;
+      onFailure.call();
+      notifyListeners();
+      return;
     }
 
     _settedLocation = _currentLocation;
     _isCurrentLocation = true;
 
+    _isSettingLocation = false;
+    onSuccess.call();
     notifyListeners();
   }
 }

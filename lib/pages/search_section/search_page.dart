@@ -29,6 +29,15 @@ class _SearchPageState extends State<SearchPage> {
     _textController.addListener(_onSearchChanged);
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    if (_debounce?.isActive ?? false) {
+      _debounce!.cancel();
+    }
+    _textController.dispose();
+  }
+
   Future<void> _onSearchChanged() async {
     if (_debounce?.isActive ?? false) {
       _debounce!.cancel();
@@ -71,12 +80,6 @@ class _SearchPageState extends State<SearchPage> {
         );
       },
     );
-  }
-
-  @override
-  void dispose() {
-    _textController.dispose();
-    super.dispose();
   }
 
   @override
