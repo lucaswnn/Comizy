@@ -1,5 +1,4 @@
 import 'package:comizy/services/change_notifiers/help_request_notifier.dart';
-import 'package:comizy/services/change_notifiers/product_notifier.dart';
 import 'package:comizy/utils/navigation_helper.dart';
 import 'package:comizy/values/app_routes.dart';
 import 'package:flutter/material.dart';
@@ -50,7 +49,7 @@ class HelpRequestPage extends StatelessWidget {
               '${request.mainOrderer} e mais ${request.numberOfOrderes} pessoas '
               'gostariam de saber o preço'),
           onTap: () {
-            context.read<ProductNotifier>().currentProduct = request.product;
+            context.read<HelpRequestNotifier>().currentProductRequest = request.product;
             NavigationHelper.pushNamed(AppRoutes.productHelpRequestPage);
           },
         );

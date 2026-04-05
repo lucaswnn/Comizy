@@ -1,7 +1,10 @@
+import 'package:comizy/services/change_notifiers/help_request_notifier.dart';
 import 'package:comizy/services/change_notifiers/location_notifier.dart';
 import 'package:comizy/services/change_notifiers/market_notifier.dart';
 import 'package:comizy/services/change_notifiers/shop_notifier.dart';
+import 'package:comizy/tads/market.dart';
 import 'package:comizy/tads/shop.dart';
+import 'package:comizy/utils/invalid_route.dart';
 import 'package:comizy/utils/navigation_helper.dart';
 import 'package:comizy/values/app_routes.dart';
 import 'package:flutter/material.dart';
@@ -40,6 +43,9 @@ class _ProductHelpRequestPageState extends State<ProductHelpRequestPage> {
 
   @override
   Widget build(BuildContext context) {
+    final currentProduct = context.read<HelpRequestNotifier>().currentProductRequest;
+    if(currentProduct == null) return const InvalidRoute();
+
     final locationNotifier = context.read<LocationNotifier>();
     final settedLocation = locationNotifier.settedLocation;
     final currentLocation = locationNotifier.currentLocation;
@@ -53,45 +59,55 @@ class _ProductHelpRequestPageState extends State<ProductHelpRequestPage> {
       initialZoom = 14;
     }
 
-    final shops = context.read<MarketNotifier>().market.shops
+    final updateOffers = context.read<MarketNotifier>().market.needingUpdateOffersFromProduct(currentProduct);
+    final shops = Market.shopsFromOffers(updateOffers).toList()
       ..sort(Shop.compareWithDistance(initialCenter));
+
+    const commonMarkerSize = 40.0;
+    const selectedMarkerSize = 45.0;
 
     final markers = [
       if (currentLocation != null)
         Marker(
           point: currentLocation,
-          width: 40,
-          height: 40,
+          width: commonMarkerSize,
+          height: commonMarkerSize,
           child: const Icon(
             Icons.my_location,
             color: Colors.blue,
-            size: 40,
+            size: commonMarkerSize,
           ),
         ),
       ...shops.map(
         (shop) {
           if (_selectedShop != null && _selectedShop == shop) {
             return Marker(
+              width: selectedMarkerSize,
+              height: selectedMarkerSize,
               point: shop.location,
               child: IconButton(
                 onPressed: _onShopTap(shop),
+                padding: EdgeInsets.zero,
                 icon: const Icon(
                   Icons.location_pin,
                   color: Colors.blue,
-                  size: 50,
+                  size: selectedMarkerSize,
                 ),
               ),
             );
           }
 
           return Marker(
+            width: commonMarkerSize,
+            height: commonMarkerSize,
             point: shop.location,
             child: IconButton(
+              padding: EdgeInsets.zero,
               onPressed: _onShopTap(shop),
               icon: const Icon(
                 Icons.location_pin,
                 color: Colors.red,
-                size: 40,
+                size: commonMarkerSize,
               ),
             ),
           );
@@ -117,6 +133,7 @@ class _ProductHelpRequestPageState extends State<ProductHelpRequestPage> {
                 TileLayer(
                   urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                   userAgentPackageName: 'com.example.app',
+                  tileProvider: NetworkTileProvider(),
                 ),
                 MarkerLayer(
                   markers: markers,

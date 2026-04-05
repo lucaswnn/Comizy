@@ -1,11 +1,11 @@
 import 'package:comizy/tads/product.dart';
-import 'package:comizy/tads/user.dart';
+import 'package:comizy/tads/app_user.dart';
 
 class HelpRequest {
   final Product product;
-  final OtherUser mainOrderer;
+  final AppOtherUser mainOrderer;
   final int numberOfOrderes;
-  
+
   const HelpRequest({
     required this.product,
     required this.mainOrderer,

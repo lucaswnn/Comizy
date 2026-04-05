@@ -28,6 +28,4 @@ class Product implements Comparable<Product> {
     }
     return a.name.compareTo(b.name);
   }
-
-  
 }

@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
-class UserPointsPage extends StatelessWidget {
-  const UserPointsPage({super.key});
+class AwardsPage extends StatelessWidget {
+  const AwardsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Meus pontos'),
+        title: const Text('Premiações'),
       ),
       body: const Center(
-        child: Text('Aqui vai o resumo dos pontos do usuário.'),
+        child: Text('Minhas premiações'),
       ),
     );
   }

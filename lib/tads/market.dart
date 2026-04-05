@@ -4,6 +4,8 @@ import 'package:comizy/tads/shop.dart';
 import 'package:comizy/test/mocks.dart';
 
 class Market {
+  final Set<Product> _products={};
+  final Set<Shop> _shops={};
   final Map<Offer, OfferInfo> _offers;
 
   Market() : _offers = mockMarketOffers;
@@ -23,25 +25,39 @@ class Market {
         _offers.entries.where((offer) => offer.key.product == product));
   }
 
-  List<Product> get products {
-    final productSet = <Product>{};
-    for (final offer in _offers.entries) {
-      productSet.add(offer.key.product);
-    }
-    return productSet.toList();
+  Set<Product> get products => Market.productsFromOffers(_offers);
+
+  Set<Shop> get shops => Market.shopsFromOffers(_offers);
+
+  Map<Offer, OfferInfo> needingUpdateOffersOnShop(Shop shop) {
+    return Map<Offer, OfferInfo>.fromEntries(
+      _offers.entries
+          .where((entry) => entry.key.shop == shop && entry.value.needsUpdate),
+    );
   }
 
-  List<Shop> get shops {
-    final shopSet = <Shop>{};
-    for (var offer in _offers.entries) {
-      shopSet.add(offer.key.shop);
-    }
-    return shopSet.toList();
+  Map<Offer, OfferInfo> needingUpdateOffersFromProduct(Product product) {
+    return Map<Offer, OfferInfo>.fromEntries(
+      _offers.entries.where(
+          (entry) => entry.key.product == product && entry.value.needsUpdate),
+    );
   }
 
-  Map<Offer, OfferInfo> needingUpdateOffers(Shop shop) {
-    return Map<Offer, OfferInfo>.fromEntries(_offers.entries
-        .where((entry) => entry.key.shop == shop && entry.value.needsUpdate));
+  static Set<Shop> shopsFromOffers(Map<Offer, OfferInfo> map) {
+    return map.entries.fold(
+      {},
+      (set, item) {
+        set.add(item.key.shop);
+        return set;
+      },
+    );
+  }
+
+  static Set<Product> productsFromOffers(Map<Offer, OfferInfo> map) {
+    return map.entries.fold({}, (set, item) {
+      set.add(item.key.product);
+      return set;
+    });
   }
 
   void setOfferUpdated(Offer offer) {

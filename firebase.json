@@ -1,16 +1,1 @@
-{
-  "hosting": {
-    "public": "build/web",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
-    ]
-  }
-}
+{"hosting":{"public":"build/web","ignore":["firebase.json","**/.*","**/node_modules/**"],"rewrites":[{"source":"**","destination":"/index.html"}]},"flutter":{"platforms":{"android":{"default":{"projectId":"comizy","appId":"1:915183794295:android:5a26089a30b6358485ae72","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"comizy","configurations":{"android":"1:915183794295:android:5a26089a30b6358485ae72","ios":"1:915183794295:ios:871fee91fd47704385ae72","web":"1:915183794295:web:e022f5394265a7f785ae72"}}}}}}

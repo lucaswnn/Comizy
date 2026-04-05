@@ -3,33 +3,119 @@ import 'package:comizy/utils/navigation_helper.dart';
 import 'package:comizy/values/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 
-class SetLocationMapPage extends StatelessWidget {
-  SetLocationMapPage({super.key});
+class SetLocationMapPage extends StatefulWidget {
+  const SetLocationMapPage({super.key});
 
-  final MapController _mapController = MapController();
+  @override
+  State<SetLocationMapPage> createState() => _SetLocationMapPageState();
+}
+
+class _SetLocationMapPageState extends State<SetLocationMapPage> {
+  late final MapController _mapController;
+
+  @override
+  void initState() {
+    super.initState();
+    _mapController = MapController();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _mapController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final locationNotifier = context.read<LocationNotifier>();
-    final settedLocation = locationNotifier.settedLocation;
-    final currentLocation = locationNotifier.currentLocation;
-    LatLng initialCenter = LocationNotifier.defaultLocation;
-    double initialZoom = 6;
-    if (currentLocation != null) {
-      initialCenter = currentLocation;
-      initialZoom = 14;
-    } else if (settedLocation != null) {
-      initialCenter = settedLocation;
-      initialZoom = 14;
-    }
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Selecione sua localização'),
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: Stack(
+              children: [
+                FlutterMap(
+                  mapController: _mapController,
+                  children: [
+                    TileLayer(
+                      urlTemplate:
+                          'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                      userAgentPackageName: 'com.comizy.app',
+                      errorTileCallback: (tile, error, stackTrace) {
+                        print(error);
+                      },
+                      retinaMode: false,
+                      tileDisplay: const TileDisplay.fadeIn(
+                        duration: Duration(milliseconds: 200),
+                      ),
+                    ),
+                  ],
+                ),
+                const Center(
+                  child: Icon(
+                    Icons.location_pin,
+                    color: Colors.red,
+                    size: 40,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+          ElevatedButton(
+            onPressed: () {
+              final locationNotifier = context.read<LocationNotifier>();
+              locationNotifier.setCustomLocation(_mapController.camera.center);
+              NavigationHelper.pushReplacementNamed(AppRoutes.mainPage);
+            },
+            child: const Text('Definir localização'),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
+/*
+class _SetLocationMapPageState extends State<SetLocationMapPage> {
+  late final MapController _mapController;
+  LatLng? _settedLocation;
+  LatLng? _currentLocation;
+  LatLng _initialCenter = LocationNotifier.defaultLocation;
+  double _initialZoom = 6;
+
+  @override
+  void initState() {
+    _mapController = MapController();
+    super.initState();
+    final locationNotifier = context.read<LocationNotifier>();
+    _settedLocation = locationNotifier.settedLocation;
+    _currentLocation = locationNotifier.currentLocation;
+    if (_currentLocation != null) {
+      _initialCenter = _currentLocation!;
+      _initialZoom = 14;
+    } else if (_settedLocation != null) {
+      _initialCenter = _settedLocation!;
+      _initialZoom = 14;
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _mapController.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final markers = [
-      if (settedLocation != null)
+      if (_settedLocation != null)
         Marker(
-          point: settedLocation,
+          point: _settedLocation!,
           width: 40,
           height: 40,
           child: const Icon(
@@ -38,9 +124,9 @@ class SetLocationMapPage extends StatelessWidget {
             size: 40,
           ),
         ),
-      if (currentLocation != null)
+      if (_currentLocation != null)
         Marker(
-          point: currentLocation,
+          point: _currentLocation!,
           width: 40,
           height: 40,
           child: const Icon(
@@ -63,14 +149,24 @@ class SetLocationMapPage extends StatelessWidget {
                 FlutterMap(
                   mapController: _mapController,
                   options: MapOptions(
-                    initialCenter: initialCenter,
-                    initialZoom: initialZoom,
+                    initialCenter: _initialCenter,
+                    initialZoom: _initialZoom,
+                    interactionOptions: const InteractionOptions(
+                      flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
+                    ),
                   ),
                   children: [
                     TileLayer(
                       urlTemplate:
                           'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                      userAgentPackageName: 'com.example.app',
+                      userAgentPackageName: 'com.comizy.app',
+                      errorTileCallback: (tile, error, stackTrace) {
+                        print(error);
+                      },
+                      retinaMode: false,
+                      tileDisplay: const TileDisplay.fadeIn(
+                        duration: Duration(milliseconds: 200),
+                      ),
                     ),
                     MarkerLayer(
                       markers: markers,
@@ -90,6 +186,7 @@ class SetLocationMapPage extends StatelessWidget {
           const SizedBox(height: 10),
           ElevatedButton(
             onPressed: () {
+              final locationNotifier = context.read<LocationNotifier>();
               locationNotifier.setCustomLocation(_mapController.camera.center);
               NavigationHelper.pushReplacementNamed(AppRoutes.mainPage);
             },
@@ -100,3 +197,4 @@ class SetLocationMapPage extends StatelessWidget {
     );
   }
 }
+*/

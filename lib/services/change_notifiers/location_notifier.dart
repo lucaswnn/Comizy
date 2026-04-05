@@ -1,3 +1,6 @@
+import 'package:comizy/services/database/database_parser.dart';
+import 'package:comizy/tads/neighborhood.dart';
+import 'package:comizy/utils/geodistance.dart';
 import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
@@ -12,6 +15,10 @@ enum GPSStatus {
 class LocationNotifier with ChangeNotifier {
   static const LatLng defaultLocation = LatLng(-15.7801, -47.9292); // Brasília
 
+  int? _maxRadiusDistanceinKm;
+  set maxRadiusDistanceInKm(int distance) =>
+      _maxRadiusDistanceinKm ??= distance;
+
   LatLng? _settedLocation;
   LatLng? get settedLocation => _settedLocation;
 
@@ -23,6 +30,28 @@ class LocationNotifier with ChangeNotifier {
 
   bool _isSettingLocation = false;
   bool get isSettingLocation => _isSettingLocation;
+
+  Set<Neighborhood>? _neighborhoods;
+  Set<Neighborhood>? get neighborhoods => _neighborhoods;
+
+  Future<void> setNearestNeighborhoods()async{
+    _neighborhoods = await DatabaseParser.getNeighborhoods();
+  }
+
+  Set<Neighborhood> getNearestNeighborhoods() {
+    if (_settedLocation == null) {
+      return {};
+    }
+    if(_maxRadiusDistanceinKm == null){
+      return {};
+    }
+    return _neighborhoods
+            ?.where((n) =>
+                geoDistance(_settedLocation!, n.latLng) <=
+                _maxRadiusDistanceinKm!)
+            .toSet() ??
+        {};
+  }
 
   void setCustomLocation(LatLng loc) {
     _settedLocation = loc;
@@ -56,7 +85,8 @@ class LocationNotifier with ChangeNotifier {
       }
 
       Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.best,
+        locationSettings:
+            const LocationSettings(accuracy: LocationAccuracy.best),
       );
 
       _currentLocation = LatLng(position.latitude, position.longitude);
@@ -67,50 +97,27 @@ class LocationNotifier with ChangeNotifier {
     }
   }
 
-  Future<bool> ensureGPS() async {
+  Future<GPSStatus> ensureGPS() async {
     final status = await askForGPS();
-    switch (status) {
-      case GPSStatus.disabled:
-        {
-          await Geolocator.openLocationSettings();
-          return false;
-        }
-      case GPSStatus.permissionDenied:
-      case GPSStatus.permissionDeniedForever:
-        return false;
-      case GPSStatus.enabled:
-        return true;
+
+    if (status == GPSStatus.disabled) {
+      await Geolocator.openLocationSettings();
     }
+    return status;
   }
 
-  Future<void> setCurrentLocation({
-    required VoidCallback onSuccess,
-    required VoidCallback onFailure,
-  }) async {
+  Future<GPSStatus> setCurrentLocation() async {
     _isSettingLocation = true;
     notifyListeners();
 
     final hasGPS = await ensureGPS();
-    if (!hasGPS) {
-      _isSettingLocation = false;
-      onFailure.call();
-      notifyListeners();
-      return;
+    if (hasGPS != GPSStatus.enabled) {
+      return hasGPS;
     }
 
     _settedLocation = _currentLocation;
     _isCurrentLocation = true;
-
-    _isSettingLocation = false;
-    onSuccess.call();
     notifyListeners();
+    return hasGPS;
   }
-}
-
-class NoGPSException implements Exception {
-  final String message;
-  NoGPSException([this.message = 'GPS is not enabled or permission denied.']);
-
-  @override
-  String toString() => 'NoGPSException: $message';
 }

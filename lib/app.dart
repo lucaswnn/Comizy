@@ -1,5 +1,5 @@
-import 'package:comizy/pages/main_pageview.dart';
 import 'package:comizy/routes.dart';
+import 'package:comizy/utils/snackbar_helper.dart';
 import 'package:comizy/values/app_routes.dart';
 import 'package:comizy/utils/navigation_helper.dart';
 import 'package:flutter/material.dart';
@@ -12,10 +12,10 @@ class App extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       restorationScopeId: 'app',
-      initialRoute: AppRoutes.mainPage,
+      initialRoute: AppRoutes.authGate,
       navigatorKey: NavigationHelper.key,
+      scaffoldMessengerKey: SnackbarHelper.key,
       onGenerateRoute: Routes.generateRoute,
-      home: const MainPageView(),
     );
   }
 }

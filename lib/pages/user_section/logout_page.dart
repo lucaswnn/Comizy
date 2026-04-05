@@ -1,3 +1,7 @@
+import 'package:comizy/services/auth/auth_service.dart';
+import 'package:comizy/services/shared_preferenes/app_preferences.dart';
+import 'package:comizy/utils/navigation_helper.dart';
+import 'package:comizy/values/app_routes.dart';
 import 'package:flutter/material.dart';
 
 class LogoutPage extends StatelessWidget {
@@ -9,8 +13,16 @@ class LogoutPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Sair'),
       ),
-      body: const Center(
-        child: Text('Aqui vai a lógica para sair do app.'),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () async {
+            final authService = AuthService.instance;
+            await authService.logout();
+            await AppPreferences.resetPreferences();
+            NavigationHelper.pushNamedAndClearStack(AppRoutes.landingPage);
+          },
+          child: const Text('Sair'),
+        ),
       ),
     );
   }

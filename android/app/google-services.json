@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "915183794295",
+    "project_id": "comizy",
+    "storage_bucket": "comizy.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:915183794295:android:347de47053cfa38a85ae72",
+        "android_client_info": {
+          "package_name": "com.comizy.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBYGRgrrvx-3aGDLsMRYSJY6_H6noz1qOk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:915183794295:android:5a26089a30b6358485ae72",
+        "android_client_info": {
+          "package_name": "com.comizy.comizy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBYGRgrrvx-3aGDLsMRYSJY6_H6noz1qOk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

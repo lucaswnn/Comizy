@@ -1,3 +1,4 @@
+import 'package:comizy/services/auth/auth_service.dart';
 import 'package:comizy/utils/navigation_helper.dart';
 import 'package:comizy/values/app_routes.dart';
 import 'package:flutter/material.dart';
@@ -19,8 +20,16 @@ class InvalidRoute extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             ElevatedButton(
-                onPressed: () => NavigationHelper.pushNamed(AppRoutes.mainPage),
-                child: const Text('Retornar')),
+              onPressed: () {
+                if (AuthService.instance.currentUser != null) {
+                  NavigationHelper.pushNamedAndClearStack(AppRoutes.mainPage);
+                } else {
+                  NavigationHelper.pushNamedAndClearStack(
+                      AppRoutes.landingPage);
+                }
+              },
+              child: const Text('Retornar'),
+            ),
           ],
         ),
       ),

@@ -1,7 +1,6 @@
 import 'package:comizy/services/change_notifiers/async_action_notifier.dart';
 import 'package:comizy/services/change_notifiers/help_request_notifier.dart';
 import 'package:comizy/services/change_notifiers/market_notifier.dart';
-import 'package:comizy/services/change_notifiers/product_notifier.dart';
 import 'package:comizy/services/change_notifiers/shop_notifier.dart';
 import 'package:comizy/services/command/submit_price_command.dart';
 import 'package:comizy/tads/product.dart';
@@ -80,11 +79,16 @@ class _EditProductPricePageState extends State<EditProductPricePage> {
 
   Widget _buildOtherHelpRequests({
     required Shop shop,
-    required ProductNotifier productNotifier,
+    required HelpRequestNotifier helpRequestNotifier,
     required MarketNotifier marketNotifier,
   }) {
     final offers =
-        marketNotifier.market.needingUpdateOffers(shop).entries.toList();
+        marketNotifier.market.needingUpdateOffersOnShop(shop).entries.toList();
+    if (offers.isEmpty) {
+      return const Center(
+        child: Text('Essa loja não possui mais produtos para cadastrar'),
+      );
+    }
     return Column(
       children: [
         const Flexible(
@@ -102,10 +106,8 @@ class _EditProductPricePageState extends State<EditProductPricePage> {
                 title: Text('$offer'),
                 subtitle: Text(
                     'Último preço em: ${offerInfo.lastUpdated.toShortDateString}'),
-                trailing:
-                    Text('Precisa de atualização: ${offerInfo.needsUpdate}'),
                 onTap: () {
-                  productNotifier.currentProduct = offer.product;
+                  helpRequestNotifier.currentProductRequest = offer.product;
                   NavigationHelper.pushReplacementNamed(
                       AppRoutes.editProductPricePage);
                 },
@@ -119,32 +121,32 @@ class _EditProductPricePageState extends State<EditProductPricePage> {
 
   void showResponseDialog({required String title, required String content}) {
     showDialog(
-        context: context,
-        builder: (_) {
-          return AlertDialog(
-            title: Text(title),
-            content: Text(content),
-            actions: [
-              TextButton(
-                child: const Text('Voltar'),
-                onPressed: () {
-                  NavigationHelper.pop();
-                },
-              ),
-            ],
-          );
-        });
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: [
+            TextButton(
+              child: const Text('Voltar'),
+              onPressed: () {
+                NavigationHelper.pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final productNotifier = context.read<ProductNotifier>();
-    final product = productNotifier.currentProduct;
     final shop = context.read<ShopNotifier>().currentShop;
     final helpRequestNotifier = context.read<HelpRequestNotifier>();
-    final marketNotifier = context.read<MarketNotifier>();
-
+    final product = helpRequestNotifier.currentProductRequest;
     if (product == null || shop == null) return const InvalidRoute();
+
+final marketNotifier = context.read<MarketNotifier>();
 
     return ChangeNotifierProvider(
       create: (_) => AsyncActionNotifier<SubmitPriceResult>(),
@@ -178,7 +180,7 @@ class _EditProductPricePageState extends State<EditProductPricePage> {
             case SubmitPriceResult.success:
               content = _buildOtherHelpRequests(
                 shop: shop,
-                productNotifier: productNotifier,
+                helpRequestNotifier: helpRequestNotifier,
                 marketNotifier: marketNotifier,
               );
               break;

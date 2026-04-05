@@ -1,6 +1,9 @@
+import 'package:comizy/services/change_notifiers/async_action_notifier.dart';
 import 'package:comizy/services/change_notifiers/location_notifier.dart';
+import 'package:comizy/services/command/set_current_location_command.dart';
 import 'package:comizy/utils/navigation_helper.dart';
 import 'package:comizy/values/app_routes.dart';
+import 'package:comizy/widgets/async_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -9,6 +12,8 @@ class SetLocationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final locationNotifier = context.read<LocationNotifier>();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Escolher localização'),
@@ -22,7 +27,52 @@ class SetLocationPage extends StatelessWidget {
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const SetCurrentLocationButton(),
+              ChangeNotifierProvider(
+                create: (_) => AsyncActionNotifier<GPSStatus>(),
+                child: Consumer<AsyncActionNotifier<GPSStatus>>(
+                  builder: (context, asyncActionNotifier, _) {
+                    WidgetsBinding.instance.addPostFrameCallback(
+                      (_) {
+                        switch (asyncActionNotifier.result) {
+                          case GPSStatus.disabled:
+                          case GPSStatus.permissionDenied:
+                          case GPSStatus.permissionDeniedForever:
+                            showDialog(
+                              context: context,
+                              builder: (_) => AlertDialog(
+                                content: const Text(
+                                    'Não foi possível obter a localização atual. '
+                                    'Tente configurar as permissões do uso de localização.'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      NavigationHelper.pop();
+                                    },
+                                    child: const Text('OK'),
+                                  )
+                                ],
+                              ),
+                            );
+                            break;
+                          case GPSStatus.enabled:
+                            NavigationHelper.pop();
+                            break;
+                          case null:
+                            break;
+                        }
+                      },
+                    );
+
+                    return AsyncElevatedButton(
+                      notifier: asyncActionNotifier,
+                      command: SetCurrentLocationCommand(
+                        locationNotifier: locationNotifier,
+                      ),
+                      child: const Text('Localização atual'),
+                    );
+                  },
+                ),
+              ),
               const SizedBox(height: 10),
               ElevatedButton(
                 onPressed: () {
@@ -34,51 +84,6 @@ class SetLocationPage extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-class SetCurrentLocationButton extends StatelessWidget {
-  const SetCurrentLocationButton({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final isSettingLocation =
-        context.select<LocationNotifier, bool>((x) => x.isSettingLocation);
-
-    if (isSettingLocation) {
-      return const CircularProgressIndicator();
-    }
-
-    return ElevatedButton(
-      onPressed: () {
-        context.read<LocationNotifier>().setCurrentLocation(
-          onSuccess: () {
-            NavigationHelper.pop();
-          },
-          onFailure: () {
-            showDialog(
-              context: context,
-              builder: (_) => AlertDialog(
-                content: const Text(
-                    'Não foi possível obter a localização atual. '
-                    'Tente configurar as permissões do uso de localização.'),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      NavigationHelper.pop();
-                    },
-                    child: const Text('OK'),
-                  )
-                ],
-              ),
-            );
-          },
-        );
-      },
-      child: const Text('Usar localização atual'),
     );
   }
 }

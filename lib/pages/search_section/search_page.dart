@@ -25,7 +25,7 @@ class _SearchPageState extends State<SearchPage> {
   @override
   void initState() {
     super.initState();
-    _options = context.read<MarketNotifier>().market.products;
+    _options = context.read<MarketNotifier>().market.products.toList();
     _textController.addListener(_onSearchChanged);
   }
 
@@ -75,7 +75,7 @@ class _SearchPageState extends State<SearchPage> {
           onTap: () {
             context.read<ProductNotifier>().currentProduct =
                 _suggestions[index];
-            NavigationHelper.pushNamed(AppRoutes.productPage);
+            NavigationHelper.pushNamed(AppRoutes.searchProductPage);
           },
         );
       },

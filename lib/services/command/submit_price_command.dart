@@ -1,8 +1,8 @@
 import 'package:comizy/services/change_notifiers/help_request_notifier.dart';
 import 'package:comizy/services/change_notifiers/market_notifier.dart';
 import 'package:comizy/services/command/async_command.dart';
+import 'package:comizy/tads/help_submission.dart';
 import 'package:comizy/tads/offer.dart';
-import 'package:comizy/tads/price.dart';
 import 'package:comizy/tads/product.dart';
 import 'package:comizy/tads/shop.dart';
 
@@ -36,21 +36,29 @@ class SubmitPriceCommand implements AsyncCommand<SubmitPriceResult> {
       return SubmitPriceResult.notValidated;
     }
 
-    final price = Price(priceProvider());
+    final price = priceProvider();
 
     final wasSubmitted = await helpRequestNotifier.submitPriceToServer(
-      offer: Offer(
+      HelpSubmissionData(
         product: product,
         shop: shop,
+        value: price,
       ),
-      price: price,
     );
 
     if (wasSubmitted) {
-      marketNotifier.setOfferUpdated(Offer(
-        product: product,
-        shop: shop,
-      ));
+      marketNotifier.setOfferUpdated(
+        Offer(
+          product: product,
+          shop: shop,
+        ),
+      );
+
+      final needingUpdateOffers =
+          marketNotifier.market.needingUpdateOffersFromProduct(product);
+      if (needingUpdateOffers.isEmpty) {
+        helpRequestNotifier.removeRequestByProduct(product);
+      }
       return SubmitPriceResult.success;
     }
 

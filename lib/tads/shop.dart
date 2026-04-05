@@ -1,12 +1,15 @@
+import 'package:comizy/tads/neighborhood.dart';
 import 'package:latlong2/latlong.dart';
 
 class Shop implements Comparable<Shop> {
   final String name;
   final LatLng location;
+  final Neighborhood neighborhood;
 
   const Shop({
     required this.name,
     required this.location,
+    required this.neighborhood,
   });
 
   @override

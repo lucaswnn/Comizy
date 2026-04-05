@@ -1,25 +1,19 @@
 import 'dart:math';
 
 import 'package:comizy/tads/help_request.dart';
+import 'package:comizy/tads/neighborhood.dart';
 import 'package:comizy/tads/offer.dart';
 import 'package:comizy/tads/price.dart';
 import 'package:comizy/tads/product.dart';
 import 'package:comizy/tads/product_type.dart';
 import 'package:comizy/tads/shop.dart';
 import 'package:comizy/tads/showcase.dart';
-import 'package:comizy/tads/user.dart';
+import 'package:comizy/tads/app_user.dart';
+import 'package:comizy/tads/wallet.dart';
 import 'package:latlong2/latlong.dart';
 
-final mockProductTypes = ProductType.mainTypeMap.entries
-    .expand(
-      (entry) => entry.value.map(
-        (subcat) => ProductType(
-          mainCategory: entry.key,
-          subcategory: subcat,
-        ),
-      ),
-    )
-    .toList();
+final mockProductTypes = <ProductType>[for(final cat in ProductCategory.categories)
+for(final subcat in ProductSubcategory.subcategories) ProductType(mainCategory: cat, subcategory: subcat)];
 
 final mockNumberOfProducts = 20;
 
@@ -34,6 +28,24 @@ final mockProducts = List<Product>.generate(mockNumberOfProducts, (i) {
 
 final mockNumberOfShops = 4;
 
+final mockNeighborhoods = const <Neighborhood>[
+  Neighborhood(
+    city: 'Belo Horizonte',
+    name: 'Castelo',
+    latLng: LatLng(-19.88168932124855, -43.99881989962394),
+  ),
+  Neighborhood(
+    city: 'Belo Horizonte',
+    name: 'Jaraguá',
+    latLng: LatLng(-19.856591376019885, -43.95007233376536),
+  ),
+  Neighborhood(
+    city: 'São João del Rei',
+    name: 'Colônia do Marçal',
+    latLng: LatLng(-21.10444220262934, -44.22836114524594),
+  ),
+];
+
 final mockShops = List<Shop>.generate(mockNumberOfShops, (i) {
   final actualLocation = const LatLng(-21.112631949836327, -44.23889486864758);
   return Shop(
@@ -42,6 +54,7 @@ final mockShops = List<Shop>.generate(mockNumberOfShops, (i) {
       actualLocation.latitude + (Random().nextDouble() - 0.5) * 0.05,
       actualLocation.longitude + (Random().nextDouble() - 0.5) * 0.05,
     ),
+    neighborhood: mockNeighborhoods[Random().nextInt(mockNeighborhoods.length)],
   );
 });
 
@@ -66,7 +79,10 @@ final mockMarketOffers =
       ),
     ),
     needsUpdate: Random().nextBool(),
-    price: Price((Random().nextDouble() * 100).roundToDouble()),
+    price: Price(
+      value: (Random().nextDouble() * 100).roundToDouble(),
+      unit: 'un.',
+    ),
   );
   return market;
 });
@@ -76,7 +92,7 @@ final mockMaxPoints = 1000;
 
 final mockUsers = List.generate(
   mockNumberOfUsers,
-  (i) => OtherUser(
+  (i) => AppOtherUser(
     name: 'Usuário $i',
     points: Random().nextInt(mockMaxPoints),
   ),
@@ -102,29 +118,27 @@ final mockHelpRequests = List.generate(mockNumberOfHelpRequests, (i) {
 }).toSet();
 
 final mockMinimumShowcaseProducts = 5;
-final mockMaxShowcaseProducts =
-    Random().nextInt(5) + mockMinimumShowcaseProducts;
+final mockMaxShowcaseItems = Random().nextInt(5) + mockMinimumShowcaseProducts;
 
-final mockShowcaseProducts = List<Product>.generate(
-  mockMaxShowcaseProducts,
-  (i) => mockProducts[Random().nextInt(mockProducts.length)],
+final mockShowcaseProducts = List<ShowcaseItem>.generate(
+  mockMaxShowcaseItems,
+  (i) => ShowcaseItem(
+    product: mockProducts[Random().nextInt(mockProducts.length)],
+    neighborhood: mockNeighborhoods[Random().nextInt(mockNeighborhoods.length)],
+  ),
 ).toSet();
 
 final mockMaxShowcaseDays = 15;
 
 final mockShowcaseProductPeriod = 7;
 
-final mockShowcaseProductsInfo =
-    mockShowcaseProducts.fold<Map<Product, ShowcaseProductInfo>>(
-  {},
-  (map, product) {
-    map[product] = ShowcaseProductInfo(
-      addedAt: DateTime.now().subtract(
-        Duration(
-          days: Random().nextInt(mockMaxShowcaseDays),
-        ),
-      ),
-    );
-    return map;
-  },
+final mockShowcaseNewSpaceCost = 50;
+
+final mockWalletCash = 125;
+
+final mockMainUser = AppMainUser(
+  name: 'Fulano',
+  points: 100,
+  number: 'number',
+  wallet: Wallet(mockWalletCash),
 );
