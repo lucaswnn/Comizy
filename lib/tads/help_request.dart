@@ -1,14 +1,14 @@
+import 'package:comizy/tads/neighborhood.dart';
 import 'package:comizy/tads/product.dart';
-import 'package:comizy/tads/app_user.dart';
 
 class HelpRequest {
   final Product product;
-  final AppOtherUser mainOrderer;
-  final int numberOfOrderes;
+  final Neighborhood neighborhood;
+  final int numberOfOrderers;
 
   const HelpRequest({
     required this.product,
-    required this.mainOrderer,
-    required this.numberOfOrderes,
+    required this.neighborhood,
+    required this.numberOfOrderers,
   });
 }

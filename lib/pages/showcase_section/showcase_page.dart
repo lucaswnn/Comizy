@@ -10,8 +10,36 @@ import 'package:comizy/widgets/empty_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class ShowcasePage extends StatelessWidget {
+class ShowcasePage extends StatefulWidget {
   const ShowcasePage({super.key});
+
+  @override
+  State<ShowcasePage> createState() =>
+      _ShowcasePageState();
+}
+
+class _ShowcasePageState
+    extends State<ShowcasePage> {
+  @override
+  Widget build(BuildContext context) {
+    final showcaseNotifier = context.read<ShowcaseNotifier>();
+    return FutureBuilder(
+      future: showcaseNotifier.loadData(forceReload: false),
+      builder: (_, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return const ConnectionErrorPage();
+        }
+        return const _ShowcasePageContent();
+      },
+    );
+  }
+}
+
+class _ShowcasePageContent extends StatelessWidget {
+  const _ShowcasePageContent();
 
   ListTile _addProductListTile() => ListTile(
         title: const Text('Adicionar produto'),

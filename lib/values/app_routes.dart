@@ -12,12 +12,10 @@ class AppRoutes {
   static const String searchProductPage = '/search_product_page';
   static const String showcaseProductPage = '/showcase_product_page';
   static const String detailedProductPage = '/detailed_product_page';
-  static const String productHelpRequestPage = '/product_help_request_page';
   static const String editProductPricePage = '/edit_product_price_page';
   static const String userPersonalPage = '/user_personal_page';
   static const String appInfoPage = '/app_info_page';
   static const String logoutPage = '/logout_page';
   static const String leaderboardPage = '/ranking_page';
-  static const String awardsPage = '/awards_page';
   static const String tutorialPage = '/tutorial_page';
 }

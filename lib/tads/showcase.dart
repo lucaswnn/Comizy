@@ -35,7 +35,7 @@ class Showcase {
     required this.maxShowcaseItemsCount,
     required this.newSpaceCost,
     required this.maxShowcaseSlotDays,
-  })  : _showcaseItems = showcaseItems;
+  }) : _showcaseItems = showcaseItems;
 
   UnmodifiableMapView<ShowcaseItem, ShowcaseItemInfo> get showcaseItems =>
       UnmodifiableMapView(_showcaseItems);
@@ -105,6 +105,20 @@ class ShowcaseItem implements Comparable<ShowcaseItem> {
     required this.neighborhood,
   });
 
+  factory ShowcaseItem.fromJSON(Map<String, dynamic> showcaseItemData) {
+    final Map<String, dynamic> productData = showcaseItemData['products'];
+    final Map<String, dynamic> neighborhoodData =
+        showcaseItemData['neighborhoods'];
+
+    final product = Product.fromJSON(productData);
+    final neighborhood = Neighborhood.fromJSON(neighborhoodData);
+
+    return ShowcaseItem(
+      product: product,
+      neighborhood: neighborhood,
+    );
+  }
+
   @override
   int compareTo(ShowcaseItem other) {
     return product.compareTo(other.product);
@@ -130,4 +144,11 @@ class ShowcaseItemInfo {
     required this.addedAt,
     required this.expiresAt,
   });
+
+  factory ShowcaseItemInfo.fromJSON(Map<String, dynamic> showcaseSlot) {
+    final expiresAt = DateTime.tryParse(showcaseSlot['expires_at'] ?? '');
+    final addedAt = DateTime.parse(showcaseSlot['inserted_at']);
+
+    return ShowcaseItemInfo(addedAt: addedAt, expiresAt: expiresAt);
+  }
 }

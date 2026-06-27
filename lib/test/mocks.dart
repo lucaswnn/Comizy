@@ -12,34 +12,52 @@ import 'package:comizy/tads/app_user.dart';
 import 'package:comizy/tads/wallet.dart';
 import 'package:latlong2/latlong.dart';
 
-final mockProductTypes = <ProductType>[for(final cat in ProductCategory.categories)
-for(final subcat in ProductSubcategory.subcategories) ProductType(mainCategory: cat, subcategory: subcat)];
+final mockNumberOfProductCategories = 3;
+final mockProductCategories = List<ProductCategory>.generate(
+    mockNumberOfProductCategories,
+    (i) => ProductCategory('Cat$i', 'CatAsset$i'));
+
+final mockNumberOfProductSubcategories = 5;
+final mockProductSubcategories = List<ProductSubcategory>.generate(
+    mockNumberOfProductSubcategories, (i) => ProductSubcategory('SubCat$i'));
+final mockProductTypes = <ProductType>[
+  for (final cat in mockProductCategories)
+    for (final subcat in mockProductSubcategories)
+      ProductType(mainCategory: cat, subcategory: subcat)
+];
 
 final mockNumberOfProducts = 20;
 
-final mockProducts = List<Product>.generate(mockNumberOfProducts, (i) {
-  final random = Random();
-  return Product(
-      name: 'Produto $i',
-      description: 'Descrição do produto $i',
-      productType: mockProductTypes[random.nextInt(mockProductTypes.length)],
-      asset: '');
-});
+final mockProducts = List<Product>.generate(
+  mockNumberOfProducts,
+  (i) {
+    final random = Random();
+    return Product(
+        id: i,
+        name: 'Produto $i',
+        description: 'Descrição do produto $i',
+        productType: mockProductTypes[random.nextInt(mockProductTypes.length)],
+        asset: '');
+  },
+);
 
 final mockNumberOfShops = 4;
 
 final mockNeighborhoods = const <Neighborhood>[
   Neighborhood(
+    id: 1,
     city: 'Belo Horizonte',
     name: 'Castelo',
     latLng: LatLng(-19.88168932124855, -43.99881989962394),
   ),
   Neighborhood(
+    id: 2,
     city: 'Belo Horizonte',
     name: 'Jaraguá',
     latLng: LatLng(-19.856591376019885, -43.95007233376536),
   ),
   Neighborhood(
+    id: 3,
     city: 'São João del Rei',
     name: 'Colônia do Marçal',
     latLng: LatLng(-21.10444220262934, -44.22836114524594),
@@ -49,6 +67,7 @@ final mockNeighborhoods = const <Neighborhood>[
 final mockShops = List<Shop>.generate(mockNumberOfShops, (i) {
   final actualLocation = const LatLng(-21.112631949836327, -44.23889486864758);
   return Shop(
+    id: i,
     name: 'Loja $i',
     location: LatLng(
       actualLocation.latitude + (Random().nextDouble() - 0.5) * 0.05,
@@ -112,8 +131,8 @@ final mockHelpRequests = List.generate(mockNumberOfHelpRequests, (i) {
   }).toList();
   return HelpRequest(
     product: products[random.nextInt(products.length)],
-    mainOrderer: mockUsers[random.nextInt(mockUsers.length)],
-    numberOfOrderes: random.nextInt(mockNumberOfHelpRequests - 1) + 1,
+    neighborhood: mockNeighborhoods[random.nextInt(mockNeighborhoods.length)],
+    numberOfOrderers: random.nextInt(mockNumberOfHelpRequests - 1) + 1,
   );
 }).toSet();
 

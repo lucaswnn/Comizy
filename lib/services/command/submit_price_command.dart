@@ -54,9 +54,7 @@ class SubmitPriceCommand implements AsyncCommand<SubmitPriceResult> {
         ),
       );
 
-      final needingUpdateOffers =
-          marketNotifier.market.needingUpdateOffersFromProduct(product);
-      if (needingUpdateOffers.isEmpty) {
+      if (marketNotifier.market.productNeedsUpdate(product)) {
         helpRequestNotifier.removeRequestByProduct(product);
       }
       return SubmitPriceResult.success;

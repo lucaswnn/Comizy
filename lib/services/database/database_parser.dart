@@ -1,10 +1,14 @@
 import 'package:comizy/tads/app_user.dart';
 import 'package:comizy/services/database/database_connection.dart';
+import 'package:comizy/tads/help_request.dart';
+import 'package:comizy/tads/help_requests.dart';
+import 'package:comizy/tads/market.dart';
 import 'package:comizy/tads/neighborhood.dart';
+import 'package:comizy/tads/offer.dart';
+import 'package:comizy/tads/price.dart';
 import 'package:comizy/tads/product.dart';
-import 'package:comizy/tads/product_type.dart';
+import 'package:comizy/tads/shop.dart';
 import 'package:comizy/tads/showcase.dart';
-import 'package:latlong2/latlong.dart';
 
 class DatabaseParser {
   DatabaseParser._();
@@ -25,53 +29,9 @@ class DatabaseParser {
       if (showcaseItemData == null) {
         continue;
       }
-      final expiresAt = DateTime.tryParse(showcaseSlot['expires_at'] ?? '');
-      final addedAt = DateTime.parse(showcaseSlot['inserted_at']);
-      final Map<String, dynamic> productData = showcaseItemData['products'];
-      final String productName = productData['product_name'];
-      final String productDescription =
-          productData['product_description'] ?? '';
-      final String productAsset = productData['product_asset'] ?? '';
-      final Map<String, dynamic> productCategoryData =
-          productData['product_categories'];
-      final String productCategory =
-          productCategoryData['product_category_name'];
-      final String productCategoryAsset =
-          productCategoryData['product_category_asset'] ?? '';
-      final Map<String, dynamic> productSubcategoryData =
-          productData['product_subcategories'];
-      final String productSubcategory =
-          productSubcategoryData['product_subcategory_name'];
-      final Map<String, dynamic> neighborhoodData =
-          showcaseItemData['neighborhoods'];
-      final String neighborhoodName = neighborhoodData['neighborhood_name'];
-      final Map<String, dynamic> cityData = neighborhoodData['cities'];
-      final String cityName = cityData['city_name'];
-      final double neighborhoodLat = neighborhoodData['neighborhood_lat'];
-      final double neighborhoodLng = neighborhoodData['neighborhood_lng'];
 
-      final productType = ProductType(
-          mainCategory: ProductCategory(productCategory, productCategoryAsset),
-          subcategory: ProductSubcategory(productSubcategory));
-
-      final product = Product(
-        name: productName,
-        description: productDescription,
-        productType: productType,
-        asset: productAsset,
-      );
-
-      final showcaseItem = ShowcaseItem(
-        product: product,
-        neighborhood: Neighborhood(
-            city: cityName,
-            name: neighborhoodName,
-            latLng: LatLng(neighborhoodLat, neighborhoodLng)),
-      );
-
-      final showcaseItemInfo =
-          ShowcaseItemInfo(addedAt: addedAt, expiresAt: expiresAt);
-
+      final showcaseItem = ShowcaseItem.fromJSON(showcaseItemData);
+      final showcaseItemInfo = ShowcaseItemInfo.fromJSON(showcaseSlot);
       showcaseMap[showcaseItem] = showcaseItemInfo;
     }
 
@@ -87,6 +47,39 @@ class DatabaseParser {
     );
   }
 
+  static Future<Market> getMarket() async {
+    final db = DatabaseConnection.instance;
+    final offersData = await db.loadOffers();
+    final market = Market();
+
+    for (final offerData in offersData) {
+      final double price = offerData['offer_price'];
+      final String unit = offerData['offer_unit'];
+      final lastUpdated = DateTime.parse(offerData['offer_last_updated']);
+      final bool needsUpdate = offerData['offer_needs_update'];
+      final offerInfo = OfferInfo(
+        lastUpdated: lastUpdated,
+        needsUpdate: needsUpdate,
+        price: Price(value: price, unit: unit),
+      );
+
+      final Map<String, dynamic> productData = offerData['products'];
+      final product = Product.fromJSON(productData);
+
+      final Map<String, dynamic> shopData = offerData['shops'];
+      final shop = Shop.fromJSON(shopData);
+
+      final offer = Offer(
+        product: product,
+        shop: shop,
+      );
+
+      market.addOffer(offer, offerInfo);
+    }
+
+    return market;
+  }
+
   static Future<int> getMaxSearchDistanceInKm(String uid) async {
     final data = await DatabaseConnection.instance.loadUserConfigData(uid);
     return data['max_search_distance_km'];
@@ -95,17 +88,37 @@ class DatabaseParser {
   static Future<Set<Neighborhood>> getNeighborhoods() async {
     final data = await DatabaseConnection.instance.loadNeighborhoods();
     final neighborhoodSet = <Neighborhood>{};
-    for(final neighborhoodData in data){
-      final Map<String,dynamic> citiesData = neighborhoodData['cities'];
-      final String cityName = citiesData['city_name'];
-      final String neighborhoodName = neighborhoodData['neighborhood_name'];
-      final double lat = neighborhoodData['neighborhood_lat'];
-      final double lng = neighborhoodData['neighborhood_lng'];
-    
-      final neighborhood = Neighborhood(city: cityName, name: neighborhoodName,
-      latLng: LatLng(lat, lng),);
+    for (final neighborhoodData in data) {
+      final neighborhood = Neighborhood.fromJSON(neighborhoodData);
       neighborhoodSet.add(neighborhood);
     }
+
     return neighborhoodSet;
+  }
+
+  static Future<HelpRequests> getHelpRequests(
+      Set<Neighborhood> neighborhoods) async {
+    final data =
+        await DatabaseConnection.instance.loadHelpRequests(neighborhoods);
+
+    final Set<HelpRequest> requests = {};
+    for (final helpRequestData in data) {
+      final int numberOfOrderes = helpRequestData['total'];
+      final Map<String, dynamic> productData = helpRequestData['products'];
+      final Map<String, dynamic> neighborhoodData =
+          helpRequestData['neighborhoods'];
+
+      final product = Product.fromJSON(productData);
+      final neighborhood = Neighborhood.fromJSON(neighborhoodData);
+
+      requests.add(
+        HelpRequest(
+          product: product,
+          neighborhood: neighborhood,
+          numberOfOrderers: numberOfOrderes,
+        ),
+      );
+    }
+    return HelpRequests(helpRequests: requests);
   }
 }

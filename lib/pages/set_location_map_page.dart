@@ -3,6 +3,7 @@ import 'package:comizy/utils/navigation_helper.dart';
 import 'package:comizy/values/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 
 class SetLocationMapPage extends StatefulWidget {
@@ -12,75 +13,6 @@ class SetLocationMapPage extends StatefulWidget {
   State<SetLocationMapPage> createState() => _SetLocationMapPageState();
 }
 
-class _SetLocationMapPageState extends State<SetLocationMapPage> {
-  late final MapController _mapController;
-
-  @override
-  void initState() {
-    super.initState();
-    _mapController = MapController();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _mapController.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Selecione sua localização'),
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: Stack(
-              children: [
-                FlutterMap(
-                  mapController: _mapController,
-                  children: [
-                    TileLayer(
-                      urlTemplate:
-                          'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                      userAgentPackageName: 'com.comizy.app',
-                      errorTileCallback: (tile, error, stackTrace) {
-                        print(error);
-                      },
-                      retinaMode: false,
-                      tileDisplay: const TileDisplay.fadeIn(
-                        duration: Duration(milliseconds: 200),
-                      ),
-                    ),
-                  ],
-                ),
-                const Center(
-                  child: Icon(
-                    Icons.location_pin,
-                    color: Colors.red,
-                    size: 40,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 10),
-          ElevatedButton(
-            onPressed: () {
-              final locationNotifier = context.read<LocationNotifier>();
-              locationNotifier.setCustomLocation(_mapController.camera.center);
-              NavigationHelper.pushReplacementNamed(AppRoutes.mainPage);
-            },
-            child: const Text('Definir localização'),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/*
 class _SetLocationMapPageState extends State<SetLocationMapPage> {
   late final MapController _mapController;
   LatLng? _settedLocation;
@@ -160,13 +92,6 @@ class _SetLocationMapPageState extends State<SetLocationMapPage> {
                       urlTemplate:
                           'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                       userAgentPackageName: 'com.comizy.app',
-                      errorTileCallback: (tile, error, stackTrace) {
-                        print(error);
-                      },
-                      retinaMode: false,
-                      tileDisplay: const TileDisplay.fadeIn(
-                        duration: Duration(milliseconds: 200),
-                      ),
                     ),
                     MarkerLayer(
                       markers: markers,
@@ -197,4 +122,3 @@ class _SetLocationMapPageState extends State<SetLocationMapPage> {
     );
   }
 }
-*/

@@ -2,15 +2,34 @@ import 'package:comizy/tads/neighborhood.dart';
 import 'package:latlong2/latlong.dart';
 
 class Shop implements Comparable<Shop> {
+  final int id;
   final String name;
   final LatLng location;
   final Neighborhood neighborhood;
 
   const Shop({
+    required this.id,
     required this.name,
     required this.location,
     required this.neighborhood,
   });
+
+  factory Shop.fromJSON(Map<String, dynamic> shopData) {
+    final int shopId = shopData['product_id'];
+    final String shopName = shopData['shop_name'];
+    final double shopLat = shopData['shop_lat'];
+    final double shopLng = shopData['shop_lng'];
+    final shopLocation = LatLng(shopLat, shopLng);
+    final Map<String, dynamic> neighborhoodData = shopData['neighborhoods'];
+    final neighborhood = Neighborhood.fromJSON(neighborhoodData);
+    
+    return Shop(
+      id: shopId,
+      name: shopName,
+      location: shopLocation,
+      neighborhood: neighborhood,
+    );
+  }
 
   @override
   String toString() => name;

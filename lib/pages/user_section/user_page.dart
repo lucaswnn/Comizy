@@ -7,8 +7,9 @@ class UserPage extends StatelessWidget {
 
   final options = const {
     0: 'Minha conta',
-    1: 'Sobre o app',
-    2: 'Sair',
+    1: 'Ranking de pontos',
+    2: 'Sobre o app',
+    3: 'Sair',
   };
 
   void _navigateToOption(int option) {
@@ -17,9 +18,12 @@ class UserPage extends StatelessWidget {
         NavigationHelper.pushNamed(AppRoutes.userPersonalPage);
         break;
       case 1:
-        NavigationHelper.pushNamed(AppRoutes.appInfoPage);
+        NavigationHelper.pushNamed(AppRoutes.leaderboardPage);
         break;
       case 2:
+        NavigationHelper.pushNamed(AppRoutes.appInfoPage);
+        break;
+      case 3:
         NavigationHelper.pushNamed(AppRoutes.logoutPage);
         break;
     }
@@ -31,7 +35,14 @@ class UserPage extends StatelessWidget {
       itemCount: options.length,
       itemBuilder: (_, i) {
         return ListTile(
-          leading: const Icon(Icons.abc),
+          leading: Icon(
+            switch (i) {
+              0 => Icons.person,
+              1 => Icons.leaderboard,
+              2 => Icons.info,
+              _ => Icons.logout,
+            },
+          ),
           title: Text(options[i] ?? ''),
           onTap: () => _navigateToOption(i),
         );

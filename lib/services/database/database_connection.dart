@@ -1,3 +1,4 @@
+import 'package:comizy/tads/neighborhood.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class DatabaseConnection {
@@ -11,7 +12,7 @@ class DatabaseConnection {
     required String name,
     required String number,
   }) async {
-    final data = await _dbInstance
+    await _dbInstance
         .from('profiles')
         .update({
           'user_name': name,
@@ -19,18 +20,17 @@ class DatabaseConnection {
         })
         .eq('user_id', uid)
         .select();
-    print('update new account data:\n$data');
   }
 
   Future<Map<String, dynamic>> loadUserProfileData(String uid) async {
     final data = await _dbInstance.from('profiles').select().single();
-    print('load user profile data:\n$data');
+
     return data;
   }
 
   Future<Map<String, dynamic>> loadUserConfigData(String uid) async {
     final data = await _dbInstance.from('user_config').select().single();
-    print('load user config:\n$data');
+
     return data;
   }
 
@@ -43,6 +43,7 @@ class DatabaseConnection {
       (
         products
         (
+          product_id,
           product_name,
           product_description,
           product_asset,
@@ -55,6 +56,7 @@ class DatabaseConnection {
         ),
         neighborhoods
         (
+          neighborhood_id,
           neighborhood_name,
           cities(city_name),
           neighborhood_lat,
@@ -63,13 +65,14 @@ class DatabaseConnection {
       )
       ''',
     ).eq('user_id', uid);
-    print('load user showcase data:\n$data');
+
     return data;
   }
 
-  Future<List<Map<String,dynamic>>> loadNeighborhoods() async{
+  Future<List<Map<String, dynamic>>> loadNeighborhoods() async {
     final data = await _dbInstance.from('neighborhoods').select(
       '''
+      neighborhood_id,
       neighborhood_name,
       neighborhood_lat,
       neighborhood_lng,
@@ -79,7 +82,83 @@ class DatabaseConnection {
       )
       ''',
     );
-    print('load neighborhoods data:\n$data');
+
+    return data;
+  }
+
+  Future<List<Map<String, dynamic>>> loadHelpRequests(
+      Set<Neighborhood> neighborhoods) async {
+    final neighborhoodIds = neighborhoods.map((e) => e.id).toList();
+    final data = await _dbInstance.from('help_requests').select('''
+          products
+          (
+            product_id,
+            product_name,
+            product_description,
+            product_asset,
+            product_categories
+            (
+              product_category_name,
+              product_category_asset
+            ),
+            product_subcategories(product_subcategory_name)
+          ),
+          neighborhoods
+          (
+            neighborhood_id,
+            neighborhood_name,
+            neighborhood_lat,
+            neighborhood_lng,
+            cities
+            (
+              city_name
+            )
+          ),
+          total
+          ''').inFilter('neighborhood_id', neighborhoodIds);
+
+    return data;
+  }
+
+  Future<List<Map<String, dynamic>>> loadOffers() async {
+    final data = await _dbInstance.from('offers_with_needs_change_flag').select(
+      '''
+      shops
+      (
+        shop_id,
+        shop_name,
+        shop_lat,
+        shop_lng,
+        neighborhoods
+        (
+          neighborhood_id,
+          neighborhood_name,
+          cities
+          (
+            city_name
+          )
+        )
+      ),
+      products
+      (
+        product_id,
+        product_name,
+        product_description,
+        product_asset,
+        product_categories
+        (
+          product_category_name,
+          product_category_asset
+        ),
+        product_subcategories(product_subcategory_name)
+      ),
+      offer_price,
+      offer_last_updated,
+      offer_unit,
+      offer_needs_update
+      ''',
+    );
+
     return data;
   }
 }

@@ -1,3 +1,5 @@
+import 'package:comizy/services/auth/auth_service.dart';
+import 'package:comizy/services/change_notifiers/database_loadable.dart';
 import 'package:comizy/services/database/database_parser.dart';
 import 'package:comizy/tads/neighborhood.dart';
 import 'package:comizy/utils/geodistance.dart';
@@ -12,7 +14,7 @@ enum GPSStatus {
   enabled,
 }
 
-class LocationNotifier with ChangeNotifier {
+class LocationNotifier extends DatabaseLoadable with ChangeNotifier {
   static const LatLng defaultLocation = LatLng(-15.7801, -47.9292); // Brasília
 
   int? _maxRadiusDistanceinKm;
@@ -34,17 +36,17 @@ class LocationNotifier with ChangeNotifier {
   Set<Neighborhood>? _neighborhoods;
   Set<Neighborhood>? get neighborhoods => _neighborhoods;
 
-  Future<void> setNearestNeighborhoods()async{
+  Future<void> setNeighborhoods() async {
     _neighborhoods = await DatabaseParser.getNeighborhoods();
   }
 
-  Set<Neighborhood> getNearestNeighborhoods() {
-    if (_settedLocation == null) {
-      return {};
+  Set<Neighborhood>? getNearestNeighborhoods() {
+    if (_settedLocation == null ||
+        _maxRadiusDistanceinKm == null ||
+        _neighborhoods == null) {
+      return null;
     }
-    if(_maxRadiusDistanceinKm == null){
-      return {};
-    }
+
     return _neighborhoods
             ?.where((n) =>
                 geoDistance(_settedLocation!, n.latLng) <=
@@ -119,5 +121,18 @@ class LocationNotifier with ChangeNotifier {
     _isCurrentLocation = true;
     notifyListeners();
     return hasGPS;
+  }
+
+  @override
+  Future<void> handleLoadData() async {
+    final authService = AuthService.instance;
+    final user = authService.currentUser;
+    if (user == null) {
+      throw 'Usuário não logado';
+    }
+
+    maxRadiusDistanceInKm =
+        await DatabaseParser.getMaxSearchDistanceInKm(user.id);
+    await setNeighborhoods();
   }
 }

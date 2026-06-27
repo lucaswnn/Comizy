@@ -1,23 +1,15 @@
+import 'package:comizy/tads/help_requests.dart';
 import 'package:comizy/tads/offer.dart';
 import 'package:comizy/tads/product.dart';
 import 'package:comizy/tads/shop.dart';
-import 'package:comizy/test/mocks.dart';
 
 class Market {
-  final Set<Product> _products={};
-  final Set<Shop> _shops={};
-  final Map<Offer, OfferInfo> _offers;
-
-  Market() : _offers = mockMarketOffers;
+  final Map<Offer, OfferInfo> _offers = {};
 
   Map<Offer, OfferInfo> get offers => _offers;
 
   void addOffer(Offer offer, OfferInfo info) {
     _offers.putIfAbsent(offer, () => info);
-  }
-
-  void removeOffer(Offer offer) {
-    _offers.remove(offer);
   }
 
   Map<Offer, OfferInfo> offersByProduct(Product product) {
@@ -26,7 +18,6 @@ class Market {
   }
 
   Set<Product> get products => Market.productsFromOffers(_offers);
-
   Set<Shop> get shops => Market.shopsFromOffers(_offers);
 
   Map<Offer, OfferInfo> needingUpdateOffersOnShop(Shop shop) {
@@ -36,11 +27,37 @@ class Market {
     );
   }
 
-  Map<Offer, OfferInfo> needingUpdateOffersFromProduct(Product product) {
-    return Map<Offer, OfferInfo>.fromEntries(
+  Map<Offer, OfferInfo> filterOffersByHelpRequests(HelpRequests helpRequests) {
+    final requests = helpRequests.helpRequestItems;
+    final filteredOffersByNeedingUpdate = Map<Offer, OfferInfo>.fromEntries(
       _offers.entries.where(
-          (entry) => entry.key.product == product && entry.value.needsUpdate),
+        (entry) => entry.value.needsUpdate,
+      ),
     );
+
+    final filteredOffersByNeighborhood = Map<Offer, OfferInfo>.fromEntries(
+      filteredOffersByNeedingUpdate.entries.where(
+        (entry) => requests.any(
+          (r) => r.neighborhood == entry.key.shop.neighborhood,
+        ),
+      ),
+    );
+
+    final filteredOffersThatContainsPruducts =
+        Map<Offer, OfferInfo>.fromEntries(
+      filteredOffersByNeighborhood.entries.where(
+        (entry) => requests.any(
+          (r) => r.product == entry.key.product,
+        ),
+      ),
+    );
+
+    return filteredOffersThatContainsPruducts;
+  }
+
+  bool productNeedsUpdate(Product product) {
+    return _offers.entries.any(
+        (entry) => entry.key.product == product && entry.value.needsUpdate);
   }
 
   static Set<Shop> shopsFromOffers(Map<Offer, OfferInfo> map) {

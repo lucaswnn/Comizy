@@ -4,7 +4,8 @@ import 'package:comizy/pages/home_section/home_page.dart';
 import 'package:comizy/pages/showcase_section/showcase_page.dart';
 import 'package:comizy/pages/user_section/user_page.dart';
 import 'package:comizy/services/change_notifiers/location_notifier.dart';
-import 'package:comizy/services/database/loader.dart';
+import 'package:comizy/services/change_notifiers/main_user_notifier.dart';
+import 'package:comizy/services/change_notifiers/market_notifier.dart';
 import 'package:comizy/services/shared_preferenes/app_preferences.dart';
 import 'package:comizy/utils/navigation_helper.dart';
 import 'package:comizy/values/app_routes.dart';
@@ -21,15 +22,21 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
+    final userNotifier = context.read<MainUserNotifier>();
+    final locationNotifier = context.read<LocationNotifier>();
+    final marketNotifier = context.read<MarketNotifier>();
     return FutureBuilder(
-      future: Loader.loadDatabaseDataToApp(context),
+      future: Future.wait([
+        userNotifier.loadData(forceReload: false),
+        locationNotifier.loadData(forceReload: false),
+        marketNotifier.loadData(forceReload: false),
+      ]),
       builder: (_, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
               body: Center(child: CircularProgressIndicator()));
         }
         if (snapshot.hasError) {
-          print('erro em _MainPageState: ${snapshot.error}');
           return const ConnectionErrorPage();
         }
         return const _MainPageView();

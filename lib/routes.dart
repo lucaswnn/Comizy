@@ -8,12 +8,10 @@ import 'package:comizy/pages/showcase_section/showcase_product_page.dart';
 import 'package:comizy/pages/user_section/app_info_page.dart';
 import 'package:comizy/pages/help_request_section/edit_product_price_page.dart';
 import 'package:comizy/pages/help_request_section/leaderboard_page.dart';
-import 'package:comizy/pages/user_section/awards_page.dart';
 import 'package:comizy/pages/user_section/logout_page.dart';
 import 'package:comizy/pages/main_page.dart';
 import 'package:comizy/pages/set_location_map_page.dart';
 import 'package:comizy/pages/set_location_page.dart';
-import 'package:comizy/pages/help_request_section/product_help_request_page.dart';
 import 'package:comizy/pages/search_section/search_product_page.dart';
 import 'package:comizy/pages/search_section/search_page.dart';
 import 'package:comizy/pages/user_section/user_personal_page.dart';
@@ -68,9 +66,6 @@ class Routes {
       case AppRoutes.detailedProductPage:
         return getRoute(widget: const DetailedProductPage());
 
-      case AppRoutes.productHelpRequestPage:
-        return getRoute(widget: const ProductHelpRequestPage());
-
       case AppRoutes.editProductPricePage:
         return getRoute(widget: const EditProductPricePage());
 
@@ -87,10 +82,7 @@ class Routes {
         return getRoute(widget: const LeaderboardPage());
 
       case AppRoutes.setLocationMapPage:
-        return getRoute(widget: SetLocationMapPage());
-
-      case AppRoutes.awardsPage:
-        return getRoute(widget: const AwardsPage());
+        return getRoute(widget: const SetLocationMapPage());
 
       case AppRoutes.showcaseProductPage:
         return getRoute(widget: const ShowcaseProductPage());

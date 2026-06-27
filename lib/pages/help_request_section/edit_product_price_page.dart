@@ -82,8 +82,9 @@ class _EditProductPricePageState extends State<EditProductPricePage> {
     required HelpRequestNotifier helpRequestNotifier,
     required MarketNotifier marketNotifier,
   }) {
+
     final offers =
-        marketNotifier.market.needingUpdateOffersOnShop(shop).entries.toList();
+        marketNotifier.needingUpdateOffersOnShop(shop).entries.toList();
     if (offers.isEmpty) {
       return const Center(
         child: Text('Essa loja não possui mais produtos para cadastrar'),

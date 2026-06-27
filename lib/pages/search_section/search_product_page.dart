@@ -64,7 +64,7 @@ class _ActionsWidgetState extends State<_ActionsWidget> {
     _currentProduct = context.read<ProductNotifier>().currentProduct;
 
     final neighborhoods = _locationNotifier.getNearestNeighborhoods();
-    if (neighborhoods.isNotEmpty) {
+    if (neighborhoods != null && neighborhoods.isNotEmpty) {
       _firstNeighborhoodChoice = neighborhoods.first;
       _neighborhoodChoice = _firstNeighborhoodChoice;
     }
@@ -82,11 +82,11 @@ class _ActionsWidgetState extends State<_ActionsWidget> {
         .toSet();
     final neighborhoods = _locationNotifier.getNearestNeighborhoods();
     final avaibleNeighborhoods =
-        neighborhoods.difference(showcaseNeighborhoods);
+        neighborhoods?.difference(showcaseNeighborhoods) ?? {};
     final areAvaibleNeighborhoods = avaibleNeighborhoods.isNotEmpty;
     final containsProduct = showcase.containsProduct(_currentProduct);
     final isShowcaseFull = showcase.isShowcaseFull;
-    final noNeighborhood = neighborhoods.isEmpty;
+    final noNeighborhood = neighborhoods?.isEmpty ?? true;
 
     if (noNeighborhood && !containsProduct) {
       return ProductStatus.noNeighborhood;
@@ -125,8 +125,9 @@ class _ActionsWidgetState extends State<_ActionsWidget> {
               .toSet();
 
           final neighborhoodOptions = _locationNotifier
-              .getNearestNeighborhoods()
-              .difference(showcaseNeighborhoods);
+                  .getNearestNeighborhoods()
+                  ?.difference(showcaseNeighborhoods) ??
+              {};
 
           return Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
