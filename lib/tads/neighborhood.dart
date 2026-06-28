@@ -30,5 +30,16 @@ class Neighborhood {
   }
 
   @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Neighborhood &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          name == other.name);
+
+  @override
+  int get hashCode => Object.hash(id, name);
+
+  @override
   String toString() => '$name - $city';
 }

@@ -1,6 +1,7 @@
 import 'package:comizy/services/change_notifiers/async_action_notifier.dart';
+import 'package:comizy/services/change_notifiers/help_request_notifier.dart';
 import 'package:comizy/services/change_notifiers/location_notifier.dart';
-import 'package:comizy/services/command/set_current_location_command.dart';
+import 'package:comizy/services/command/set_location_command.dart';
 import 'package:comizy/utils/navigation_helper.dart';
 import 'package:comizy/values/app_routes.dart';
 import 'package:comizy/widgets/async_elevated_button.dart';
@@ -63,10 +64,14 @@ class SetLocationPage extends StatelessWidget {
                       },
                     );
 
+                    final helpRequestNotifier =
+                        context.read<HelpRequestNotifier>();
+
                     return AsyncElevatedButton(
                       notifier: asyncActionNotifier,
                       command: SetCurrentLocationCommand(
                         locationNotifier: locationNotifier,
+                        helpRequestNotifier: helpRequestNotifier,
                       ),
                       child: const Text('Localização atual'),
                     );

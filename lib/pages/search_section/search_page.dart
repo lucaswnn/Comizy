@@ -50,7 +50,9 @@ class _SearchPageState extends State<SearchPage> {
     }
 
     _debounce = Timer(
-        const Duration(milliseconds: 500), () => _filterSuggestions(query));
+      const Duration(milliseconds: 500),
+      () => _filterSuggestions(query),
+    );
   }
 
   void _filterSuggestions(String query) => setState(() {

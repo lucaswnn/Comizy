@@ -44,6 +44,17 @@ class Product implements Comparable<Product> {
   }
 
   @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Product &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          name == other.name);
+
+  @override
+  int get hashCode => Object.hash(id, name);
+
+  @override
   String toString() => name;
 
   @override

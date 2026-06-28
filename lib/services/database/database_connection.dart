@@ -133,6 +133,8 @@ class DatabaseConnection {
         (
           neighborhood_id,
           neighborhood_name,
+          neighborhood_lat,
+          neighborhood_lng,
           cities
           (
             city_name

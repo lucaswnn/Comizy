@@ -7,7 +7,7 @@ import 'package:comizy/pages/detailed_product_page.dart';
 import 'package:comizy/pages/showcase_section/showcase_product_page.dart';
 import 'package:comizy/pages/user_section/app_info_page.dart';
 import 'package:comizy/pages/help_request_section/edit_product_price_page.dart';
-import 'package:comizy/pages/help_request_section/leaderboard_page.dart';
+import 'package:comizy/pages/user_section/leaderboard_page.dart';
 import 'package:comizy/pages/user_section/logout_page.dart';
 import 'package:comizy/pages/main_page.dart';
 import 'package:comizy/pages/set_location_map_page.dart';

@@ -2,10 +2,12 @@ import 'package:comizy/services/change_notifiers/help_request_notifier.dart';
 import 'package:comizy/services/change_notifiers/location_notifier.dart';
 import 'package:comizy/services/change_notifiers/market_notifier.dart';
 import 'package:comizy/services/change_notifiers/shop_notifier.dart';
+import 'package:comizy/services/shared_preferenes/app_preferences.dart';
 import 'package:comizy/tads/market.dart';
 import 'package:comizy/tads/offer.dart';
 import 'package:comizy/tads/product.dart';
 import 'package:comizy/tads/shop.dart';
+import 'package:comizy/utils/location_alert_dialog.dart';
 import 'package:comizy/utils/navigation_helper.dart';
 import 'package:comizy/values/app_routes.dart';
 import 'package:flutter/material.dart';
@@ -38,6 +40,31 @@ class _HelpRequestPageState extends State<HelpRequestPage> {
   @override
   Widget build(BuildContext context) {
     final locationNotifier = context.read<LocationNotifier>();
+    if (locationNotifier.settedLocation == null) {
+      return Column(
+        children: [
+          const Text('Associe uma localização para cadastrar os preços'),
+          IconButton(
+            onPressed: () async {
+              final shouldShowDialog =
+                  await AppPreferences.shouldShowLocationMessage();
+              if (!context.mounted) return;
+
+              if (shouldShowDialog) {
+                showDialog(
+                    context: context,
+                    builder: (_) => const LocationAlertDialog());
+              } else {
+                locationNotifier.askForGPS();
+                NavigationHelper.pushNamed(AppRoutes.setLocationPage);
+              }
+            },
+            icon: const Icon(Icons.location_pin),
+          ),
+        ],
+      );
+    }
+
     final market = context.watch<MarketNotifier>().market;
     final helpRequestNotifier = context.read<HelpRequestNotifier>();
 
@@ -46,17 +73,17 @@ class _HelpRequestPageState extends State<HelpRequestPage> {
 
     LatLng initialCenter = LocationNotifier.defaultLocation;
     double initialZoom = 6;
-    if (currentLocation != null) {
-      initialCenter = currentLocation;
-      initialZoom = 14;
-    } else if (settedLocation != null) {
+    if (settedLocation != null) {
       initialCenter = settedLocation;
       initialZoom = 14;
     }
 
     final helpRequests = helpRequestNotifier.helpRequests;
+    print(helpRequests.helpRequestItems);
     final offers = market.filterOffersByHelpRequests(helpRequests);
+    print(offers);
     final shops = Market.shopsFromOffers(offers);
+    print(shops);
 
     final selectedShopOffers = _selectedShop == null
         ? <MapEntry<Offer, OfferInfo>>[]

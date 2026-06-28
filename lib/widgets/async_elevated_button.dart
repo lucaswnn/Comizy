@@ -15,7 +15,8 @@ class AsyncElevatedButton<R> extends StatelessWidget {
   final Clip? clipBehavior;
   final WidgetStatesController? statesController;
 
-  const AsyncElevatedButton({super.key,
+  const AsyncElevatedButton({
+    super.key,
     required this.notifier,
     required this.command,
     required this.child,
@@ -32,7 +33,8 @@ class AsyncElevatedButton<R> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: notifier.isExecuting ? null : () => notifier.execute(command),
+      onPressed:
+          notifier.isExecuting ? null : () => notifier.execute(command),
       onLongPress: onLongPress,
       onHover: onHover,
       onFocusChange: onFocusChange,

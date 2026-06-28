@@ -1,6 +1,10 @@
+import 'package:comizy/services/change_notifiers/async_action_notifier.dart';
+import 'package:comizy/services/change_notifiers/help_request_notifier.dart';
 import 'package:comizy/services/change_notifiers/location_notifier.dart';
+import 'package:comizy/services/command/set_location_command.dart';
 import 'package:comizy/utils/navigation_helper.dart';
 import 'package:comizy/values/app_routes.dart';
+import 'package:comizy/widgets/async_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -109,13 +113,36 @@ class _SetLocationMapPageState extends State<SetLocationMapPage> {
             ),
           ),
           const SizedBox(height: 10),
-          ElevatedButton(
-            onPressed: () {
-              final locationNotifier = context.read<LocationNotifier>();
-              locationNotifier.setCustomLocation(_mapController.camera.center);
-              NavigationHelper.pushReplacementNamed(AppRoutes.mainPage);
-            },
-            child: const Text('Definir localização'),
+          ChangeNotifierProvider(
+            create: (_) => AsyncActionNotifier<SetCustomLocationResult>(),
+            child: Consumer<AsyncActionNotifier<SetCustomLocationResult>>(
+              builder: (context, asyncActionNotifier, _) {
+                WidgetsBinding.instance.addPostFrameCallback(
+                  (_) {
+                    switch (asyncActionNotifier.result) {
+                      case SetCustomLocationResult.success:
+                        NavigationHelper.pushNamedAndClearStack(
+                            AppRoutes.mainPage);
+                        break;
+                      default:
+                        break;
+                    }
+                  },
+                );
+
+                final locationNotifier = context.read<LocationNotifier>();
+                final helpRequestNotifier = context.read<HelpRequestNotifier>();
+                return AsyncElevatedButton(
+                  notifier: asyncActionNotifier,
+                  command: SetCustomLocationCommand(
+                    locationNotifier: locationNotifier,
+                    helpRequestNotifier: helpRequestNotifier,
+                    getLatLngFunc: () => _mapController.camera.center,
+                  ),
+                  child: const Text('Definir localização'),
+                );
+              },
+            ),
           ),
         ],
       ),

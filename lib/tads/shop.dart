@@ -15,14 +15,14 @@ class Shop implements Comparable<Shop> {
   });
 
   factory Shop.fromJSON(Map<String, dynamic> shopData) {
-    final int shopId = shopData['product_id'];
+    final int shopId = shopData['shop_id'];
     final String shopName = shopData['shop_name'];
     final double shopLat = shopData['shop_lat'];
     final double shopLng = shopData['shop_lng'];
     final shopLocation = LatLng(shopLat, shopLng);
     final Map<String, dynamic> neighborhoodData = shopData['neighborhoods'];
     final neighborhood = Neighborhood.fromJSON(neighborhoodData);
-    
+
     return Shop(
       id: shopId,
       name: shopName,
@@ -30,6 +30,17 @@ class Shop implements Comparable<Shop> {
       neighborhood: neighborhood,
     );
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Shop &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          name == other.name);
+
+  @override
+  int get hashCode => Object.hash(id, name);
 
   @override
   String toString() => name;

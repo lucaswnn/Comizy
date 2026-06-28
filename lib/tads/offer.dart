@@ -43,4 +43,8 @@ class OfferInfo {
     required this.needsUpdate,
     required this.price,
   });
+
+  @override
+  String toString() =>
+      '$price (última atualização: $lastUpdated - ${needsUpdate ? "" : "não "}precisa atualizar)';
 }

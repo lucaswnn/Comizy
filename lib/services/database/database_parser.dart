@@ -52,6 +52,9 @@ class DatabaseParser {
     final offersData = await db.loadOffers();
     final market = Market();
 
+    final products = <int, Product>{};
+    final shops = <int, Shop>{};
+
     for (final offerData in offersData) {
       final double price = offerData['offer_price'];
       final String unit = offerData['offer_unit'];
@@ -64,10 +67,18 @@ class DatabaseParser {
       );
 
       final Map<String, dynamic> productData = offerData['products'];
-      final product = Product.fromJSON(productData);
+      final productId = productData['product_id'];
+      final product = products.putIfAbsent(
+        productId,
+        () => Product.fromJSON(productData),
+      );
 
       final Map<String, dynamic> shopData = offerData['shops'];
-      final shop = Shop.fromJSON(shopData);
+      final shopId = shopData['shop_id'];
+      final shop = shops.putIfAbsent(
+        shopId,
+        () => Shop.fromJSON(shopData),
+      );
 
       final offer = Offer(
         product: product,
@@ -119,6 +130,7 @@ class DatabaseParser {
         ),
       );
     }
+
     return HelpRequests(helpRequests: requests);
   }
 }

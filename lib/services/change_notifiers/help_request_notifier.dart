@@ -26,13 +26,13 @@ class NullHelpRequestsException implements Exception {
 
 class HelpRequestNotifier extends DatabaseLoadable with ChangeNotifier {
   HelpRequests? _helpRequests;
-  
+
   HelpRequests get helpRequests {
     if (_helpRequests == null) {
-      throw NullHelpRequestsException(
-          'helpRequests não foi inicializado');
+      throw NullHelpRequestsException('helpRequests não foi inicializado');
     }
-    return _helpRequests!;}
+    return _helpRequests!;
+  }
 
   set helpRequests(HelpRequests? helpRequests) {
     _helpRequests = helpRequests;
@@ -72,7 +72,7 @@ class HelpRequestNotifier extends DatabaseLoadable with ChangeNotifier {
       throw NullNeighborhoodException(
           'sem vizinhança carregada para definir helpRequests');
     }
-    
+
     _helpRequests = await DatabaseParser.getHelpRequests(neighborhoods!);
   }
 }

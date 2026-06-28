@@ -11,4 +11,7 @@ class HelpRequest {
     required this.neighborhood,
     required this.numberOfOrderers,
   });
+
+  @override
+  String toString() => '$product - $neighborhood ($numberOfOrderers)';
 }

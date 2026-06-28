@@ -34,6 +34,7 @@ class Market {
         (entry) => entry.value.needsUpdate,
       ),
     );
+    print(filteredOffersByNeedingUpdate);
 
     final filteredOffersByNeighborhood = Map<Offer, OfferInfo>.fromEntries(
       filteredOffersByNeedingUpdate.entries.where(
@@ -42,6 +43,8 @@ class Market {
         ),
       ),
     );
+
+    print(filteredOffersByNeighborhood);
 
     final filteredOffersThatContainsPruducts =
         Map<Offer, OfferInfo>.fromEntries(
