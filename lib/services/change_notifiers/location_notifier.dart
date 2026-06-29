@@ -132,7 +132,7 @@ class LocationNotifier extends DatabaseLoadable with ChangeNotifier {
     }
 
     maxRadiusDistanceInKm =
-        await DatabaseParser.getMaxSearchDistanceInKm(user.id);
+        await DatabaseParser.getMaxSearchDistanceInKm();
     await setNeighborhoods();
   }
 }

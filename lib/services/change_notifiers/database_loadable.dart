@@ -11,5 +11,7 @@ abstract class DatabaseLoadable {
     _isLoaded = true;
   }
 
+  void resetReloadFlag() => _isLoaded = false;
+
   Future<void> handleLoadData();
 }

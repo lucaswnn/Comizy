@@ -10,37 +10,9 @@ import 'package:comizy/widgets/empty_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class ShowcasePage extends StatefulWidget {
+class ShowcasePage extends StatelessWidget {
   const ShowcasePage({super.key});
-
-  @override
-  State<ShowcasePage> createState() =>
-      _ShowcasePageState();
-}
-
-class _ShowcasePageState
-    extends State<ShowcasePage> {
-  @override
-  Widget build(BuildContext context) {
-    final showcaseNotifier = context.read<ShowcaseNotifier>();
-    return FutureBuilder(
-      future: showcaseNotifier.loadData(forceReload: false),
-      builder: (_, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (snapshot.hasError) {
-          return const ConnectionErrorPage();
-        }
-        return const _ShowcasePageContent();
-      },
-    );
-  }
-}
-
-class _ShowcasePageContent extends StatelessWidget {
-  const _ShowcasePageContent();
-
+  
   ListTile _addProductListTile() => ListTile(
         title: const Text('Adicionar produto'),
         leading: const Icon(Icons.add),
@@ -57,7 +29,9 @@ class _ShowcasePageContent extends StatelessWidget {
       leading: const Icon(Icons.abc),
       trailing: showcase!.isItemRemovable(item)
           ? IconButton(
-              onPressed: () => showcaseNotifier.removeShowcaseItem(item),
+              onPressed: () async {
+                await showcaseNotifier.removeShowcaseItem(item);
+              },
               icon: const Icon(Icons.remove),
             )
           : null,
@@ -115,13 +89,17 @@ class _NewSpaceListTile extends StatelessWidget {
       ];
 
   List<Widget> _buildAddOrReturnActions(
-          ShowcaseNotifier showcaseNotifier, Wallet wallet) =>
+    ShowcaseNotifier showcaseNotifier,
+    Wallet wallet,
+  ) =>
       [
         TextButton(
           child: const Text('Adicionar'),
-          onPressed: () {
-            showcaseNotifier.addShowcaseSpace(wallet);
-            NavigationHelper.pop();
+          onPressed: () async {
+            final result = await showcaseNotifier.addShowcaseSpace(wallet);
+            if (result == ShowcaseAddSpaceStatus.success) {
+              NavigationHelper.pop();
+            }
           },
         ),
         TextButton(

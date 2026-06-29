@@ -79,11 +79,8 @@ class _HelpRequestPageState extends State<HelpRequestPage> {
     }
 
     final helpRequests = helpRequestNotifier.helpRequests;
-    print(helpRequests.helpRequestItems);
     final offers = market.filterOffersByHelpRequests(helpRequests);
-    print(offers);
     final shops = Market.shopsFromOffers(offers);
-    print(shops);
 
     final selectedShopOffers = _selectedShop == null
         ? <MapEntry<Offer, OfferInfo>>[]

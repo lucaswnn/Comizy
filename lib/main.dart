@@ -7,14 +7,14 @@ import 'package:comizy/services/change_notifiers/product_notifier.dart';
 import 'package:comizy/services/change_notifiers/shop_notifier.dart';
 import 'package:comizy/services/change_notifiers/showcase_notifier.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
+//import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
-import 'firebase_options.dart';
+//import 'firebase_options.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await Supabase.initialize(
     url: 'https://lcukugkbfzqfuehbxfqv.supabase.co',
     anonKey: 'sb_publishable_Lz4MYgQuF9EAVpVAtblp4g_Dtiuxo8r',

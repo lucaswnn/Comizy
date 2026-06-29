@@ -1,11 +1,14 @@
+import 'package:comizy/services/auth/auth_service.dart';
 import 'package:comizy/services/change_notifiers/location_notifier.dart';
 import 'package:comizy/services/change_notifiers/product_notifier.dart';
 import 'package:comizy/services/change_notifiers/showcase_notifier.dart';
+import 'package:comizy/services/shared_preferenes/app_preferences.dart';
 import 'package:comizy/tads/neighborhood.dart';
 import 'package:comizy/tads/product.dart';
 import 'package:comizy/tads/showcase.dart';
 import 'package:comizy/utils/invalid_route.dart';
 import 'package:comizy/utils/navigation_helper.dart';
+import 'package:comizy/utils/reset_loadable_notifiers.dart';
 import 'package:comizy/values/app_routes.dart';
 import 'package:comizy/widgets/empty_widget.dart';
 import 'package:flutter/material.dart';
@@ -52,39 +55,26 @@ class _ActionsWidgetState extends State<_ActionsWidget> {
   Neighborhood? _firstNeighborhoodChoice;
   Neighborhood? _neighborhoodChoice;
 
-  late final LocationNotifier _locationNotifier;
-  late final ShowcaseNotifier _showcaseNotifier;
-  late final Product? _currentProduct;
-
-  @override
-  void initState() {
-    super.initState();
-    _locationNotifier = context.read<LocationNotifier>();
-    _showcaseNotifier = context.read<ShowcaseNotifier>();
-    _currentProduct = context.read<ProductNotifier>().currentProduct;
-
-    final neighborhoods = _locationNotifier.getNearestNeighborhoods();
-    if (neighborhoods != null && neighborhoods.isNotEmpty) {
-      _firstNeighborhoodChoice = neighborhoods.first;
-      _neighborhoodChoice = _firstNeighborhoodChoice;
-    }
-  }
-
-  ProductStatus _checkShowcaseAddOptions() {
-    final showcase = _showcaseNotifier.showcase;
+  ProductStatus _checkShowcaseAddOptions({
+    required ShowcaseNotifier showcaseNotifier,
+    required LocationNotifier locationNotifier,
+    required Product? currentProduct,
+  }) {
+    final showcase = showcaseNotifier.showcase;
     if (showcase == null) {
       return ProductStatus.error;
     }
+
     final showcaseNeighborhoods = showcase
-        .filterByProduct(_currentProduct!)
+        .filterByProduct(currentProduct!)
         .keys
         .map((i) => i.neighborhood)
         .toSet();
-    final neighborhoods = _locationNotifier.getNearestNeighborhoods();
+    final neighborhoods = locationNotifier.getNearestNeighborhoods();
     final avaibleNeighborhoods =
         neighborhoods?.difference(showcaseNeighborhoods) ?? {};
     final areAvaibleNeighborhoods = avaibleNeighborhoods.isNotEmpty;
-    final containsProduct = showcase.containsProduct(_currentProduct);
+    final containsProduct = showcase.containsProduct(currentProduct);
     final isShowcaseFull = showcase.isShowcaseFull;
     final noNeighborhood = neighborhoods?.isEmpty ?? true;
 
@@ -113,18 +103,23 @@ class _ActionsWidgetState extends State<_ActionsWidget> {
     return ProductStatus.notReachable;
   }
 
-  Widget _buildActionsWidget(ProductStatus showcaseAddOption) {
+  Widget _buildActionsWidget({
+    required ProductStatus showcaseAddOption,
+    required ShowcaseNotifier showcaseNotifier,
+    required LocationNotifier locationNotifier,
+    required Product? currentProduct,
+  }) {
     switch (showcaseAddOption) {
       case ProductStatus.inShowcaseAddable:
       case ProductStatus.notInShowcaseAddable:
         {
-          final showcaseNeighborhoods = _showcaseNotifier.showcase!
-              .filterByProduct(_currentProduct!)
+          final showcaseNeighborhoods = showcaseNotifier.showcase!
+              .filterByProduct(currentProduct!)
               .keys
               .map((i) => i.neighborhood)
               .toSet();
 
-          final neighborhoodOptions = _locationNotifier
+          final neighborhoodOptions = locationNotifier
                   .getNearestNeighborhoods()
                   ?.difference(showcaseNeighborhoods) ??
               {};
@@ -144,11 +139,17 @@ class _ActionsWidgetState extends State<_ActionsWidget> {
               ),
               ElevatedButton(
                   onPressed: _neighborhoodChoice != null
-                      ? () {
-                          _showcaseNotifier.addShowcaseItem(ShowcaseItem(
-                              product: _currentProduct!,
-                              neighborhood: _neighborhoodChoice!));
-                          NavigationHelper.pop();
+                      ? () async {
+                          final result = await showcaseNotifier.addShowcaseItem(
+                            ShowcaseItem(
+                              product: currentProduct,
+                              neighborhood: _neighborhoodChoice!,
+                            ),
+                          );
+                          if (result == ShowcaseAddItemStatus.success) {
+                            NavigationHelper.pop();
+                          } else {
+                          }
                         }
                       : null,
                   child: const Text('Adicionar'))
@@ -163,7 +164,11 @@ class _ActionsWidgetState extends State<_ActionsWidget> {
         return const EmptyWidget();
       case ProductStatus.error:
         return ElevatedButton(
-          onPressed: () {
+          onPressed: () async {
+            resetLoadableNotifiers(context);
+            final authService = AuthService.instance;
+            await authService.logout();
+            await AppPreferences.resetPreferences();
             NavigationHelper.pushNamedAndClearStack(AppRoutes.landingPage);
           },
           child: const Text('Retornar'),
@@ -194,11 +199,25 @@ class _ActionsWidgetState extends State<_ActionsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    if (_currentProduct == null) {
+    final locationNotifier = context.read<LocationNotifier>();
+    final showcaseNotifier = context.read<ShowcaseNotifier>();
+    final currentProduct = context.read<ProductNotifier>().currentProduct;
+
+    final neighborhoods = locationNotifier.getNearestNeighborhoods();
+    if (neighborhoods != null && neighborhoods.isNotEmpty) {
+      _firstNeighborhoodChoice = neighborhoods.first;
+      _neighborhoodChoice = _firstNeighborhoodChoice;
+    }
+
+    if (currentProduct == null) {
       return const EmptyWidget();
     }
 
-    final showcaseAddOption = _checkShowcaseAddOptions();
+    final showcaseAddOption = _checkShowcaseAddOptions(
+      showcaseNotifier: showcaseNotifier,
+      locationNotifier: locationNotifier,
+      currentProduct: currentProduct,
+    );
     final String message = _message(showcaseAddOption);
 
     return Column(
@@ -206,7 +225,12 @@ class _ActionsWidgetState extends State<_ActionsWidget> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(message),
-        _buildActionsWidget(showcaseAddOption),
+        _buildActionsWidget(
+          showcaseAddOption: showcaseAddOption,
+          showcaseNotifier: showcaseNotifier,
+          locationNotifier: locationNotifier,
+          currentProduct: currentProduct,
+        ),
       ],
     );
   }

@@ -51,6 +51,17 @@ class Showcase {
     return _showcaseItems.keys.any((item) => item.product == product);
   }
 
+  ShowcaseAddItemStatus previewAddShowcaseItem(ShowcaseItem item) {
+    if (_showcaseItems.length >= maxShowcaseItemsCount) {
+      return ShowcaseAddItemStatus.limitReached;
+    }
+    if (_showcaseItems.containsKey(item)) {
+      return ShowcaseAddItemStatus.alreadyExists;
+    }
+
+    return ShowcaseAddItemStatus.success;
+  }
+
   ShowcaseAddItemStatus addShowcaseItem(ShowcaseItem item) {
     if (_showcaseItems.length >= maxShowcaseItemsCount) {
       return ShowcaseAddItemStatus.limitReached;
@@ -87,6 +98,18 @@ class Showcase {
       return ShowcaseRemoveStatus.notEnoughTime;
     }
     _showcaseItems.remove(item);
+    return ShowcaseRemoveStatus.success;
+  }
+
+  ShowcaseRemoveStatus previewRemoveShowcaseItem(ShowcaseItem item) {
+    if (!_showcaseItems.containsKey(item)) {
+      return ShowcaseRemoveStatus.itemNotFound;
+    }
+    final addedAt = _showcaseItems[item]!.addedAt;
+    if (DateTime.now().difference(addedAt).inDays < maxShowcaseSlotDays) {
+      return ShowcaseRemoveStatus.notEnoughTime;
+    }
+
     return ShowcaseRemoveStatus.success;
   }
 
@@ -134,6 +157,10 @@ class ShowcaseItem implements Comparable<ShowcaseItem> {
 
   @override
   int get hashCode => Object.hash(product, neighborhood);
+
+  @override
+  String toString() =>
+      '$product (${product.id}) - $neighborhood (${neighborhood.id})';
 }
 
 class ShowcaseItemInfo {

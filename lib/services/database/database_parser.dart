@@ -14,8 +14,20 @@ class DatabaseParser {
   DatabaseParser._();
 
   static Future<AppMainUser> getUser(String uid) async {
-    final data = await DatabaseConnection.instance.loadUserProfileData(uid);
+    final data = await DatabaseConnection.instance.loadUserProfileData();
     return AppMainUser.fromJSON(data);
+  }
+
+  static Future<void> addShowcaseSpace({required int newWalletCash}) async {
+    await DatabaseConnection.instance.insertShowcaseSlot();
+  }
+
+  static Future<void> addShowcaseItem(ShowcaseItem item) async {
+    await DatabaseConnection.instance.insertItemInShowcaseSlot(item);
+  }
+
+  static Future<void> removeShowcaseItem(ShowcaseItem item) async {
+    await DatabaseConnection.instance.removeShowcaseItem(item);
   }
 
   static Future<Showcase> getShowcase(String uid) async {
@@ -35,7 +47,7 @@ class DatabaseParser {
       showcaseMap[showcaseItem] = showcaseItemInfo;
     }
 
-    final userConfigData = await db.loadUserConfigData(uid);
+    final userConfigData = await db.loadUserConfigData();
     final int newSpaceCost = userConfigData['new_showcase_slot_cost'];
     final int maxShowcaseSlotDays = userConfigData['max_showcase_slot_days'];
 
@@ -91,8 +103,8 @@ class DatabaseParser {
     return market;
   }
 
-  static Future<int> getMaxSearchDistanceInKm(String uid) async {
-    final data = await DatabaseConnection.instance.loadUserConfigData(uid);
+  static Future<int> getMaxSearchDistanceInKm() async {
+    final data = await DatabaseConnection.instance.loadUserConfigData();
     return data['max_search_distance_km'];
   }
 

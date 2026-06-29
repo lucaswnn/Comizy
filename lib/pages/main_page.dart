@@ -6,6 +6,7 @@ import 'package:comizy/pages/user_section/user_page.dart';
 import 'package:comizy/services/change_notifiers/location_notifier.dart';
 import 'package:comizy/services/change_notifiers/main_user_notifier.dart';
 import 'package:comizy/services/change_notifiers/market_notifier.dart';
+import 'package:comizy/services/change_notifiers/showcase_notifier.dart';
 import 'package:comizy/services/shared_preferenes/app_preferences.dart';
 import 'package:comizy/utils/location_alert_dialog.dart';
 import 'package:comizy/utils/navigation_helper.dart';
@@ -26,11 +27,13 @@ class _MainPageState extends State<MainPage> {
     final userNotifier = context.read<MainUserNotifier>();
     final locationNotifier = context.read<LocationNotifier>();
     final marketNotifier = context.read<MarketNotifier>();
+    final showcaseNotifier = context.read<ShowcaseNotifier>();
     return FutureBuilder(
       future: Future.wait([
         userNotifier.loadData(forceReload: false),
         locationNotifier.loadData(forceReload: false),
         marketNotifier.loadData(forceReload: false),
+        showcaseNotifier.loadData(forceReload: false),
       ]),
       builder: (_, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {

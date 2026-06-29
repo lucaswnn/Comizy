@@ -1,4 +1,5 @@
 import 'package:comizy/tads/neighborhood.dart';
+import 'package:comizy/tads/showcase.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class DatabaseConnection {
@@ -22,46 +23,43 @@ class DatabaseConnection {
         .select();
   }
 
-  Future<Map<String, dynamic>> loadUserProfileData(String uid) async {
+  Future<Map<String, dynamic>> loadUserProfileData() async {
     final data = await _dbInstance.from('profiles').select().single();
 
     return data;
   }
 
-  Future<Map<String, dynamic>> loadUserConfigData(String uid) async {
+  Future<Map<String, dynamic>> loadUserConfigData() async {
     final data = await _dbInstance.from('user_config').select().single();
 
     return data;
   }
 
   Future<List<Map<String, dynamic>>> loadUserShowcaseData(String uid) async {
-    final data = await _dbInstance.from('showcase').select(
+    final data = await _dbInstance.from('showcase_active').select(
       '''
       expires_at,
       inserted_at,
-      showcase_items
+      products
       (
-        products
+        product_id,
+        product_name,
+        product_description,
+        product_asset,
+        product_categories
         (
-          product_id,
-          product_name,
-          product_description,
-          product_asset,
-          product_categories
-          (
-            product_category_name,
-            product_category_asset
-          ),
-          product_subcategories(product_subcategory_name)
+          product_category_name,
+          product_category_asset
         ),
-        neighborhoods
-        (
-          neighborhood_id,
-          neighborhood_name,
-          cities(city_name),
-          neighborhood_lat,
-          neighborhood_lng
-        )
+        product_subcategories(product_subcategory_name)
+      ),
+      neighborhoods
+      (
+        neighborhood_id,
+        neighborhood_name,
+        cities(city_name),
+        neighborhood_lat,
+        neighborhood_lng
       )
       ''',
     ).eq('user_id', uid);
@@ -162,5 +160,38 @@ class DatabaseConnection {
     );
 
     return data;
+  }
+
+  Future<void> insertShowcaseSlot() async {
+    final Map<String, dynamic> res = await _dbInstance.rpc(
+      'insert_showcase_slot',
+    );
+
+    print(res);
+  }
+
+  Future<void> insertItemInShowcaseSlot(ShowcaseItem item) async {
+    print(item);
+    final Map<String, dynamic> res = await _dbInstance.rpc(
+      'insert_item_in_showcase_slot',
+      params: {
+        'v_product_id': item.product.id,
+        'v_neighborhood_id': item.neighborhood.id,
+      },
+    );
+
+    print(res);
+  }
+
+  Future<void> removeShowcaseItem(ShowcaseItem item) async {
+    final Map<String, dynamic> res = await _dbInstance.rpc(
+      'remove_showcase_item',
+      params: {
+        'v_product_id': item.product.id,
+        'v_neighborhood_id': item.neighborhood.id,
+      },
+    );
+
+    print(res);
   }
 }

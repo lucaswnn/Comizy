@@ -22,39 +22,70 @@ class ShowcaseNotifier extends DatabaseLoadable with ChangeNotifier {
     notifyListeners();
   }
 
-  ShowcaseAddSpaceStatus addShowcaseSpace(Wallet wallet) {
+  Future<ShowcaseAddSpaceStatus> addShowcaseSpace(Wallet wallet) async {
     if (_showcase == null) {
       return ShowcaseAddSpaceStatus.error;
     }
-    final result = _showcase!.addShowcaseSpace(wallet);
-    if (result == ShowcaseAddSpaceStatus.success) {
-      notifyListeners();
+    if (!_showcase!.isSpaceAddable(wallet)) {
+      return ShowcaseAddSpaceStatus.notEnoughCash;
     }
-    return result;
+
+    try {
+      await DatabaseParser.addShowcaseSpace(
+        newWalletCash: wallet.cash - _showcase!.newSpaceCost,
+      );
+      final result = _showcase!.addShowcaseSpace(wallet);
+      if (result == ShowcaseAddSpaceStatus.success) {
+        notifyListeners();
+      }
+      return result;
+    } catch (_) {
+      return ShowcaseAddSpaceStatus.error;
+    }
   }
 
-  ShowcaseAddItemStatus addShowcaseItem(ShowcaseItem item) {
+  Future<ShowcaseAddItemStatus> addShowcaseItem(ShowcaseItem item) async {
     if (_showcase == null) {
       return ShowcaseAddItemStatus.error;
     }
-    final status = _showcase!.addShowcaseItem(item);
+
+    final status = _showcase!.previewAddShowcaseItem(item);
     if (status != ShowcaseAddItemStatus.success) {
       return status;
     }
-    notifyListeners();
-    return status;
+
+    try {
+      await DatabaseParser.addShowcaseItem(item);
+      final result = _showcase!.addShowcaseItem(item);
+      if (result == ShowcaseAddItemStatus.success) {
+        notifyListeners();
+      }
+      return result;
+    } catch (_) {
+      return ShowcaseAddItemStatus.error;
+    }
   }
 
-  ShowcaseRemoveStatus removeShowcaseItem(ShowcaseItem item) {
+  Future<ShowcaseRemoveStatus> removeShowcaseItem(ShowcaseItem item) async {
     if (_showcase == null) {
       return ShowcaseRemoveStatus.error;
     }
-    final status = _showcase!.removeShowcaseItem(item);
+
+    final status = _showcase!.previewRemoveShowcaseItem(item);
     if (status != ShowcaseRemoveStatus.success) {
       return status;
     }
-    notifyListeners();
-    return status;
+
+    try {
+      await DatabaseParser.removeShowcaseItem(item);
+      final result = _showcase!.removeShowcaseItem(item);
+      if (result == ShowcaseRemoveStatus.success) {
+        notifyListeners();
+      }
+      return result;
+    } catch (_) {
+      return ShowcaseRemoveStatus.error;
+    }
   }
 
   @override
@@ -64,7 +95,7 @@ class ShowcaseNotifier extends DatabaseLoadable with ChangeNotifier {
     if (user == null) {
       throw 'Usuário não logado';
     }
-    
+
     _showcase = await DatabaseParser.getShowcase(user.id);
   }
 }
