@@ -23,6 +23,7 @@ class EditProductPricePage extends StatefulWidget {
 class _EditProductPricePageState extends State<EditProductPricePage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _priceController = TextEditingController();
+  SubmitPriceResult? _lastShownDialogResult;
 
   @override
   void dispose() {
@@ -66,7 +67,8 @@ class _EditProductPricePageState extends State<EditProductPricePage> {
               helpRequestNotifier: helpRequestNotifier,
               marketNotifier: marketNotifier,
               validator: () => _formKey.currentState?.validate() ?? false,
-              priceProvider: () => double.parse(_priceController.text),
+              priceProvider: () =>
+                  double.parse(_priceController.text.replaceFirst(',', '.')),
               product: product,
               shop: shop,
             ),
@@ -82,7 +84,6 @@ class _EditProductPricePageState extends State<EditProductPricePage> {
     required HelpRequestNotifier helpRequestNotifier,
     required MarketNotifier marketNotifier,
   }) {
-
     final offers =
         marketNotifier.needingUpdateOffersOnShop(shop).entries.toList();
     if (offers.isEmpty) {
@@ -147,46 +148,65 @@ class _EditProductPricePageState extends State<EditProductPricePage> {
     final product = helpRequestNotifier.currentProductRequest;
     if (product == null || shop == null) return const InvalidRoute();
 
-final marketNotifier = context.read<MarketNotifier>();
+    final marketNotifier = context.read<MarketNotifier>();
 
     return ChangeNotifierProvider(
       create: (_) => AsyncActionNotifier<SubmitPriceResult>(),
       child: Consumer<AsyncActionNotifier<SubmitPriceResult>>(
         builder: (context, asyncActionNotifier, _) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            switch (asyncActionNotifier.result) {
-              case SubmitPriceResult.success:
-                showResponseDialog(
-                  title: 'Sucesso ao cadastrar',
-                  content: 'Produto cadastrado com sucesso.',
-                );
-                break;
-              case SubmitPriceResult.notValidated:
-                break;
-              case SubmitPriceResult.failure:
-                showResponseDialog(
-                  title: 'Falha ao cadastrar',
-                  content: 'Houve uma falha do servidor. '
-                      'Tente novamente mais tarde.',
-                );
-                asyncActionNotifier.reset();
-                break;
-              case null:
-                break;
-            }
-          });
+          final result = asyncActionNotifier.result;
+          if (result == null) {
+            _lastShownDialogResult = null;
+          }
+
+          WidgetsBinding.instance.addPostFrameCallback(
+            (_) {
+              if (result == null || result == _lastShownDialogResult) {
+                return;
+              }
+
+              _lastShownDialogResult = result;
+
+              switch (result) {
+                case SubmitPriceResult.success:
+                  showResponseDialog(
+                    title: 'Sucesso ao cadastrar',
+                    content: 'Preço cadastrado com sucesso.',
+                  );
+                  break;
+                case SubmitPriceResult.hold:
+                  showResponseDialog(
+                    title: 'Contribuição em análise',
+                    content:
+                        'Obrigado pela ajuda! Sua contribuição está agora em análise',
+                  );
+                  break;
+                case SubmitPriceResult.error:
+                  showResponseDialog(
+                    title: 'Falha ao cadastrar',
+                    content: 'Houve uma falha do servidor. '
+                        'Tente novamente mais tarde.',
+                  );
+                  asyncActionNotifier.reset();
+                  break;
+                case SubmitPriceResult.invalid:
+                  break;
+              }
+            },
+          );
 
           Widget content;
-          switch (asyncActionNotifier.result) {
+          switch (result) {
             case SubmitPriceResult.success:
+            case SubmitPriceResult.hold:
               content = _buildOtherHelpRequests(
                 shop: shop,
                 helpRequestNotifier: helpRequestNotifier,
                 marketNotifier: marketNotifier,
               );
               break;
-            case SubmitPriceResult.notValidated:
-            case SubmitPriceResult.failure:
+            case SubmitPriceResult.invalid:
+            case SubmitPriceResult.error:
             case null:
               content = _buildForm(
                 product: product,

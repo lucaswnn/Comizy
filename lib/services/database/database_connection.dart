@@ -1,5 +1,6 @@
 import 'package:comizy/tads/neighborhood.dart';
 import 'package:comizy/tads/showcase.dart';
+import 'package:comizy/tads/help_submission.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class DatabaseConnection {
@@ -193,5 +194,20 @@ class DatabaseConnection {
     );
 
     print(res);
+  }
+
+  Future<Map<String, dynamic>> submitPriceOffer(HelpSubmissionData helpData) async {
+    final Map<String, dynamic> res = await _dbInstance.rpc(
+      'submit_price_offer',
+      params: {
+        'v_product_id': helpData.product.id,
+        'v_shop_id': helpData.shop.id,
+        'v_offer_price': helpData.value,
+      },
+    );
+
+    print(res);
+
+    return res;
   }
 }

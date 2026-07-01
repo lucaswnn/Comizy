@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:comizy/services/change_notifiers/database_loadable.dart';
 import 'package:comizy/services/database/database_parser.dart';
 import 'package:comizy/tads/help_requests.dart';
@@ -54,16 +52,15 @@ class HelpRequestNotifier extends DatabaseLoadable with ChangeNotifier {
 
   Set<Neighborhood>? neighborhoods;
 
-  Future<bool> submitPriceToServer(
+  Future<SubmitPriceStatus> submitPriceToServer(
     HelpSubmissionData helpData,
   ) async {
-    await Future.delayed(const Duration(seconds: 1), () {});
-
-    if (Random().nextDouble() < 0.95) {
-      return true;
+    try {
+      return await DatabaseParser.submitPriceOffer(helpData);
+    } catch (e) {
+      print(e);
+      return SubmitPriceStatus.error;
     }
-
-    return false;
   }
 
   @override

@@ -2,6 +2,7 @@ import 'package:comizy/tads/app_user.dart';
 import 'package:comizy/services/database/database_connection.dart';
 import 'package:comizy/tads/help_request.dart';
 import 'package:comizy/tads/help_requests.dart';
+import 'package:comizy/tads/help_submission.dart';
 import 'package:comizy/tads/market.dart';
 import 'package:comizy/tads/neighborhood.dart';
 import 'package:comizy/tads/offer.dart';
@@ -9,6 +10,12 @@ import 'package:comizy/tads/price.dart';
 import 'package:comizy/tads/product.dart';
 import 'package:comizy/tads/shop.dart';
 import 'package:comizy/tads/showcase.dart';
+
+enum SubmitPriceStatus {
+  success,
+  hold,
+  error,
+}
 
 class DatabaseParser {
   DatabaseParser._();
@@ -144,5 +151,23 @@ class DatabaseParser {
     }
 
     return HelpRequests(helpRequests: requests);
+  }
+
+  static Future<SubmitPriceStatus> submitPriceOffer(
+    HelpSubmissionData helpData,
+  ) async {
+    final data = await DatabaseConnection.instance.submitPriceOffer(helpData);
+    final status = (data['status']?.toString() ?? '').toLowerCase();
+
+    switch (status) {
+      case 'success':
+        return SubmitPriceStatus.success;
+      case 'hold':
+        return SubmitPriceStatus.hold;
+      case 'error':
+        return SubmitPriceStatus.error;
+      default:
+        return SubmitPriceStatus.error;
+    }
   }
 }

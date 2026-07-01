@@ -1,5 +1,6 @@
 import 'package:comizy/services/change_notifiers/help_request_notifier.dart';
 import 'package:comizy/services/change_notifiers/market_notifier.dart';
+import 'package:comizy/services/database/database_parser.dart';
 import 'package:comizy/services/command/async_command.dart';
 import 'package:comizy/tads/help_submission.dart';
 import 'package:comizy/tads/offer.dart';
@@ -8,8 +9,9 @@ import 'package:comizy/tads/shop.dart';
 
 enum SubmitPriceResult {
   success,
-  notValidated,
-  failure,
+  hold,
+  invalid,
+  error,
 }
 
 class SubmitPriceCommand implements AsyncCommand<SubmitPriceResult> {
@@ -33,12 +35,12 @@ class SubmitPriceCommand implements AsyncCommand<SubmitPriceResult> {
   Future<SubmitPriceResult> execute() async {
     final isValidated = validator();
     if (!isValidated) {
-      return SubmitPriceResult.notValidated;
+      return SubmitPriceResult.invalid;
     }
 
     final price = priceProvider();
 
-    final wasSubmitted = await helpRequestNotifier.submitPriceToServer(
+    final submitStatus = await helpRequestNotifier.submitPriceToServer(
       HelpSubmissionData(
         product: product,
         shop: shop,
@@ -46,20 +48,23 @@ class SubmitPriceCommand implements AsyncCommand<SubmitPriceResult> {
       ),
     );
 
-    if (wasSubmitted) {
-      marketNotifier.setOfferUpdated(
-        Offer(
-          product: product,
-          shop: shop,
-        ),
-      );
+    switch (submitStatus) {
+      case SubmitPriceStatus.success:
+        marketNotifier.setOfferUpdated(
+          Offer(
+            product: product,
+            shop: shop,
+          ),
+        );
 
-      if (marketNotifier.market.productNeedsUpdate(product)) {
-        helpRequestNotifier.removeRequestByProduct(product);
-      }
-      return SubmitPriceResult.success;
+        if (marketNotifier.market.productNeedsUpdate(product)) {
+          helpRequestNotifier.removeRequestByProduct(product);
+        }
+        return SubmitPriceResult.success;
+      case SubmitPriceStatus.hold:
+        return SubmitPriceResult.hold;
+      case SubmitPriceStatus.error:
+        return SubmitPriceResult.error;
     }
-
-    return SubmitPriceResult.failure;
   }
 }
