@@ -4,6 +4,7 @@ import 'package:comizy/services/change_notifiers/location_notifier.dart';
 import 'package:comizy/services/change_notifiers/main_user_notifier.dart';
 import 'package:comizy/services/change_notifiers/market_notifier.dart';
 import 'package:comizy/services/change_notifiers/product_notifier.dart';
+import 'package:comizy/services/change_notifiers/ranking_notifier.dart';
 import 'package:comizy/services/change_notifiers/shop_notifier.dart';
 import 'package:comizy/services/change_notifiers/showcase_notifier.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +31,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => ProductNotifier()),
         ChangeNotifierProvider(create: (_) => ShopNotifier()),
         ChangeNotifierProvider(create: (_) => MarketNotifier()),
+        ChangeNotifierProvider(create: (_) => RankingNotifier()),
       ],
       child: const App(),
     ),

@@ -8,6 +8,7 @@ import 'package:comizy/tads/neighborhood.dart';
 import 'package:comizy/tads/offer.dart';
 import 'package:comizy/tads/price.dart';
 import 'package:comizy/tads/product.dart';
+import 'package:comizy/tads/ranking.dart';
 import 'package:comizy/tads/shop.dart';
 import 'package:comizy/tads/showcase.dart';
 
@@ -169,5 +170,28 @@ class DatabaseParser {
       default:
         return SubmitPriceStatus.error;
     }
+  }
+
+  static Future<Ranking> getRanking({required String currentUserId}) async {
+    final rankingData = await DatabaseConnection.instance.loadRankingData();
+
+    final entries = rankingData.map((data) {
+      final String userId = data['user_id'];
+      final String userName = data['user_name'];
+      final int points = data['user_ranking_points'];
+      final String neighborhoodName = data['neighborhood_name'];
+      final String cityName = data['city_name'];
+
+      return RankingEntry(
+        userId: userId,
+        userName: userName,
+        points: points,
+        cityName: cityName,
+        neighborhoodName: neighborhoodName,
+        isCurrentUser: userId == currentUserId,
+      );
+    }).toList();
+
+    return Ranking(entries: entries);
   }
 }
