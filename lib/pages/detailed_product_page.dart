@@ -10,7 +10,7 @@ class DetailedProductPage extends StatelessWidget {
 
   Widget buildEmptyOffers() {
     return const Center(
-      child: Text('Nenhuma oferta disponível para este produto.'),
+      child: Text('Ainda nao ha ofertas disponiveis para este produto.'),
     );
   }
 
@@ -22,8 +22,8 @@ class DetailedProductPage extends StatelessWidget {
         return ListTile(
           title: Text('${entries[index].key.shop}'),
           subtitle:
-              Text('Última atualização: ${entries[index].value.lastUpdated}'),
-          trailing: Text('Preço: ${entries[index].value.price}'),
+              Text('Atualizado em: ${entries[index].value.lastUpdated}'),
+          trailing: Text('Preco: ${entries[index].value.price}'),
         );
       },
     );
@@ -39,7 +39,7 @@ class DetailedProductPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Detalhes completos do produto'),
+        title: const Text('Detalhes do produto'),
       ),
       body: offers.isEmpty ? buildEmptyOffers() : buildOfferList(offers),
     );

@@ -4,6 +4,7 @@ import 'package:comizy/utils/input_formatters.dart';
 import 'package:comizy/utils/navigation_helper.dart';
 import 'package:comizy/utils/snackbar_helper.dart';
 import 'package:comizy/utils/validators.dart';
+import 'package:comizy/values/app_colors.dart';
 import 'package:comizy/values/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,13 +15,18 @@ class CreateAccountPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.primary,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: _CreateAccountForm(),
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(20),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 420),
+              child: _CreateAccountForm(),
+            ),
+          ),
         ),
       ),
-      backgroundColor: Colors.blue,
     );
   }
 }
@@ -40,6 +46,9 @@ class _CreateAccountFormState extends State<_CreateAccountForm> {
   bool? _enabled = false;
   bool _showPassword = false;
 
+  static const String _termsSummary =
+      'Ao criar sua conta, você concorda que seus dados de cadastro, localização e uso do aplicativo sejam utilizados para operar a plataforma, personalizar resultados, prevenir fraudes e melhorar a experiência. Os dados podem ser compartilhados apenas com parceiros essenciais de infraestrutura e autenticação, sempre com medidas de segurança e em conformidade com a legislação vigente. Você pode solicitar atualização ou exclusão de dados pelos canais de suporte.';
+
   void _setEnabled(bool? value) {
     setState(() => _enabled = value);
   }
@@ -48,14 +57,14 @@ class _CreateAccountFormState extends State<_CreateAccountForm> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Termos de Uso'),
+        title: const Text('Termos e Condicoes'),
         content: const SingleChildScrollView(
-          child: Text('AppStrings.termsOfUse'),
+          child: Text(_termsSummary),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Fechar'),
+            child: const Text('Entendi'),
           ),
         ],
       ),
@@ -135,7 +144,7 @@ class _CreateAccountFormState extends State<_CreateAccountForm> {
       decoration: InputDecoration(
         hintText: hintText,
         icon: icon,
-        iconColor: Colors.white,
+        iconColor: AppColors.secondary,
         suffixIcon: isPassword
             ? ExcludeFocus(
                 child: IconButton(
@@ -146,19 +155,20 @@ class _CreateAccountFormState extends State<_CreateAccountForm> {
                 ),
               )
             : null,
-        suffixIconColor: Colors.white,
-        hintStyle: const TextStyle(color: Colors.white, fontSize: 14),
+        suffixIconColor: AppColors.secondary,
+        hintStyle: const TextStyle(color: AppColors.secondary, fontSize: 14),
+        filled: false,
         focusedBorder: const UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.green),
+          borderSide: BorderSide(color: AppColors.tertiary),
         ),
         enabledBorder: const UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.white),
+          borderSide: BorderSide(color: AppColors.secondary),
         ),
-        errorStyle: const TextStyle(color: Colors.white),
+        errorStyle: const TextStyle(color: AppColors.secondary),
       ),
       validator: validator,
       inputFormatters: inputFormatters,
-      style: const TextStyle(color: Colors.white, fontSize: 14),
+      style: const TextStyle(color: AppColors.secondary, fontSize: 14),
     );
   }
 
@@ -177,27 +187,48 @@ class _CreateAccountFormState extends State<_CreateAccountForm> {
     return Form(
       key: _formKey,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          const Text(
+            'Crie sua conta',
+            style: TextStyle(
+              color: AppColors.secondary,
+              fontSize: 28,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Comece a acompanhar produtos, contribuir com precos e subir no ranking da sua regiao.',
+            style: TextStyle(
+              color: AppColors.secondary.withValues(alpha: 0.9),
+              fontSize: 14,
+              height: 1.3,
+            ),
+          ),
+          const SizedBox(height: 22),
           _formattedTextFormField(
             controller: _nameController,
-            hintText: 'Diga-nos seu nome',
+            hintText: 'Seu nome completo',
             validator: Validators.nonEmptyValidator,
             icon: const Icon(Icons.person),
           ),
+          const SizedBox(height: 8),
           _formattedTextFormField(
             controller: _numberController,
-            hintText: 'Diga-nos seu telefone',
+            hintText: 'Seu telefone',
             validator: Validators.numberValidator,
             icon: const Icon(Icons.phone),
             inputFormatters: [TelephoneNumberInputFormatter()],
           ),
+          const SizedBox(height: 8),
           _formattedTextFormField(
             controller: _emailController,
-            hintText: 'Diga-nos seu email',
+            hintText: 'Seu e-mail',
             validator: Validators.emailValidator,
             icon: const Icon(Icons.email),
           ),
+          const SizedBox(height: 8),
           _formattedTextFormField(
             controller: _passwordController,
             hintText: 'Crie uma senha',
@@ -205,6 +236,7 @@ class _CreateAccountFormState extends State<_CreateAccountForm> {
             icon: const Icon(Icons.lock),
             isPassword: true,
           ),
+          const SizedBox(height: 8),
           _formattedTextFormField(
             controller: _confirmPasswordController,
             hintText: 'Confirme sua senha',
@@ -215,30 +247,40 @@ class _CreateAccountFormState extends State<_CreateAccountForm> {
           const SizedBox(height: 25),
           Row(
             children: [
-              Checkbox(value: _enabled, onChanged: _setEnabled),
+              Checkbox(
+                value: _enabled,
+                onChanged: _setEnabled,
+                fillColor: const WidgetStatePropertyAll(AppColors.secondary),
+                checkColor: AppColors.primary,
+                side: const BorderSide(color: AppColors.secondary),
+              ),
               Flexible(
                 child: TextButton(
                   onPressed: _showTerms,
-                  child: const Text('AppStrings.acceptTermsOfUse'),
+                  child: const Text(
+                    'Li e aceito os Termos e Condicoes de uso de dados.',
+                  ),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 10),
-          Align(
-            alignment: Alignment.center,
-            child: ElevatedButton(
-              style: const ButtonStyle(
-                side: WidgetStatePropertyAll(BorderSide.none),
-                textStyle: WidgetStatePropertyAll(TextStyle(fontSize: 15)),
-              ),
-              onPressed: (_enabled ?? false) ? _submitForm : null,
-              child: const Text(
-                'Cadastrar',
-                style: TextStyle(color: Colors.black),
-              ),
+          ElevatedButton(
+            onPressed: (_enabled ?? false) ? _submitForm : null,
+            child: const Text(
+              'Criar conta',
+              style: TextStyle(color: AppColors.primary),
             ),
           ),
+          const SizedBox(height: 10),
+          Text(
+            'Você podera ajustar suas preferencias e dados pessoais depois.',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: AppColors.secondary.withValues(alpha: 0.84),
+              fontSize: 12,
+            ),
+          )
         ],
       ),
     );

@@ -1,5 +1,6 @@
 import 'package:comizy/pages/auth_section/auth_gate_page.dart';
 import 'package:comizy/pages/auth_section/create_account_page.dart';
+import 'package:comizy/pages/auth_section/forgot_password_page.dart';
 import 'package:comizy/pages/auth_section/landing_page.dart';
 import 'package:comizy/pages/auth_section/login_page.dart';
 import 'package:comizy/pages/auth_section/tutorial_page.dart';
@@ -47,6 +48,9 @@ class Routes {
 
       case AppRoutes.loginPage:
         return getRoute(widget: const LoginPage());
+
+      case AppRoutes.forgotPasswordPage:
+        return getRoute(widget: const ForgotPasswordPage());
 
       case AppRoutes.createAccountPage:
         return getRoute(widget: const CreateAccountPage());

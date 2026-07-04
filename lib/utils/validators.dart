@@ -9,7 +9,7 @@ enum _PasswordItems {
 class Validators {
   static String? nonEmptyValidator(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Por favor, insira um nome válido';
+      return 'Informe um nome valido';
     }
 
     return null;
@@ -17,20 +17,20 @@ class Validators {
 
   static String? numberValidator(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Por favor, digite um número';
+      return 'Informe um telefone';
     }
     if (!RegExp(r'^\(\d{2}\) 9\d{4}-\d{4}$').hasMatch(value)) {
-      return 'Por favor, digite um número válido';
+      return 'Use o formato (99) 99999-9999';
     }
     return null;
   }
 
   static String? emailValidator(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Por favor, insira um email válido';
+      return 'Informe um e-mail valido';
     }
     if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-      return 'Por favor, insira um email válido';
+      return 'Informe um e-mail valido';
     }
     return null;
   }
@@ -48,10 +48,10 @@ class Validators {
 
   static String? passwordValidator(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Por favor, insira uma senha';
+      return 'Crie uma senha';
     }
     if (!value.contains(RegExp('^[A-Za-z0-9$passwordSpecialCharacters]+\$'))) {
-      return 'A senha deve conter apenas os seguintes caracteres especiais: $passwordSpecialCharacters';
+      return 'Use apenas letras, numeros e os caracteres especiais: $passwordSpecialCharacters';
     }
 
     final passwordItems = <_PasswordItems>[];
@@ -72,7 +72,7 @@ class Validators {
     }
 
     if (passwordItems.isNotEmpty) {
-      return passwordItems.fold<String>('A senha deve conter pelo menos:\n',
+      return passwordItems.fold<String>('Sua senha precisa ter:\n',
           (str, item) {
         return '$str\n- ${_passwordHints[item]}';
       });

@@ -9,6 +9,7 @@ import 'package:comizy/tads/product.dart';
 import 'package:comizy/tads/shop.dart';
 import 'package:comizy/utils/location_alert_dialog.dart';
 import 'package:comizy/utils/navigation_helper.dart';
+import 'package:comizy/values/app_colors.dart';
 import 'package:comizy/values/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -43,7 +44,7 @@ class _HelpRequestPageState extends State<HelpRequestPage> {
     if (locationNotifier.settedLocation == null) {
       return Column(
         children: [
-          const Text('Associe uma localização para cadastrar os preços'),
+          const Text('Defina sua localizacao para ver lojas com pedidos de preco'),
           IconButton(
             onPressed: () async {
               final shouldShowDialog =
@@ -100,7 +101,7 @@ class _HelpRequestPageState extends State<HelpRequestPage> {
           height: commonMarkerSize,
           child: const Icon(
             Icons.my_location,
-            color: Colors.blue,
+            color: AppColors.primary,
             size: commonMarkerSize,
           ),
         ),
@@ -115,7 +116,7 @@ class _HelpRequestPageState extends State<HelpRequestPage> {
             padding: EdgeInsets.zero,
             icon: Icon(
               Icons.location_pin,
-              color: isSelected ? Colors.blue : Colors.red,
+              color: isSelected ? AppColors.primary : AppColors.tertiary,
               size: isSelected ? selectedMarkerSize : commonMarkerSize,
             ),
           ),
@@ -125,7 +126,7 @@ class _HelpRequestPageState extends State<HelpRequestPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Lojas que precisam de cadastro'),
+        title: const Text('Lojas com precos para atualizar'),
       ),
       body: Column(
         children: [
@@ -150,12 +151,12 @@ class _HelpRequestPageState extends State<HelpRequestPage> {
           Expanded(
             child: _selectedShop == null
                 ? const Center(
-                    child: Text('Toque em uma loja no mapa para ver os itens'),
+                    child: Text('Toque em uma loja no mapa para ver os produtos'),
                   )
                 : selectedShopOffers.isEmpty
                     ? const Center(
                         child: Text(
-                          'Essa loja não possui itens pendentes para cadastro',
+                          'Esta loja nao possui itens pendentes no momento',
                           textAlign: TextAlign.center,
                         ),
                       )
@@ -168,7 +169,7 @@ class _HelpRequestPageState extends State<HelpRequestPage> {
                             leading: const Icon(Icons.volunteer_activism),
                             title: Text('${offer.product}'),
                             subtitle: Text(
-                              'Último preço em: ${offerInfo.lastUpdated}',
+                              'Ultimo preco em: ${offerInfo.lastUpdated}',
                             ),
                             onTap: () {
                               _openPricePage(

@@ -65,7 +65,7 @@ class _SearchPageState extends State<SearchPage> {
   Widget _buildResults() {
     if (_suggestions.isEmpty && _textController.text != '') {
       return const Center(
-        child: Text('ops... parece que o item não existe :('),
+        child: Text('Nao encontramos esse item. Tente outro nome.'),
       );
     }
 
@@ -90,7 +90,7 @@ class _SearchPageState extends State<SearchPage> {
       appBar: AppBar(
         title: TextField(
           decoration: const InputDecoration(
-            hintText: 'Digite o item que você procura',
+            hintText: 'Digite o produto que deseja buscar',
             isDense: true,
             filled: true,
             fillColor: Colors.white,

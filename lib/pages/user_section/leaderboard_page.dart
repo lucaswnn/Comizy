@@ -94,7 +94,7 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Ranking de Pontos'),
+        title: const Text('Ranking de pontos'),
       ),
       body: FutureBuilder<void>(
         future: _loadFuture,
@@ -104,7 +104,7 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
           }
           if (snapshot.hasError) {
             return const Center(
-              child: Text('Nao foi possivel carregar o ranking.'),
+              child: Text('Nao foi possivel carregar o ranking agora.'),
             );
           }
 
@@ -195,8 +195,7 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
                 ),
                 const Expanded(
                   child: Center(
-                    child:
-                        Text('Nenhum resultado para os filtros selecionados.'),
+                    child: Text('Nenhum resultado para os filtros selecionados.'),
                   ),
                 ),
               ],
@@ -289,7 +288,7 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
                       title: Text(entry.userName),
                       subtitle:
                           Text('${entry.neighborhoodName} - ${entry.cityName}'),
-                      trailing: Text('${entry.points} pts'),
+                      trailing: Text('${entry.points} pontos'),
                     );
                   },
                 ),

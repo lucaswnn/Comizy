@@ -1,4 +1,5 @@
 import 'package:comizy/utils/navigation_helper.dart';
+import 'package:comizy/values/app_colors.dart';
 import 'package:comizy/values/app_routes.dart';
 import 'package:flutter/material.dart';
 
@@ -15,27 +16,27 @@ class _TutorialPageState extends State<TutorialPage> {
 
   final List<Map<String, String>> _steps = [
     {
-      'title': 'Escolha 2 produtos',
+      'title': 'Escolha os produtos que importam para voce',
       'description':
-          'Você pode acompanhar os preços de 2 produtos à sua escolha, por tempo indeterminado.',
+          'Acompanhe os precos dos itens que voce mais compra e receba atualizacoes feitas pela comunidade.',
       'image': 'https://cdn-icons-png.flaticon.com/512/3081/3081559.png'
     },
     {
-      'title': 'Troque após 1 semana',
+      'title': 'Troque produtos quando precisar',
       'description':
-          'Se quiser trocar os produtos, aguarde 1 semana desde a última troca.',
+          'Se quiser mudar seus itens monitorados, voce pode fazer a troca apos o periodo minimo da plataforma.',
       'image': 'https://cdn-icons-png.flaticon.com/512/484/484582.png'
     },
     {
-      'title': 'Ganhe pontos cadastrando preços',
+      'title': 'Ganhe pontos ao enviar precos',
       'description':
-          'Ao cadastrar preços de produtos, você ajuda a comunidade e ganha pontos!',
+          'Cada colaboracao valida ajuda outros usuarios e aumenta sua pontuacao no ranking local.',
       'image': 'https://cdn-icons-png.flaticon.com/512/1041/1041873.png'
     },
     {
-      'title': 'Desbloqueie produtos ocultos',
+      'title': 'Descubra novas oportunidades',
       'description':
-          'A cada 2 preços validados, você desbloqueia 1 produto oculto por uma semana.',
+          'Com participacao frequente, voce desbloqueia recursos e acompanha mais ofertas relevantes.',
       'image': 'https://cdn-icons-png.flaticon.com/512/2910/2910768.png'
     },
   ];
@@ -109,7 +110,7 @@ class _TutorialPageState extends State<TutorialPage> {
                     height: 8,
                     decoration: BoxDecoration(
                       color: _currentPage == index
-                          ? Colors.blue
+                          ? AppColors.primary
                           : Colors.grey.shade400,
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -120,6 +121,8 @@ class _TutorialPageState extends State<TutorialPage> {
             ElevatedButton(
               onPressed: _nextPage,
               style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: AppColors.secondary,
                 padding:
                     const EdgeInsets.symmetric(horizontal: 40, vertical: 14),
                 shape: RoundedRectangleBorder(

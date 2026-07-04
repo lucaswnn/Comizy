@@ -22,6 +22,14 @@ enum AuthLoginStatus {
   unknownError,
 }
 
+enum AuthRecoverPasswordStatus {
+  success,
+  invalidEmail,
+  tooManyRequests,
+  networkRequestFailed,
+  unknownError,
+}
+
 class AuthService {
   AuthService._();
   static final AuthService instance = AuthService._();
@@ -120,5 +128,34 @@ class AuthService {
 
   Future<void> logout() async {
     await _client.auth.signOut();
+  }
+
+  Future<AuthRecoverPasswordStatus> recoverPasswordByEmail({
+    required String email,
+  }) async {
+    try {
+      await _client.auth.resetPasswordForEmail(email.trim());
+      return AuthRecoverPasswordStatus.success;
+    } on AuthException catch (e) {
+      return _mapRecoverPasswordError(e);
+    } catch (_) {
+      return AuthRecoverPasswordStatus.unknownError;
+    }
+  }
+
+  AuthRecoverPasswordStatus _mapRecoverPasswordError(AuthException e) {
+    final message = e.message.toLowerCase();
+
+    if (message.contains('invalid email')) {
+      return AuthRecoverPasswordStatus.invalidEmail;
+    }
+    if (message.contains('too many requests')) {
+      return AuthRecoverPasswordStatus.tooManyRequests;
+    }
+    if (message.contains('network')) {
+      return AuthRecoverPasswordStatus.networkRequestFailed;
+    }
+
+    return AuthRecoverPasswordStatus.unknownError;
   }
 }

@@ -15,7 +15,7 @@ class UserPersonalPage extends StatelessWidget {
     final wallet = user.wallet;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Meus dados pessoais'),
+        title: const Text('Meus dados'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -38,7 +38,7 @@ class UserPersonalPage extends StatelessWidget {
               contentPadding: EdgeInsets.zero,
               leading: const Icon(Icons.account_balance_wallet_outlined),
               title: const Text('Carteira'),
-              subtitle: Text('${wallet.cash} moedas'),
+              subtitle: Text('${wallet.cash} moedas disponiveis'),
             ),
           ],
         ),

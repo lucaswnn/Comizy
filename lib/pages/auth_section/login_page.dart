@@ -2,6 +2,7 @@ import 'package:comizy/services/auth/auth_service.dart';
 import 'package:comizy/utils/navigation_helper.dart';
 import 'package:comizy/utils/snackbar_helper.dart';
 import 'package:comizy/utils/validators.dart';
+import 'package:comizy/values/app_colors.dart';
 import 'package:comizy/values/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,11 +13,16 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue,
+      backgroundColor: AppColors.primary,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: _LoginForm(),
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(20),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 420),
+              child: const _LoginForm(),
+            ),
+          ),
         ),
       ),
     );
@@ -24,6 +30,8 @@ class LoginPage extends StatelessWidget {
 }
 
 class _LoginForm extends StatefulWidget {
+  const _LoginForm();
+
   @override
   State<_LoginForm> createState() => _LoginFormState();
 }
@@ -76,6 +84,10 @@ class _LoginFormState extends State<_LoginForm> {
     }
   }
 
+  void _openForgotPassword() {
+    NavigationHelper.pushNamed(AppRoutes.forgotPasswordPage);
+  }
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -100,7 +112,7 @@ class _LoginFormState extends State<_LoginForm> {
       decoration: InputDecoration(
         hintText: hintText,
         icon: icon,
-        iconColor: Colors.white,
+        iconColor: AppColors.secondary,
         suffixIcon: isPassword
             ? ExcludeFocus(
                 child: IconButton(
@@ -111,19 +123,20 @@ class _LoginFormState extends State<_LoginForm> {
                 ),
               )
             : null,
-        suffixIconColor: Colors.white,
-        hintStyle: const TextStyle(color: Colors.white, fontSize: 14),
+        suffixIconColor: AppColors.secondary,
+        hintStyle: const TextStyle(color: AppColors.secondary, fontSize: 14),
+        filled: false,
         focusedBorder: const UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.green),
+          borderSide: BorderSide(color: AppColors.tertiary),
         ),
         enabledBorder: const UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.white),
+          borderSide: BorderSide(color: AppColors.secondary),
         ),
-        errorStyle: const TextStyle(color: Colors.white),
+        errorStyle: const TextStyle(color: AppColors.secondary),
       ),
       validator: validator,
       inputFormatters: inputFormatters,
-      style: const TextStyle(color: Colors.white, fontSize: 14),
+      style: const TextStyle(color: AppColors.secondary, fontSize: 14),
     );
   }
 
@@ -131,39 +144,56 @@ class _LoginFormState extends State<_LoginForm> {
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _formattedTextFormField(
-            controller: _emailController,
-            hintText: 'E-mail',
-            validator: Validators.emailValidator,
-            icon: const Icon(Icons.email),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        const Text(
+          'Acesse sua conta',
+          style: TextStyle(
+            color: AppColors.secondary,
+            fontSize: 28,
+            fontWeight: FontWeight.w800,
           ),
-          _formattedTextFormField(
-            controller: _passwordController,
-            hintText: 'Senha',
-            validator: Validators.passwordValidator,
-            icon: const Icon(Icons.lock),
-            isPassword: true,
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'Continue acompanhando preços e contribuindo com a comunidade.',
+          style: TextStyle(
+            color: AppColors.secondary.withValues(alpha: 0.9),
+            fontSize: 14,
+            height: 1.3,
           ),
-          const SizedBox(height: 10),
-          Align(
-            alignment: Alignment.center,
-            child: ElevatedButton(
-              style: const ButtonStyle(
-                side: WidgetStatePropertyAll(BorderSide.none),
-                textStyle: WidgetStatePropertyAll(TextStyle(fontSize: 15)),
-              ),
-              onPressed: _submitForm,
-              child: const Text(
-                'Entrar',
-                style: TextStyle(color: Colors.black),
-              ),
-            ),
+        ),
+        const SizedBox(height: 22),
+        _formattedTextFormField(
+          controller: _emailController,
+          hintText: 'Seu e-mail',
+          validator: Validators.emailValidator,
+          icon: const Icon(Icons.email),
+        ),
+        const SizedBox(height: 8),
+        _formattedTextFormField(
+          controller: _passwordController,
+          hintText: 'Sua senha',
+          validator: Validators.passwordValidator,
+          icon: const Icon(Icons.lock),
+          isPassword: true,
+        ),
+        const SizedBox(height: 4),
+        Align(
+          alignment: Alignment.centerRight,
+          child: TextButton(
+            onPressed: _openForgotPassword,
+            child: const Text('Esqueci minha senha'),
           ),
-        ],
-      ),
+        ),
+        const SizedBox(height: 8),
+        ElevatedButton(
+          onPressed: _submitForm,
+          child: const Text(
+            'Entrar',
+            style: TextStyle(color: AppColors.primary),
+          ),
+        ),
+      ]),
     );
   }
 }

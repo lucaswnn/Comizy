@@ -28,7 +28,7 @@ class ShowcaseProductPage extends StatelessWidget {
       appBar: AppBar(),
       body: Column(
         children: [
-          const Text('Dados do produto'),
+          const Text('Informacoes do produto na vitrine'),
           ChangeNotifierProvider(
             create: (_) => AsyncActionNotifier<ShowcaseRemoveStatus>(),
             child: Consumer<AsyncActionNotifier<ShowcaseRemoveStatus>>(
@@ -54,7 +54,7 @@ class ShowcaseProductPage extends StatelessWidget {
                             context: context,
                             builder: (_) => AlertDialog(
                               content: Text(
-                                  'O produto não pode ser removido da vitrine ainda. '
+                                  'Este produto ainda nao pode ser removido da vitrine. '
                                   'Aguarde mais $differenceInDays $dayFormatting.'),
                               actions: [
                                 TextButton(
@@ -83,7 +83,7 @@ class ShowcaseProductPage extends StatelessWidget {
                     showcaseNotifier: showcaseNotifier,
                     showcaseItem: item,
                   ),
-                  child: const Text('Remover'),
+                  child: const Text('Remover da vitrine'),
                 );
               },
             ),

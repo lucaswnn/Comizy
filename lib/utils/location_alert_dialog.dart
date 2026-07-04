@@ -18,12 +18,12 @@ class _LocationAlertDialogState extends State<LocationAlertDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Uso de localização'),
+      title: const Text('Uso de localizacao'),
       content: Column(
         children: [
-          const Text('Para melhorar sua experiência, utilizamos o GPS '
-              'para encontrar sua localização atual. '
-              'O uso da localização não é obrigatório.'),
+          const Text('Para melhorar sua experiencia, usamos o GPS '
+              'para identificar sua localizacao atual e mostrar ofertas proximas. '
+              'O uso da localizacao e opcional.'),
           const SizedBox(height: 10),
           Checkbox(
             value: doNotShowAgain,

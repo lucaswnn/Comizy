@@ -12,7 +12,7 @@ class LogoutPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Sair'),
+        title: const Text('Encerrar sessao'),
       ),
       body: Center(
         child: ElevatedButton(
@@ -23,7 +23,7 @@ class LogoutPage extends StatelessWidget {
             await AppPreferences.resetPreferences();
             NavigationHelper.pushNamedAndClearStack(AppRoutes.landingPage);
           },
-          child: const Text('Sair'),
+          child: const Text('Sair da conta'),
         ),
       ),
     );

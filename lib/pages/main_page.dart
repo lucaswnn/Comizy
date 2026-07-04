@@ -69,24 +69,24 @@ class _MainPageViewState extends State<_MainPageView> {
   final List<NavigationDestination> _navItems = const [
     NavigationDestination(
         icon: Icon(
-          Icons.abc,
+          Icons.home_outlined,
         ),
-        label: 'Home'),
+        label: 'Inicio'),
     NavigationDestination(
         icon: Icon(
-          Icons.abc,
+          Icons.storefront_outlined,
         ),
-        label: 'Showcase'),
+        label: 'Vitrine'),
     NavigationDestination(
         icon: Icon(
-          Icons.abc,
+          Icons.volunteer_activism_outlined,
         ),
-        label: 'Help'),
+        label: 'Ajudar'),
     NavigationDestination(
         icon: Icon(
-          Icons.abc,
+          Icons.person_outline,
         ),
-        label: 'User'),
+        label: 'Perfil'),
   ];
 
   int _currentNavIndex = 0;

@@ -17,13 +17,13 @@ class SetLocationPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Escolher localização'),
+        title: const Text('Escolher localizacao'),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Text(
-              'Escolha uma localização para encontrar os melhores preços'),
+              'Escolha sua localizacao para encontrar os melhores precos perto de voce'),
           const SizedBox(height: 20),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -42,8 +42,8 @@ class SetLocationPage extends StatelessWidget {
                               context: context,
                               builder: (_) => AlertDialog(
                                 content: const Text(
-                                    'Não foi possível obter a localização atual. '
-                                    'Tente configurar as permissões do uso de localização.'),
+                                  'Nao foi possivel obter sua localizacao atual. '
+                                  'Verifique as permissoes de localizacao e tente novamente.'),
                                 actions: [
                                   TextButton(
                                     onPressed: () {
@@ -73,7 +73,7 @@ class SetLocationPage extends StatelessWidget {
                         locationNotifier: locationNotifier,
                         helpRequestNotifier: helpRequestNotifier,
                       ),
-                      child: const Text('Localização atual'),
+                      child: const Text('Usar localizacao atual'),
                     );
                   },
                 ),
@@ -83,7 +83,7 @@ class SetLocationPage extends StatelessWidget {
                 onPressed: () {
                   NavigationHelper.pushNamed(AppRoutes.setLocationMapPage);
                 },
-                child: const Text('Selecionar no mapa'),
+                child: const Text('Escolher no mapa'),
               ),
             ],
           ),

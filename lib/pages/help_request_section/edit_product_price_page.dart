@@ -51,11 +51,11 @@ class _EditProductPricePageState extends State<EditProductPricePage> {
             keyboardType: TextInputType.number,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Por favor, insira um preço';
+                return 'Informe um preco';
               }
               final price = double.tryParse(value.replaceFirst(',', '.'));
               if (price == null || price < 0) {
-                return 'Por favor, insira um preço válido';
+                return 'Informe um preco valido';
               }
               return null;
             },
@@ -72,7 +72,7 @@ class _EditProductPricePageState extends State<EditProductPricePage> {
               product: product,
               shop: shop,
             ),
-            child: const Text('Cadastrar'),
+            child: const Text('Enviar preco'),
           ),
         ],
       ),
@@ -88,13 +88,13 @@ class _EditProductPricePageState extends State<EditProductPricePage> {
         marketNotifier.needingUpdateOffersOnShop(shop).entries.toList();
     if (offers.isEmpty) {
       return const Center(
-        child: Text('Essa loja não possui mais produtos para cadastrar'),
+        child: Text('Esta loja nao possui mais produtos pendentes'),
       );
     }
     return Column(
       children: [
         const Flexible(
-          child: Text('Outras pessoas também gostariam de saber dessa loja'),
+          child: Text('Outras pessoas tambem querem atualizar precos desta loja'),
         ),
         const SizedBox(height: 10),
         Flexible(
@@ -107,7 +107,7 @@ class _EditProductPricePageState extends State<EditProductPricePage> {
               return ListTile(
                 title: Text('$offer'),
                 subtitle: Text(
-                    'Último preço em: ${offerInfo.lastUpdated.toShortDateString}'),
+                  'Ultimo preco em: ${offerInfo.lastUpdated.toShortDateString}'),
                 onTap: () {
                   helpRequestNotifier.currentProductRequest = offer.product;
                   NavigationHelper.pushReplacementNamed(
@@ -130,7 +130,7 @@ class _EditProductPricePageState extends State<EditProductPricePage> {
           content: Text(content),
           actions: [
             TextButton(
-              child: const Text('Voltar'),
+              child: const Text('Fechar'),
               onPressed: () {
                 NavigationHelper.pop();
               },
@@ -170,22 +170,22 @@ class _EditProductPricePageState extends State<EditProductPricePage> {
               switch (result) {
                 case SubmitPriceResult.success:
                   showResponseDialog(
-                    title: 'Sucesso ao cadastrar',
-                    content: 'Preço cadastrado com sucesso.',
+                    title: 'Preco enviado com sucesso',
+                    content: 'Obrigado por contribuir com a comunidade.',
                   );
                   break;
                 case SubmitPriceResult.hold:
                   showResponseDialog(
-                    title: 'Contribuição em análise',
+                    title: 'Contribuicao em analise',
                     content:
-                        'Obrigado pela ajuda! Sua contribuição está agora em análise',
+                        'Recebemos seu envio e ele sera validado em breve.',
                   );
                   break;
                 case SubmitPriceResult.error:
                   showResponseDialog(
-                    title: 'Falha ao cadastrar',
-                    content: 'Houve uma falha do servidor. '
-                        'Tente novamente mais tarde.',
+                    title: 'Nao foi possivel enviar',
+                    content:
+                        'Houve uma falha no servidor. Tente novamente mais tarde.',
                   );
                   asyncActionNotifier.reset();
                   break;
@@ -219,7 +219,7 @@ class _EditProductPricePageState extends State<EditProductPricePage> {
           }
           return Scaffold(
             appBar: AppBar(
-              title: const Text('Editar preço do produto'),
+              title: const Text('Cadastrar preco do produto'),
               leading: IconButton(
                 onPressed: () =>
                     NavigationHelper.pushNamedAndClearStack(AppRoutes.mainPage),

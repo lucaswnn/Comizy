@@ -14,7 +14,7 @@ class ShowcasePage extends StatelessWidget {
   const ShowcasePage({super.key});
   
   ListTile _addProductListTile() => ListTile(
-        title: const Text('Adicionar produto'),
+        title: const Text('Adicionar produto na vitrine'),
         leading: const Icon(Icons.add),
         onTap: () => NavigationHelper.pushNamed(AppRoutes.searchPage),
       );
@@ -83,7 +83,7 @@ class _NewSpaceListTile extends StatelessWidget {
 
   List<Widget> _buildReturnAction() => [
         TextButton(
-          child: const Text('Retornar'),
+          child: const Text('Voltar'),
           onPressed: () => NavigationHelper.pop(),
         ),
       ];
@@ -103,7 +103,7 @@ class _NewSpaceListTile extends StatelessWidget {
           },
         ),
         TextButton(
-          child: const Text('Retornar'),
+          child: const Text('Voltar'),
           onPressed: () => NavigationHelper.pop(),
         )
       ];
@@ -124,20 +124,20 @@ class _NewSpaceListTile extends StatelessWidget {
     String content;
     if (isAddable) {
       content =
-          'Deseja mesmo adicionar mais um espaço por ${showcase.newSpaceCost} pontos?';
+          'Deseja adicionar mais um espaco por ${showcase.newSpaceCost} pontos?';
     } else {
       content =
-          'Para adicionar mais um espaço, tenha pelo menos ${showcase.newSpaceCost} pontos.';
+          'Para adicionar um novo espaco, voce precisa de pelo menos ${showcase.newSpaceCost} pontos.';
     }
 
     return ListTile(
       leading: const Icon(Icons.add),
-      title: const Text('Novo espaço'),
+      title: const Text('Novo espaco'),
       onTap: () {
         showDialog(
           context: context,
           builder: (_) => AlertDialog(
-            title: const Text('Adicionar novo espaço'),
+            title: const Text('Adicionar novo espaco'),
             content: Text(content),
             actions: isAddable
                 ? _buildAddOrReturnActions(showcaseNotifier, wallet)

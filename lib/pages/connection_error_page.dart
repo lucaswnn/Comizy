@@ -14,7 +14,10 @@ class ConnectionErrorPage extends StatelessWidget {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text('Algo deu errado ao atualizar os dados.'),
+          const Text(
+            'Nao foi possivel atualizar seus dados agora.\nTente novamente em instantes.',
+            textAlign: TextAlign.center,
+          ),
           ElevatedButton(
             onPressed: () async {
               resetLoadableNotifiers(context);
@@ -23,7 +26,7 @@ class ConnectionErrorPage extends StatelessWidget {
               await AppPreferences.resetPreferences();
               NavigationHelper.pushNamedAndClearStack(AppRoutes.landingPage);
             },
-            child: const Text('Retornar'),
+            child: const Text('Voltar para o inicio'),
           )
         ],
       ),

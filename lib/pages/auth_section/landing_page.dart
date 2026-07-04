@@ -1,25 +1,11 @@
 import 'package:comizy/utils/navigation_helper.dart';
+import 'package:comizy/values/app_colors.dart';
 import 'package:comizy/values/app_assets.dart';
 import 'package:comizy/values/app_routes.dart';
 import 'package:flutter/material.dart';
 
 class LandingPage extends StatelessWidget {
   const LandingPage({super.key});
-
-  ElevatedButton _formattedElevatedButton(
-      {required void Function()? onPressed, required String text}) {
-    return ElevatedButton(
-      style: const ButtonStyle(
-        side: WidgetStatePropertyAll(BorderSide.none),
-        textStyle: WidgetStatePropertyAll(TextStyle(fontSize: 15)),
-      ),
-      onPressed: onPressed,
-      child: Text(
-        text,
-        style: const TextStyle(color: Colors.black),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +20,10 @@ class LandingPage extends StatelessWidget {
           ),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(20.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 mainAxisSize: MainAxisSize.min,
@@ -45,48 +32,75 @@ class LandingPage extends StatelessWidget {
                   const SizedBox(width: 15),
                   const Flexible(
                     child: Text(
-                      'AppStrings.landingPageTinyTitle',
+                      'Comunidade colaborativa de preços',
                       style: TextStyle(
                         color: Colors.white,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
                 ],
               ),
+              const Text(
+                'Economize nas compras do dia a dia com informações reais do seu bairro.',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 30,
+                  fontWeight: FontWeight.w800,
+                  height: 1.2,
+                ),
+              ),
               Row(
                 children: [
-                  const Flexible(
+                  Expanded(
                     child: Text(
-                      'AppStrings.landingPageMainTitle',
-                      style: TextStyle(color: Colors.white, fontSize: 25),
+                      'Cadastre preços, acompanhe produtos e ganhe pontos ajudando outras pessoas a comprar melhor.',
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: Colors.white.withValues(alpha: 0.92),
+                        height: 1.35,
+                      ),
                     ),
                   ),
+                  const SizedBox(width: 16),
                   Image.asset(
                     'assets/${AppAssets.simpleLogo}',
                     scale: 1.5,
                   ),
                 ],
               ),
-              const Text(
-                'AppStrings.landingPageText',
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ElevatedButton(
+                    onPressed: () =>
+                        NavigationHelper.pushNamed(AppRoutes.loginPage),
+                    child: const Text('Entrar na minha conta'),
+                  ),
+                  const SizedBox(height: 8),
+                  OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.secondary,
+                      side: const BorderSide(color: AppColors.secondary),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onPressed: () =>
+                        NavigationHelper.pushNamed(AppRoutes.createAccountPage),
+                    child: const Text('Criar conta grátis'),
+                  ),
+                ],
+              ),
+              Text(
+                'Ao continuar, você concorda com nossos termos e política de privacidade.',
                 style: TextStyle(
-                  fontSize: 15,
-                  color: Colors.white,
+                  color: Colors.white.withValues(alpha: 0.86),
+                  fontSize: 12,
                 ),
               ),
-              Column(children: [
-                _formattedElevatedButton(
-                  onPressed: () =>
-                      NavigationHelper.pushNamed(AppRoutes.loginPage),
-                  text: 'Já tenho conta',
-                ),
-                const SizedBox(height: 5),
-                _formattedElevatedButton(
-                  onPressed: () =>
-                      NavigationHelper.pushNamed(AppRoutes.createAccountPage),
-                  text: 'Criar conta',
-                ),
-              ]),
             ],
           ),
         ),

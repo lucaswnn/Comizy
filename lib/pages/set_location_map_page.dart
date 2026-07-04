@@ -3,6 +3,7 @@ import 'package:comizy/services/change_notifiers/help_request_notifier.dart';
 import 'package:comizy/services/change_notifiers/location_notifier.dart';
 import 'package:comizy/services/command/set_location_command.dart';
 import 'package:comizy/utils/navigation_helper.dart';
+import 'package:comizy/values/app_colors.dart';
 import 'package:comizy/values/app_routes.dart';
 import 'package:comizy/widgets/async_elevated_button.dart';
 import 'package:flutter/material.dart';
@@ -56,7 +57,7 @@ class _SetLocationMapPageState extends State<SetLocationMapPage> {
           height: 40,
           child: const Icon(
             Icons.location_pin,
-            color: Colors.green,
+            color: AppColors.tertiary,
             size: 40,
           ),
         ),
@@ -67,7 +68,7 @@ class _SetLocationMapPageState extends State<SetLocationMapPage> {
           height: 40,
           child: const Icon(
             Icons.my_location,
-            color: Colors.blue,
+            color: AppColors.primary,
             size: 40,
           ),
         ),
@@ -75,7 +76,7 @@ class _SetLocationMapPageState extends State<SetLocationMapPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Selecione sua localização'),
+        title: const Text('Selecione sua localizacao'),
       ),
       body: Column(
         children: [
@@ -105,7 +106,7 @@ class _SetLocationMapPageState extends State<SetLocationMapPage> {
                 const Center(
                   child: Icon(
                     Icons.location_pin,
-                    color: Colors.red,
+                    color: AppColors.tertiary,
                     size: 40,
                   ),
                 ),
@@ -139,7 +140,7 @@ class _SetLocationMapPageState extends State<SetLocationMapPage> {
                     helpRequestNotifier: helpRequestNotifier,
                     getLatLngFunc: () => _mapController.camera.center,
                   ),
-                  child: const Text('Definir localização'),
+                  child: const Text('Confirmar localizacao'),
                 );
               },
             ),

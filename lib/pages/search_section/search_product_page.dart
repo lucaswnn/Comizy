@@ -37,7 +37,7 @@ class SearchProductPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Detalhes do produto ${product.name}'),
+        title: Text('Produto: ${product.name}'),
       ),
       body: const _ActionsWidget(),
     );
@@ -152,7 +152,7 @@ class _ActionsWidgetState extends State<_ActionsWidget> {
                           }
                         }
                       : null,
-                  child: const Text('Adicionar'))
+                  child: const Text('Adicionar na vitrine'))
             ],
           );
         }
@@ -171,7 +171,7 @@ class _ActionsWidgetState extends State<_ActionsWidget> {
             await AppPreferences.resetPreferences();
             NavigationHelper.pushNamedAndClearStack(AppRoutes.landingPage);
           },
-          child: const Text('Retornar'),
+          child: const Text('Voltar ao inicio'),
         );
     }
   }
@@ -179,21 +179,21 @@ class _ActionsWidgetState extends State<_ActionsWidget> {
   String _message(ProductStatus showcaseAddOption) {
     switch (showcaseAddOption) {
       case ProductStatus.notInShowcaseAddable:
-        return 'Para mais detalhes, adicione este produto na vitrine';
+        return 'Adicione este produto na sua vitrine para acompanhar os precos.';
       case ProductStatus.inShowcaseAddable:
-        return 'Para mais detalhes deste produto em outros bairros, adicione-o na vitrine';
+        return 'Voce pode acompanhar este produto em mais bairros pela vitrine.';
       case ProductStatus.noNeighborhood:
-        return 'Parece que a localização inserida não possui bairros cadastrados na plataforma';
+        return 'Sua localizacao ainda nao possui bairros cadastrados na plataforma.';
       case ProductStatus.notInShowcaseNotAddable:
-        return 'Ops, não encontramos este produto na localização atual';
+        return 'Nao encontramos este produto na localizacao atual.';
       case ProductStatus.inShowcaseNoNeighborhoodToAdd:
-        return 'Detalhes do produto';
+        return 'Este produto ja esta sendo acompanhado na sua vitrine.';
       case ProductStatus.inShowcaseNotAddable:
-        return 'Detalhes do produto';
+        return 'Sua vitrine esta cheia no momento para este produto.';
       case ProductStatus.notReachable:
-        return 'Algo deu errado';
+        return 'Algo deu errado ao carregar as informacoes.';
       case ProductStatus.error:
-        return 'Erro de conexão. Faça login novamente.';
+        return 'Erro de conexao. Entre novamente para continuar.';
     }
   }
 

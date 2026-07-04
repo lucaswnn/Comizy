@@ -8,8 +8,8 @@ class UserPage extends StatelessWidget {
   final options = const {
     0: 'Minha conta',
     1: 'Ranking de pontos',
-    2: 'Sobre o app',
-    3: 'Sair',
+    2: 'Sobre o Comizy',
+    3: 'Encerrar sessao',
   };
 
   void _navigateToOption(int option) {
