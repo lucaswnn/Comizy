@@ -6,6 +6,7 @@ import 'package:comizy/services/command/submit_price_command.dart';
 import 'package:comizy/tads/product.dart';
 import 'package:comizy/tads/shop.dart';
 import 'package:comizy/utils/extensions.dart';
+import 'package:comizy/utils/input_formatters.dart';
 import 'package:comizy/utils/invalid_route.dart';
 import 'package:comizy/utils/navigation_helper.dart';
 import 'package:comizy/values/app_routes.dart';
@@ -49,13 +50,14 @@ class _EditProductPricePageState extends State<EditProductPricePage> {
               labelText: 'Preço do ${product.name} no ${shop.name}',
             ),
             keyboardType: TextInputType.number,
+            inputFormatters: [CurrencyInputFormatter()],
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Informe um preco';
+                return 'Informe um preço';
               }
               final price = double.tryParse(value.replaceFirst(',', '.'));
               if (price == null || price < 0) {
-                return 'Informe um preco valido';
+                return 'Informe um preço válido';
               }
               return null;
             },
@@ -72,7 +74,7 @@ class _EditProductPricePageState extends State<EditProductPricePage> {
               product: product,
               shop: shop,
             ),
-            child: const Text('Enviar preco'),
+            child: const Text('Enviar preço'),
           ),
         ],
       ),
@@ -88,13 +90,14 @@ class _EditProductPricePageState extends State<EditProductPricePage> {
         marketNotifier.needingUpdateOffersOnShop(shop).entries.toList();
     if (offers.isEmpty) {
       return const Center(
-        child: Text('Esta loja nao possui mais produtos pendentes'),
+        child: Text('Esta loja não possui mais produtos pendentes'),
       );
     }
     return Column(
       children: [
         const Flexible(
-          child: Text('Outras pessoas tambem querem atualizar precos desta loja'),
+          child:
+              Text('Outras pessoas também querem atualizar preços desta loja'),
         ),
         const SizedBox(height: 10),
         Flexible(
@@ -107,7 +110,7 @@ class _EditProductPricePageState extends State<EditProductPricePage> {
               return ListTile(
                 title: Text('$offer'),
                 subtitle: Text(
-                  'Ultimo preco em: ${offerInfo.lastUpdated.toShortDateString}'),
+                    'Último preço em: ${offerInfo.lastUpdated.toShortDateString}'),
                 onTap: () {
                   helpRequestNotifier.currentProductRequest = offer.product;
                   NavigationHelper.pushReplacementNamed(
@@ -170,20 +173,20 @@ class _EditProductPricePageState extends State<EditProductPricePage> {
               switch (result) {
                 case SubmitPriceResult.success:
                   showResponseDialog(
-                    title: 'Preco enviado com sucesso',
+                    title: 'Preço enviado com sucesso',
                     content: 'Obrigado por contribuir com a comunidade.',
                   );
                   break;
                 case SubmitPriceResult.hold:
                   showResponseDialog(
-                    title: 'Contribuicao em analise',
+                    title: 'Contribuição em análise',
                     content:
-                        'Recebemos seu envio e ele sera validado em breve.',
+                        'Recebemos seu envio e ele será validado em breve.',
                   );
                   break;
                 case SubmitPriceResult.error:
                   showResponseDialog(
-                    title: 'Nao foi possivel enviar',
+                    title: 'Não foi possível enviar',
                     content:
                         'Houve uma falha no servidor. Tente novamente mais tarde.',
                   );
@@ -219,14 +222,19 @@ class _EditProductPricePageState extends State<EditProductPricePage> {
           }
           return Scaffold(
             appBar: AppBar(
-              title: const Text('Cadastrar preco do produto'),
+              title: const Text('Cadastrar preço do produto'),
               leading: IconButton(
                 onPressed: () =>
                     NavigationHelper.pushNamedAndClearStack(AppRoutes.mainPage),
                 icon: const Icon(Icons.arrow_back),
               ),
             ),
-            body: content,
+            body: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: content,
+              ),
+            ),
           );
         },
       ),

@@ -199,7 +199,7 @@ class _CreateAccountFormState extends State<_CreateAccountForm> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Comece a acompanhar produtos, contribuir com precos e subir no ranking da sua regiao.',
+            'Comece a acompanhar produtos, contribuir com preços e subir no ranking da sua região.',
             style: TextStyle(
               color: AppColors.secondary.withValues(alpha: 0.9),
               fontSize: 14,
@@ -258,7 +258,7 @@ class _CreateAccountFormState extends State<_CreateAccountForm> {
                 child: TextButton(
                   onPressed: _showTerms,
                   child: const Text(
-                    'Li e aceito os Termos e Condicoes de uso de dados.',
+                    'Li e aceito os Termos e Condições de uso de dados.',
                   ),
                 ),
               ),
@@ -274,7 +274,7 @@ class _CreateAccountFormState extends State<_CreateAccountForm> {
           ),
           const SizedBox(height: 10),
           Text(
-            'Você podera ajustar suas preferencias e dados pessoais depois.',
+            'Você poderá ajustar suas preferências e dados pessoais depois.',
             textAlign: TextAlign.center,
             style: TextStyle(
               color: AppColors.secondary.withValues(alpha: 0.84),

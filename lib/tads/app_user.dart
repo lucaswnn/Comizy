@@ -26,14 +26,12 @@ class AppMainUser extends AppUser {
     required this.wallet,
   });
 
-  factory AppMainUser.fromJSON(Map<String, dynamic> json) {
-    return AppMainUser(
-      name: json['user_name'],
-      points: 0,
-      number: json['user_number'],
-      wallet: Wallet(json['user_wallet']),
-    );
-  }
+  factory AppMainUser.fromJSON(Map<String, dynamic> json) => AppMainUser(
+        name: json['user_name'],
+        points: 0,
+        number: json['user_number'],
+        wallet: Wallet(json['user_wallet']),
+      );
 }
 
 class AppOtherUser extends AppUser {

@@ -58,7 +58,6 @@ class HelpRequestNotifier extends DatabaseLoadable with ChangeNotifier {
     try {
       return await DatabaseParser.submitPriceOffer(helpData);
     } catch (e) {
-      print(e);
       return SubmitPriceStatus.error;
     }
   }

@@ -38,7 +38,7 @@ class UserPersonalPage extends StatelessWidget {
               contentPadding: EdgeInsets.zero,
               leading: const Icon(Icons.account_balance_wallet_outlined),
               title: const Text('Carteira'),
-              subtitle: Text('${wallet.cash} moedas disponiveis'),
+              subtitle: Text('${wallet.cash} moedas disponíveis'),
             ),
           ],
         ),

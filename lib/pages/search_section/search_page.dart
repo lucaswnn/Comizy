@@ -65,7 +65,7 @@ class _SearchPageState extends State<SearchPage> {
   Widget _buildResults() {
     if (_suggestions.isEmpty && _textController.text != '') {
       return const Center(
-        child: Text('Nao encontramos esse item. Tente outro nome.'),
+        child: Text('Não encontramos esse item. Tente outro nome.'),
       );
     }
 

@@ -27,14 +27,12 @@ class DatabaseConnection {
   Future<Map<String, dynamic>> loadUserProfileData() async {
     final data = await _dbInstance.from('profiles').select().single();
 
-    print('loadUserProfileData:\n$data');
     return data;
   }
 
   Future<Map<String, dynamic>> loadUserConfigData() async {
     final data = await _dbInstance.from('user_config').select().single();
 
-    print('loadUserConfigData:\n$data');
     return data;
   }
 
@@ -84,7 +82,6 @@ class DatabaseConnection {
       ''',
     );
 
-    print('loadNeighborhoods:\n$data');
     return data;
   }
 
@@ -119,7 +116,6 @@ class DatabaseConnection {
           total
           ''').inFilter('neighborhood_id', neighborhoodIds);
 
-    print('loadHelpRequests:\n$data');
     return data;
   }
 
@@ -164,40 +160,33 @@ class DatabaseConnection {
       ''',
     );
 
-    print('loadOffers:\n$data');
     return data;
   }
 
   Future<void> insertShowcaseSlot() async {
-    final Map<String, dynamic> res = await _dbInstance.rpc(
+    await _dbInstance.rpc(
       'insert_showcase_slot',
     );
-
-    print('insertShowcaseSlot:\n$res\n');
   }
 
   Future<void> insertItemInShowcaseSlot(ShowcaseItem item) async {
-    final Map<String, dynamic> res = await _dbInstance.rpc(
+    await _dbInstance.rpc(
       'insert_item_in_showcase_slot',
       params: {
         'v_product_id': item.product.id,
         'v_neighborhood_id': item.neighborhood.id,
       },
     );
-
-    print('insertItemInShowcaseSlot:\n$res\n');
   }
 
   Future<void> removeShowcaseItem(ShowcaseItem item) async {
-    final Map<String, dynamic> res = await _dbInstance.rpc(
+    await _dbInstance.rpc(
       'remove_showcase_item',
       params: {
         'v_product_id': item.product.id,
         'v_neighborhood_id': item.neighborhood.id,
       },
     );
-
-    print('removeShowcaseItem:\n$res\n');
   }
 
   Future<Map<String, dynamic>> submitPriceOffer(
@@ -211,15 +200,12 @@ class DatabaseConnection {
       },
     );
 
-    print('submitPriceOffer:\n$res\n');
-
     return res;
   }
 
   Future<List<Map<String, dynamic>>> loadRankingData() async {
     final List<Map<String, dynamic>> res = await _dbInstance.rpc('get_leaderboard');
   
-    print('loadRankingData:\n$res\n');
     return res;
   }
 }

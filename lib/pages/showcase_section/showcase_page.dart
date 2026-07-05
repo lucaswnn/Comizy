@@ -12,7 +12,7 @@ import 'package:provider/provider.dart';
 
 class ShowcasePage extends StatelessWidget {
   const ShowcasePage({super.key});
-  
+
   ListTile _addProductListTile() => ListTile(
         title: const Text('Adicionar produto na vitrine'),
         leading: const Icon(Icons.add),
@@ -56,7 +56,10 @@ class ShowcasePage extends StatelessWidget {
     final showcaseNotifier = context.watch<ShowcaseNotifier>();
     final showcase = showcaseNotifier.showcase;
     if (showcase == null) {
-      return const ConnectionErrorPage();
+      return const ConnectionErrorPage(
+        errorMessage:
+            'Erro ao carregar dados da vitrine. Vitrine não carregada.',
+      );
     }
     final items = showcase.showcaseItems.keys.toList()..sort();
 
@@ -118,26 +121,28 @@ class _NewSpaceListTile extends StatelessWidget {
     final showcaseNotifier = context.read<ShowcaseNotifier>();
     final showcase = showcaseNotifier.showcase;
     if (showcase == null) {
-      return const ConnectionErrorPage();
+      return const ConnectionErrorPage(
+        errorMessage: 'Erro ao carregar dados da vitrine. Vitrine não carregada.',
+      );
     }
     final isAddable = showcase.isSpaceAddable(wallet);
     String content;
     if (isAddable) {
       content =
-          'Deseja adicionar mais um espaco por ${showcase.newSpaceCost} pontos?';
+          'Deseja adicionar mais um espaço por ${showcase.newSpaceCost} pontos?';
     } else {
       content =
-          'Para adicionar um novo espaco, voce precisa de pelo menos ${showcase.newSpaceCost} pontos.';
+          'Para adicionar um novo espaço, você precisa de pelo menos ${showcase.newSpaceCost} pontos.';
     }
 
     return ListTile(
       leading: const Icon(Icons.add),
-      title: const Text('Novo espaco'),
+      title: const Text('Novo espaço'),
       onTap: () {
         showDialog(
           context: context,
           builder: (_) => AlertDialog(
-            title: const Text('Adicionar novo espaco'),
+            title: const Text('Adicionar novo espaço'),
             content: Text(content),
             actions: isAddable
                 ? _buildAddOrReturnActions(showcaseNotifier, wallet)

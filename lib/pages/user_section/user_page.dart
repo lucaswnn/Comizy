@@ -9,7 +9,7 @@ class UserPage extends StatelessWidget {
     0: 'Minha conta',
     1: 'Ranking de pontos',
     2: 'Sobre o Comizy',
-    3: 'Encerrar sessao',
+    3: 'Encerrar sessão',
   };
 
   void _navigateToOption(int option) {

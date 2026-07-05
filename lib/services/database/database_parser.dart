@@ -76,7 +76,7 @@ class DatabaseParser {
     final shops = <int, Shop>{};
 
     for (final offerData in offersData) {
-      final double price = offerData['offer_price'];
+      final double price = (offerData['offer_price'] as num).toDouble();
       final String unit = offerData['offer_unit'];
       final lastUpdated = DateTime.parse(offerData['offer_last_updated']);
       final bool needsUpdate = offerData['offer_needs_update'];

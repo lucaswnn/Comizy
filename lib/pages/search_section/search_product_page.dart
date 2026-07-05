@@ -13,6 +13,7 @@ import 'package:comizy/values/app_routes.dart';
 import 'package:comizy/widgets/empty_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:comizy/values/app_colors.dart';
 
 enum ProductStatus {
   noNeighborhood,
@@ -39,7 +40,11 @@ class SearchProductPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Produto: ${product.name}'),
       ),
-      body: const _ActionsWidget(),
+      body: const SafeArea(
+        child: Center(
+          child: _ActionsWidget(),
+        ),
+      ),
     );
   }
 }
@@ -103,7 +108,7 @@ class _ActionsWidgetState extends State<_ActionsWidget> {
     return ProductStatus.notReachable;
   }
 
-  Widget _buildActionsWidget({
+  Widget? _buildActionsWidget({
     required ProductStatus showcaseAddOption,
     required ShowcaseNotifier showcaseNotifier,
     required LocationNotifier locationNotifier,
@@ -124,19 +129,27 @@ class _ActionsWidgetState extends State<_ActionsWidget> {
                   ?.difference(showcaseNeighborhoods) ??
               {};
 
-          return Row(
+          return Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              DropdownMenu<Neighborhood>(
-                initialSelection: _firstNeighborhoodChoice,
-                dropdownMenuEntries: neighborhoodOptions
-                    .map((n) => DropdownMenuEntry<Neighborhood>(
-                        value: n, label: n.name))
-                    .toList(),
-                onSelected: (v) => setState(
-                  () => _neighborhoodChoice = v,
+              Align(
+                child: DropdownMenu<Neighborhood>(
+                  initialSelection: _firstNeighborhoodChoice,
+                  dropdownMenuEntries: neighborhoodOptions
+                      .map((n) => DropdownMenuEntry<Neighborhood>(
+                          value: n, label: n.name))
+                      .toList(),
+                  onSelected: (v) => setState(
+                    () => _neighborhoodChoice = v,
+                  ),
+                  inputDecorationTheme: const InputDecorationTheme(
+                    border: InputBorder.none,
+                    suffixIconColor: AppColors.tertiary,
+                  ),
                 ),
               ),
+              const SizedBox(height: 10),
               ElevatedButton(
                   onPressed: _neighborhoodChoice != null
                       ? () async {
@@ -148,8 +161,7 @@ class _ActionsWidgetState extends State<_ActionsWidget> {
                           );
                           if (result == ShowcaseAddItemStatus.success) {
                             NavigationHelper.pop();
-                          } else {
-                          }
+                          } else {}
                         }
                       : null,
                   child: const Text('Adicionar na vitrine'))
@@ -161,7 +173,7 @@ class _ActionsWidgetState extends State<_ActionsWidget> {
       case ProductStatus.inShowcaseNoNeighborhoodToAdd:
       case ProductStatus.inShowcaseNotAddable:
       case ProductStatus.notReachable:
-        return const EmptyWidget();
+        return null;
       case ProductStatus.error:
         return ElevatedButton(
           onPressed: () async {
@@ -171,7 +183,7 @@ class _ActionsWidgetState extends State<_ActionsWidget> {
             await AppPreferences.resetPreferences();
             NavigationHelper.pushNamedAndClearStack(AppRoutes.landingPage);
           },
-          child: const Text('Voltar ao inicio'),
+          child: const Text('Voltar ao início'),
         );
     }
   }
@@ -179,21 +191,21 @@ class _ActionsWidgetState extends State<_ActionsWidget> {
   String _message(ProductStatus showcaseAddOption) {
     switch (showcaseAddOption) {
       case ProductStatus.notInShowcaseAddable:
-        return 'Adicione este produto na sua vitrine para acompanhar os precos.';
+        return 'Adicione este produto na sua vitrine para acompanhar os preços.';
       case ProductStatus.inShowcaseAddable:
-        return 'Voce pode acompanhar este produto em mais bairros pela vitrine.';
+        return 'Você pode acompanhar este produto em mais bairros pela vitrine.';
       case ProductStatus.noNeighborhood:
-        return 'Sua localizacao ainda nao possui bairros cadastrados na plataforma.';
+        return 'Sua localização ainda não possui bairros cadastrados na plataforma.';
       case ProductStatus.notInShowcaseNotAddable:
-        return 'Nao encontramos este produto na localizacao atual.';
+        return 'Não encontramos este produto na localização atual.';
       case ProductStatus.inShowcaseNoNeighborhoodToAdd:
-        return 'Este produto ja esta sendo acompanhado na sua vitrine.';
+        return 'Este produto já está sendo acompanhado na sua vitrine.';
       case ProductStatus.inShowcaseNotAddable:
-        return 'Sua vitrine esta cheia no momento para este produto.';
+        return 'Sua vitrine está cheia no momento para este produto.';
       case ProductStatus.notReachable:
-        return 'Algo deu errado ao carregar as informacoes.';
+        return 'Algo deu errado ao carregar as informações.';
       case ProductStatus.error:
-        return 'Erro de conexao. Entre novamente para continuar.';
+        return 'Erro de conexão. Entre novamente para continuar.';
     }
   }
 
@@ -219,19 +231,24 @@ class _ActionsWidgetState extends State<_ActionsWidget> {
       currentProduct: currentProduct,
     );
     final String message = _message(showcaseAddOption);
+    final Widget? actionsWidget = _buildActionsWidget(
+      showcaseAddOption: showcaseAddOption,
+      showcaseNotifier: showcaseNotifier,
+      locationNotifier: locationNotifier,
+      currentProduct: currentProduct,
+    );
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Text(message),
-        _buildActionsWidget(
-          showcaseAddOption: showcaseAddOption,
-          showcaseNotifier: showcaseNotifier,
-          locationNotifier: locationNotifier,
-          currentProduct: currentProduct,
-        ),
-      ],
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(message, textAlign: TextAlign.center),
+          if (actionsWidget != null) const SizedBox(height: 20),
+          if (actionsWidget != null) actionsWidget,
+        ],
+      ),
     );
   }
 }

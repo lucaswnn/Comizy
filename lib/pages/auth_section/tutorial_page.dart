@@ -16,27 +16,27 @@ class _TutorialPageState extends State<TutorialPage> {
 
   final List<Map<String, String>> _steps = [
     {
-      'title': 'Escolha os produtos que importam para voce',
+      'title': 'Escolha os produtos que importam para você',
       'description':
-          'Acompanhe os precos dos itens que voce mais compra e receba atualizacoes feitas pela comunidade.',
+          'Acompanhe os preços dos itens que você mais compra e receba atualizações feitas pela comunidade.',
       'image': 'https://cdn-icons-png.flaticon.com/512/3081/3081559.png'
     },
     {
       'title': 'Troque produtos quando precisar',
       'description':
-          'Se quiser mudar seus itens monitorados, voce pode fazer a troca apos o periodo minimo da plataforma.',
+          'Se quiser mudar seus itens monitorados, você pode fazer a troca após o período mínimo da plataforma.',
       'image': 'https://cdn-icons-png.flaticon.com/512/484/484582.png'
     },
     {
-      'title': 'Ganhe pontos ao enviar precos',
+      'title': 'Ganhe pontos ao enviar preços',
       'description':
-          'Cada colaboracao valida ajuda outros usuarios e aumenta sua pontuacao no ranking local.',
+          'Cada colaboração válida ajuda outros usuários e aumenta sua pontuação no ranking local.',
       'image': 'https://cdn-icons-png.flaticon.com/512/1041/1041873.png'
     },
     {
       'title': 'Descubra novas oportunidades',
       'description':
-          'Com participacao frequente, voce desbloqueia recursos e acompanha mais ofertas relevantes.',
+          'Com participação frequente, você desbloqueia recursos e acompanha mais ofertas relevantes.',
       'image': 'https://cdn-icons-png.flaticon.com/512/2910/2910768.png'
     },
   ];

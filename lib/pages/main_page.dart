@@ -41,7 +41,9 @@ class _MainPageState extends State<MainPage> {
               body: Center(child: CircularProgressIndicator()));
         }
         if (snapshot.hasError) {
-          return const ConnectionErrorPage();
+          return ConnectionErrorPage(
+            errorMessage: 'Erro ao carregar dados: ${snapshot.error}',
+          );
         }
         return const _MainPageView();
       },
@@ -71,7 +73,7 @@ class _MainPageViewState extends State<_MainPageView> {
         icon: Icon(
           Icons.home_outlined,
         ),
-        label: 'Inicio'),
+        label: 'Início'),
     NavigationDestination(
         icon: Icon(
           Icons.storefront_outlined,

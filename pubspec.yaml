@@ -23,6 +23,8 @@ dependencies:
   shared_preferences: ^2.2.2
   firebase_core: ^4.4.0
   firebase_auth: ^6.1.4
+  flutter_native_splash: ^2.4.7
+  flutter_launcher_icons: ^0.14.4
 
 dev_dependencies:
   flutter_test:
@@ -33,4 +35,18 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/
+    - assets/images/
+    - assets/icons/
+
+flutter_native_splash:
+  color: "#0b4788"
+  image: assets/images/logo_com_nome.png
+  android: true
+  ios: true
+
+flutter_launcher_icons:
+  image_path: "assets/images/logo_simples_azul.png"
+  android: "launcher_icon"
+  min_sdk_android: 16 # android min sdk min:16, default 21
+  ios: true
+  remove_alpha_ios: true

@@ -43,8 +43,8 @@ class _HelpRequestPageState extends State<HelpRequestPage> {
     final locationNotifier = context.read<LocationNotifier>();
     if (locationNotifier.settedLocation == null) {
       return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text('Defina sua localizacao para ver lojas com pedidos de preco'),
           IconButton(
             onPressed: () async {
               final shouldShowDialog =
@@ -60,8 +60,12 @@ class _HelpRequestPageState extends State<HelpRequestPage> {
                 NavigationHelper.pushNamed(AppRoutes.setLocationPage);
               }
             },
+            iconSize: 40,
             icon: const Icon(Icons.location_pin),
           ),
+          const SizedBox(height: 10),
+          const Text(
+              'Defina sua localização para ver lojas com pedidos de preço'),
         ],
       );
     }
@@ -126,7 +130,7 @@ class _HelpRequestPageState extends State<HelpRequestPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Lojas com precos para atualizar'),
+        title: const Text('Lojas com preços para atualizar'),
       ),
       body: Column(
         children: [
@@ -136,11 +140,14 @@ class _HelpRequestPageState extends State<HelpRequestPage> {
               options: MapOptions(
                 initialCenter: initialCenter,
                 initialZoom: initialZoom,
+                interactionOptions: const InteractionOptions(
+                          flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
+                        ),
               ),
               children: [
                 TileLayer(
                   urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                  userAgentPackageName: 'com.comizy.app',
+                  userAgentPackageName: 'com.comizy.comizy',
                   tileProvider: NetworkTileProvider(),
                 ),
                 MarkerLayer(markers: markers),
@@ -151,12 +158,13 @@ class _HelpRequestPageState extends State<HelpRequestPage> {
           Expanded(
             child: _selectedShop == null
                 ? const Center(
-                    child: Text('Toque em uma loja no mapa para ver os produtos'),
+                    child:
+                        Text('Toque em uma loja no mapa para ver os produtos'),
                   )
                 : selectedShopOffers.isEmpty
                     ? const Center(
                         child: Text(
-                          'Esta loja nao possui itens pendentes no momento',
+                          'Esta loja não possui itens pendentes no momento',
                           textAlign: TextAlign.center,
                         ),
                       )
@@ -169,7 +177,7 @@ class _HelpRequestPageState extends State<HelpRequestPage> {
                             leading: const Icon(Icons.volunteer_activism),
                             title: Text('${offer.product}'),
                             subtitle: Text(
-                              'Ultimo preco em: ${offerInfo.lastUpdated}',
+                              'Último preço em: ${offerInfo.lastUpdated}',
                             ),
                             onTap: () {
                               _openPricePage(

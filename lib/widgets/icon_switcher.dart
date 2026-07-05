@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:comizy/values/app_assets.dart';
 
 class IconSwitcher extends StatefulWidget {
   const IconSwitcher({super.key});
@@ -8,14 +9,8 @@ class IconSwitcher extends StatefulWidget {
 }
 
 class _IconSwitcherState extends State<IconSwitcher> {
-  final _icons = const [
-    Icons.book,
-    Icons.movie,
-    Icons.music_note,
-    Icons.videogame_asset,
-    Icons.tv,
-    Icons.podcasts,
-  ];
+  final _iconAssets = List<String>.generate(
+      IconAssets.productIconCount, (i) => IconAssets.productIcon(i + 1));
 
   int _index = 0;
 
@@ -26,7 +21,7 @@ class _IconSwitcherState extends State<IconSwitcher> {
       await Future.delayed(const Duration(seconds: 1));
       if (!mounted) return false;
       setState(() {
-        _index = (_index + 1) % _icons.length;
+        _index = (_index + 1) % _iconAssets.length;
       });
       return true;
     });
@@ -45,10 +40,10 @@ class _IconSwitcherState extends State<IconSwitcher> {
           ),
         );
       },
-      child: Icon(
-        _icons[_index],
-        key: ValueKey(_icons[_index]),
-        size: 48,
+      child: Image.asset(
+        _iconAssets[_index],
+        key: ValueKey<int>(_index),
+        height: 150,
       ),
     );
   }

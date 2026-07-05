@@ -17,7 +17,7 @@ class HomePage extends StatelessWidget {
             onPressed: () {
               NavigationHelper.pushNamed(AppRoutes.searchPage);
             },
-            child: const Text('Qual produto voce quer acompanhar hoje?'))
+            child: const Text('Qual produto você quer acompanhar hoje?'))
       ],
     );
   }

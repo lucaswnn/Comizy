@@ -17,7 +17,10 @@ class ShowcaseProductPage extends StatelessWidget {
     final showcaseNotifier = context.read<ShowcaseNotifier>();
     final showcase = showcaseNotifier.showcase;
     if (showcase == null) {
-      return const ConnectionErrorPage();
+      return const ConnectionErrorPage(
+        errorMessage:
+            'Erro ao carregar dados da vitrine. Vitrine não carregada.',
+      );
     }
     final item = showcaseNotifier.currentShowcaseItem;
     if (item == null) {
@@ -54,7 +57,7 @@ class ShowcaseProductPage extends StatelessWidget {
                             context: context,
                             builder: (_) => AlertDialog(
                               content: Text(
-                                  'Este produto ainda nao pode ser removido da vitrine. '
+                                  'Este produto ainda não pode ser removido da vitrine. '
                                   'Aguarde mais $differenceInDays $dayFormatting.'),
                               actions: [
                                 TextButton(
@@ -72,7 +75,7 @@ class ShowcaseProductPage extends StatelessWidget {
                       case ShowcaseRemoveStatus.error:
                         throw '${asyncActionNotifier.error}';
                       case null:
-                        throw 'Algum erro aconteceu';
+                        break;
                     }
                   },
                 );

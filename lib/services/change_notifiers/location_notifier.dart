@@ -78,12 +78,16 @@ class LocationNotifier extends DatabaseLoadable with ChangeNotifier {
       }
 
       LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        return GPSStatus.permissionDenied;
-      }
 
       if (permission == LocationPermission.deniedForever) {
         return GPSStatus.permissionDeniedForever;
+      }
+
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          return GPSStatus.permissionDenied;
+        }
       }
 
       Position position = await Geolocator.getCurrentPosition(
@@ -131,8 +135,7 @@ class LocationNotifier extends DatabaseLoadable with ChangeNotifier {
       throw 'Usuário não logado';
     }
 
-    maxRadiusDistanceInKm =
-        await DatabaseParser.getMaxSearchDistanceInKm();
+    maxRadiusDistanceInKm = await DatabaseParser.getMaxSearchDistanceInKm();
     await setNeighborhoods();
   }
 }

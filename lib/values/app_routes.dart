@@ -6,6 +6,7 @@ class AppRoutes {
   static const String landingPage = '/landing_page';
   static const String loginPage = '/login_page';
   static const String forgotPasswordPage = '/forgot_password_page';
+  static const String changePasswordPage = '/change_password_page';
   static const String createAccountPage = '/create_account_page';
   static const String setLocationPage = '/set_location_page';
   static const String setLocationMapPage = '/set_location_map_page';

@@ -43,26 +43,33 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     switch (status) {
       case AuthRecoverPasswordStatus.success:
         SnackbarHelper.showSnackBar(
-          'Enviamos um link de recuperacao para o seu e-mail.',
+          'Enviamos um link de recuperação para o seu e-mail.',
+          duration: const Duration(seconds: 5),
         );
         NavigationHelper.pop();
         break;
       case AuthRecoverPasswordStatus.invalidEmail:
-        SnackbarHelper.showSnackBar('Informe um e-mail valido para continuar.');
+        SnackbarHelper.showSnackBar(
+          'Informe um e-mail válido para continuar.',
+          duration: const Duration(seconds: 5),
+        );
         break;
       case AuthRecoverPasswordStatus.tooManyRequests:
         SnackbarHelper.showSnackBar(
           'Muitas tentativas detectadas. Tente novamente em instantes.',
+          duration: const Duration(seconds: 5),
         );
         break;
       case AuthRecoverPasswordStatus.networkRequestFailed:
         SnackbarHelper.showSnackBar(
-          'Falha de conexao. Verifique sua internet e tente novamente.',
+          'Falha de conexão. Verifique sua internet e tente novamente.',
+          duration: const Duration(seconds: 5),
         );
         break;
       case AuthRecoverPasswordStatus.unknownError:
         SnackbarHelper.showSnackBar(
-          'Nao foi possivel enviar o e-mail agora. Tente novamente mais tarde.',
+          'Não foi possível enviar o e-mail agora. Tente novamente mais tarde.',
+          duration: const Duration(seconds: 5),
         );
         break;
     }
@@ -96,7 +103,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Digite o e-mail da sua conta para receber o link de recuperacao.',
+                      'Digite o e-mail da sua conta para receber o link de recuperação.',
                       style: TextStyle(
                         color: AppColors.secondary.withValues(alpha: 0.9),
                         fontSize: 14,
@@ -129,7 +136,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     ElevatedButton(
                       onPressed: _isSubmitting ? null : _submit,
                       child: Text(
-                        _isSubmitting ? 'Enviando...' : 'Enviar e-mail de recuperacao',
+                        _isSubmitting ? 'Enviando...' : 'Enviar e-mail de recuperação',
                         style: const TextStyle(color: AppColors.primary),
                       ),
                     ),

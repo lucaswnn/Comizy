@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 enum AuthCreateAccountStatus {
@@ -25,6 +26,16 @@ enum AuthLoginStatus {
 enum AuthRecoverPasswordStatus {
   success,
   invalidEmail,
+  tooManyRequests,
+  networkRequestFailed,
+  unknownError,
+}
+
+enum AuthUpdatePasswordStatus {
+  success,
+  weakPassword,
+  differentFromOldPassword,
+  notAuthenticated,
   tooManyRequests,
   networkRequestFailed,
   unknownError,
@@ -62,7 +73,7 @@ class AuthService {
 
   AuthCreateAccountStatus _mapCreateAccountError(AuthException e) {
     final message = e.message.toLowerCase();
-    
+
     if (message.contains('already registered')) {
       return AuthCreateAccountStatus.existingEmail;
     }
@@ -134,7 +145,10 @@ class AuthService {
     required String email,
   }) async {
     try {
-      await _client.auth.resetPasswordForEmail(email.trim());
+      await _client.auth.resetPasswordForEmail(
+        email.trim(),
+        redirectTo: kIsWeb ? null : 'io.supabase.comizy://reset-password/',
+      );
       return AuthRecoverPasswordStatus.success;
     } on AuthException catch (e) {
       return _mapRecoverPasswordError(e);
@@ -157,5 +171,45 @@ class AuthService {
     }
 
     return AuthRecoverPasswordStatus.unknownError;
+  }
+
+  Future<AuthUpdatePasswordStatus> updatePassword({
+    required String password,
+  }) async {
+    try {
+      await _client.auth.updateUser(
+        UserAttributes(password: password.trim()),
+      );
+      return AuthUpdatePasswordStatus.success;
+    } on AuthException catch (e) {
+      return _mapUpdatePasswordError(e);
+    } catch (_) {
+      return AuthUpdatePasswordStatus.unknownError;
+    }
+  }
+
+  AuthUpdatePasswordStatus _mapUpdatePasswordError(AuthException e) {
+    final message = e.message.toLowerCase();
+    print(message);
+
+    if (message.contains('old password')) {
+      return AuthUpdatePasswordStatus.differentFromOldPassword;
+    }
+    if (message.contains('password')) {
+      return AuthUpdatePasswordStatus.weakPassword;
+    }
+    if (message.contains('too many requests')) {
+      return AuthUpdatePasswordStatus.tooManyRequests;
+    }
+    if (message.contains('network')) {
+      return AuthUpdatePasswordStatus.networkRequestFailed;
+    }
+    if (message.contains('session') ||
+        message.contains('authenticated') ||
+        message.contains('authorization')) {
+      return AuthUpdatePasswordStatus.notAuthenticated;
+    }
+
+    return AuthUpdatePasswordStatus.unknownError;
   }
 }

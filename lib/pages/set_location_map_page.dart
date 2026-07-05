@@ -76,76 +76,83 @@ class _SetLocationMapPageState extends State<SetLocationMapPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Selecione sua localizacao'),
+        title: const Text('Selecione sua localização'),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: Stack(
-              children: [
-                FlutterMap(
-                  mapController: _mapController,
-                  options: MapOptions(
-                    initialCenter: _initialCenter,
-                    initialZoom: _initialZoom,
-                    interactionOptions: const InteractionOptions(
-                      flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
-                    ),
-                  ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Expanded(
+                child: Stack(
                   children: [
-                    TileLayer(
-                      urlTemplate:
-                          'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                      userAgentPackageName: 'com.comizy.app',
+                    FlutterMap(
+                      mapController: _mapController,
+                      options: MapOptions(
+                        initialCenter: _initialCenter,
+                        initialZoom: _initialZoom,
+                        interactionOptions: const InteractionOptions(
+                          flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
+                        ),
+                      ),
+                      children: [
+                        TileLayer(
+                          urlTemplate:
+                              'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                          userAgentPackageName: 'com.comizy.comizy',
+                        ),
+                        MarkerLayer(
+                          markers: markers,
+                        ),
+                      ],
                     ),
-                    MarkerLayer(
-                      markers: markers,
+                    const Center(
+                      child: Icon(
+                        Icons.location_pin,
+                        color: AppColors.tertiary,
+                        size: 40,
+                      ),
                     ),
                   ],
                 ),
-                const Center(
-                  child: Icon(
-                    Icons.location_pin,
-                    color: AppColors.tertiary,
-                    size: 40,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 10),
-          ChangeNotifierProvider(
-            create: (_) => AsyncActionNotifier<SetCustomLocationResult>(),
-            child: Consumer<AsyncActionNotifier<SetCustomLocationResult>>(
-              builder: (context, asyncActionNotifier, _) {
-                WidgetsBinding.instance.addPostFrameCallback(
-                  (_) {
-                    switch (asyncActionNotifier.result) {
-                      case SetCustomLocationResult.success:
-                        NavigationHelper.pushNamedAndClearStack(
-                            AppRoutes.mainPage);
-                        break;
-                      default:
-                        break;
-                    }
-                  },
-                );
+              ),
+              const SizedBox(height: 10),
+              ChangeNotifierProvider(
+                create: (_) => AsyncActionNotifier<SetCustomLocationResult>(),
+                child: Consumer<AsyncActionNotifier<SetCustomLocationResult>>(
+                  builder: (context, asyncActionNotifier, _) {
+                    WidgetsBinding.instance.addPostFrameCallback(
+                      (_) {
+                        switch (asyncActionNotifier.result) {
+                          case SetCustomLocationResult.success:
+                            NavigationHelper.pushNamedAndClearStack(
+                                AppRoutes.mainPage);
+                            break;
+                          default:
+                            break;
+                        }
+                      },
+                    );
 
-                final locationNotifier = context.read<LocationNotifier>();
-                final helpRequestNotifier = context.read<HelpRequestNotifier>();
-                return AsyncElevatedButton(
-                  notifier: asyncActionNotifier,
-                  command: SetCustomLocationCommand(
-                    locationNotifier: locationNotifier,
-                    helpRequestNotifier: helpRequestNotifier,
-                    getLatLngFunc: () => _mapController.camera.center,
-                  ),
-                  child: const Text('Confirmar localizacao'),
-                );
-              },
-            ),
+                    final locationNotifier = context.read<LocationNotifier>();
+                    final helpRequestNotifier =
+                        context.read<HelpRequestNotifier>();
+                    return AsyncElevatedButton(
+                      notifier: asyncActionNotifier,
+                      command: SetCustomLocationCommand(
+                        locationNotifier: locationNotifier,
+                        helpRequestNotifier: helpRequestNotifier,
+                        getLatLngFunc: () => _mapController.camera.center,
+                      ),
+                      child: const Text('Confirmar localização'),
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

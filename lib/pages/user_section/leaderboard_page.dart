@@ -104,7 +104,7 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
           }
           if (snapshot.hasError) {
             return const Center(
-              child: Text('Nao foi possivel carregar o ranking agora.'),
+              child: Text('Não foi possível carregar o ranking agora.'),
             );
           }
 
@@ -195,7 +195,8 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
                 ),
                 const Expanded(
                   child: Center(
-                    child: Text('Nenhum resultado para os filtros selecionados.'),
+                    child:
+                        Text('Nenhum resultado para os filtros selecionados.'),
                   ),
                 ),
               ],

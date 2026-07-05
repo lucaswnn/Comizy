@@ -17,7 +17,7 @@ class RankingNotifier extends DatabaseLoadable with ChangeNotifier {
 
   Ranking get ranking {
     if (_ranking == null) {
-      throw NullRankingException('Ranking nao foi inicializado');
+      throw NullRankingException('Ranking não foi inicializado');
     }
     return _ranking!;
   }
@@ -27,7 +27,7 @@ class RankingNotifier extends DatabaseLoadable with ChangeNotifier {
     final authService = AuthService.instance;
     final user = authService.currentUser;
     if (user == null) {
-      throw 'Usuario nao logado';
+      throw 'Usuário não logado';
     }
 
     _ranking = await DatabaseParser.getRanking(currentUserId: user.id);

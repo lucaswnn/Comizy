@@ -1,12 +1,54 @@
+import 'dart:async';
+
 import 'package:comizy/routes.dart';
 import 'package:comizy/utils/snackbar_helper.dart';
 import 'package:comizy/values/app_colors.dart';
 import 'package:comizy/values/app_routes.dart';
 import 'package:comizy/utils/navigation_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-class App extends StatelessWidget {
+class App extends StatefulWidget {
   const App({super.key});
+
+  @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+  StreamSubscription<AuthState>? _authStateSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    _authStateSubscription =
+        Supabase.instance.client.auth.onAuthStateChange.listen(
+      (data) {
+        if (data.event == AuthChangeEvent.passwordRecovery) {
+          _openChangePasswordPage();
+        }
+      },
+      onError: (error, stackTrace) {},
+    );
+  }
+
+  void _openChangePasswordPage() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+
+      NavigationHelper.pushNamedAndClearStack(
+        AppRoutes.changePasswordPage,
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _authStateSubscription?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,8 +124,8 @@ class App extends StatelessWidget {
         ),
         snackBarTheme: const SnackBarThemeData(
           behavior: SnackBarBehavior.floating,
-          backgroundColor: AppColors.primary,
-          contentTextStyle: TextStyle(color: AppColors.secondary),
+          backgroundColor: AppColors.secondary,
+          contentTextStyle: TextStyle(color: AppColors.primary),
         ),
       ),
       onGenerateRoute: Routes.generateRoute,

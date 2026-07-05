@@ -12,19 +12,29 @@ class LogoutPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Encerrar sessao'),
+        title: const Text('Encerrar sessão'),
       ),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () async {
-            resetLoadableNotifiers(context);
-            final authService = AuthService.instance;
-            await authService.logout();
-            await AppPreferences.resetPreferences();
-            NavigationHelper.pushNamedAndClearStack(AppRoutes.landingPage);
-          },
-          child: const Text('Sair da conta'),
-        ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+            'Você tem certeza que deseja encerrar a sessão?',
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 16),
+          Center(
+            child: ElevatedButton(
+              onPressed: () async {
+                resetLoadableNotifiers(context);
+                final authService = AuthService.instance;
+                await authService.logout();
+                await AppPreferences.resetPreferences();
+                NavigationHelper.pushNamedAndClearStack(AppRoutes.landingPage);
+              },
+              child: const Text('Encerrar sessão'),
+            ),
+          ),
+        ],
       ),
     );
   }

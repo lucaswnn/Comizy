@@ -6,7 +6,11 @@ import 'package:comizy/values/app_routes.dart';
 import 'package:flutter/material.dart';
 
 class ConnectionErrorPage extends StatelessWidget {
-  const ConnectionErrorPage({super.key});
+  final String errorMessage;
+  const ConnectionErrorPage({
+    super.key,
+    required this.errorMessage,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -15,9 +19,12 @@ class ConnectionErrorPage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Text(
-            'Nao foi possivel atualizar seus dados agora.\nTente novamente em instantes.',
+            'Não foi possível atualizar seus dados agora.\nTente novamente em instantes.',
             textAlign: TextAlign.center,
           ),
+          const SizedBox(height: 16),
+          Text(errorMessage),
+          const SizedBox(height: 16),
           ElevatedButton(
             onPressed: () async {
               resetLoadableNotifiers(context);
@@ -26,7 +33,7 @@ class ConnectionErrorPage extends StatelessWidget {
               await AppPreferences.resetPreferences();
               NavigationHelper.pushNamedAndClearStack(AppRoutes.landingPage);
             },
-            child: const Text('Voltar para o inicio'),
+            child: const Text('Voltar para o início'),
           )
         ],
       ),

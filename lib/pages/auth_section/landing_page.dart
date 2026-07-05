@@ -28,7 +28,7 @@ class LandingPage extends StatelessWidget {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Image.asset('assets/${AppAssets.logoNameSmall}'),
+                  Image.asset(AppAssets.logoNameSmall),
                   const SizedBox(width: 15),
                   const Flexible(
                     child: Text(
@@ -64,8 +64,7 @@ class LandingPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 16),
-                  Image.asset(
-                    'assets/${AppAssets.simpleLogo}',
+                  Image.asset(AppAssets.simpleLogo,
                     scale: 1.5,
                   ),
                 ],
