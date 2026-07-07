@@ -141,8 +141,8 @@ class _HelpRequestPageState extends State<HelpRequestPage> {
                 initialCenter: initialCenter,
                 initialZoom: initialZoom,
                 interactionOptions: const InteractionOptions(
-                          flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
-                        ),
+                  flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
+                ),
               ),
               children: [
                 TileLayer(

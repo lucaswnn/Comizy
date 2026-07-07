@@ -158,10 +158,12 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
                           if (value == null) {
                             return;
                           }
-                          setState(() {
-                            _selectedCity = value;
-                            _selectedNeighborhood = _allNeighborhoods;
-                          });
+                          setState(
+                            () {
+                              _selectedCity = value;
+                              _selectedNeighborhood = _allNeighborhoods;
+                            },
+                          );
                         },
                       ),
                       const SizedBox(height: 12),
@@ -185,9 +187,11 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
                                 if (value == null) {
                                   return;
                                 }
-                                setState(() {
-                                  _selectedNeighborhood = value;
-                                });
+                                setState(
+                                  () {
+                                    _selectedNeighborhood = value;
+                                  },
+                                );
                               },
                       ),
                     ],
@@ -254,9 +258,11 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
                               if (value == null) {
                                 return;
                               }
-                              setState(() {
-                                _selectedNeighborhood = value;
-                              });
+                              setState(
+                                () {
+                                  _selectedNeighborhood = value;
+                                },
+                              );
                             },
                     ),
                   ],

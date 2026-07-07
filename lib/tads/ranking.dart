@@ -1,6 +1,7 @@
+import 'package:comizy/utils/nickname_generator.dart';
+
 class RankingEntry implements Comparable<RankingEntry> {
   final String userId;
-  final String userName;
   final int points;
   final String cityName;
   final String neighborhoodName;
@@ -10,12 +11,13 @@ class RankingEntry implements Comparable<RankingEntry> {
 
   const RankingEntry({
     required this.userId,
-    required this.userName,
     required this.points,
     required this.cityName,
     required this.neighborhoodName,
     required this.isCurrentUser,
   });
+
+  String get userName => NicknameGenerator.generate(userId);
 
   @override
   int compareTo(RankingEntry other) => other.points.compareTo(points);

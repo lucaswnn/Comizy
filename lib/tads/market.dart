@@ -29,6 +29,7 @@ class Market {
 
   Map<Offer, OfferInfo> filterOffersByHelpRequests(HelpRequests helpRequests) {
     final requests = helpRequests.helpRequestItems;
+
     final filteredOffersByNeedingUpdate = Map<Offer, OfferInfo>.fromEntries(
       _offers.entries.where(
         (entry) => entry.value.needsUpdate,
@@ -51,7 +52,7 @@ class Market {
         ),
       ),
     );
-
+    
     return filteredOffersThatContainsPruducts;
   }
 

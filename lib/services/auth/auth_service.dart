@@ -190,7 +190,6 @@ class AuthService {
 
   AuthUpdatePasswordStatus _mapUpdatePasswordError(AuthException e) {
     final message = e.message.toLowerCase();
-    print(message);
 
     if (message.contains('old password')) {
       return AuthUpdatePasswordStatus.differentFromOldPassword;

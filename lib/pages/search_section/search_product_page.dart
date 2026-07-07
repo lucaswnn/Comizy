@@ -1,7 +1,9 @@
 import 'package:comizy/services/auth/auth_service.dart';
+import 'package:comizy/services/change_notifiers/async_action_notifier.dart';
 import 'package:comizy/services/change_notifiers/location_notifier.dart';
 import 'package:comizy/services/change_notifiers/product_notifier.dart';
 import 'package:comizy/services/change_notifiers/showcase_notifier.dart';
+import 'package:comizy/services/command/add_showcase_item_command.dart';
 import 'package:comizy/services/shared_preferenes/app_preferences.dart';
 import 'package:comizy/tads/neighborhood.dart';
 import 'package:comizy/tads/product.dart';
@@ -10,6 +12,7 @@ import 'package:comizy/utils/invalid_route.dart';
 import 'package:comizy/utils/navigation_helper.dart';
 import 'package:comizy/utils/reset_loadable_notifiers.dart';
 import 'package:comizy/values/app_routes.dart';
+import 'package:comizy/widgets/async_elevated_button.dart';
 import 'package:comizy/widgets/empty_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -100,9 +103,9 @@ class _ActionsWidgetState extends State<_ActionsWidget> {
 
     if (containsProduct && areAvaibleNeighborhoods) {
       if (isShowcaseFull) {
-        return ProductStatus.inShowcaseAddable;
+        return ProductStatus.inShowcaseNotAddable;
       }
-      return ProductStatus.inShowcaseNotAddable;
+      return ProductStatus.inShowcaseAddable;
     }
 
     return ProductStatus.notReachable;
@@ -128,6 +131,8 @@ class _ActionsWidgetState extends State<_ActionsWidget> {
                   .getNearestNeighborhoods()
                   ?.difference(showcaseNeighborhoods) ??
               {};
+          _firstNeighborhoodChoice =
+              neighborhoodOptions.isNotEmpty ? neighborhoodOptions.first : null;
 
           return Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -140,9 +145,7 @@ class _ActionsWidgetState extends State<_ActionsWidget> {
                       .map((n) => DropdownMenuEntry<Neighborhood>(
                           value: n, label: n.name))
                       .toList(),
-                  onSelected: (v) => setState(
-                    () => _neighborhoodChoice = v,
-                  ),
+                  onSelected: (v) => setState(() => _neighborhoodChoice = v),
                   inputDecorationTheme: const InputDecorationTheme(
                     border: InputBorder.none,
                     suffixIconColor: AppColors.tertiary,
@@ -150,21 +153,81 @@ class _ActionsWidgetState extends State<_ActionsWidget> {
                 ),
               ),
               const SizedBox(height: 10),
-              ElevatedButton(
-                  onPressed: _neighborhoodChoice != null
-                      ? () async {
-                          final result = await showcaseNotifier.addShowcaseItem(
-                            ShowcaseItem(
-                              product: currentProduct,
-                              neighborhood: _neighborhoodChoice!,
-                            ),
-                          );
-                          if (result == ShowcaseAddItemStatus.success) {
+              ChangeNotifierProvider(
+                create: (_) => AsyncActionNotifier<ShowcaseAddItemStatus>(),
+                child: Consumer<AsyncActionNotifier<ShowcaseAddItemStatus>>(
+                  builder: (context, asyncActionNotifier, _) {
+                    WidgetsBinding.instance.addPostFrameCallback(
+                      (_) {
+                        bool mustShowDialog = false;
+                        String dialogTitle = '';
+                        String dialogContent = '';
+                        switch (asyncActionNotifier.result) {
+                          case ShowcaseAddItemStatus.success:
                             NavigationHelper.pop();
-                          } else {}
+                            break;
+
+                          case ShowcaseAddItemStatus.alreadyExists:
+                            mustShowDialog = true;
+                            dialogTitle = 'Produto já existe na vitrine';
+                            dialogContent =
+                                'Este produto já está sendo acompanhado na sua vitrine.';
+                            break;
+                          case ShowcaseAddItemStatus.limitReached:
+                            mustShowDialog = true;
+                            dialogTitle = 'Limite de produtos atingido';
+                            dialogContent =
+                                'Você atingiu o limite de produtos na vitrine.';
+                            break;
+                          case ShowcaseAddItemStatus.error:
+                            mustShowDialog = true;
+                            dialogTitle = 'Erro ao adicionar produto';
+                            dialogContent =
+                                'Ocorreu um erro ao tentar adicionar o produto na vitrine.';
+                            break;
+                          case null:
+                            break;
                         }
-                      : null,
-                  child: const Text('Adicionar na vitrine'))
+
+                        if (mustShowDialog) {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: Text(dialogTitle),
+                                content: Text(dialogContent),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(),
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        }
+                      },
+                    );
+
+                    final showcaseItem = ShowcaseItem(
+                      product: currentProduct,
+                      neighborhood: _neighborhoodChoice!,
+                    );
+
+                    return AsyncElevatedButton<ShowcaseAddItemStatus>(
+                      notifier: asyncActionNotifier,
+                      command: _neighborhoodChoice != null
+                          ? AddShowcaseItemCommand(
+                              showcaseNotifier: showcaseNotifier,
+                              showcaseItem: showcaseItem,
+                            )
+                          : null,
+                      child: const Text('Adicionar na vitrine'),
+                    );
+                  },
+                ),
+              ),
             ],
           );
         }
@@ -214,12 +277,6 @@ class _ActionsWidgetState extends State<_ActionsWidget> {
     final locationNotifier = context.read<LocationNotifier>();
     final showcaseNotifier = context.read<ShowcaseNotifier>();
     final currentProduct = context.read<ProductNotifier>().currentProduct;
-
-    final neighborhoods = locationNotifier.getNearestNeighborhoods();
-    if (neighborhoods != null && neighborhoods.isNotEmpty) {
-      _firstNeighborhoodChoice = neighborhoods.first;
-      _neighborhoodChoice = _firstNeighborhoodChoice;
-    }
 
     if (currentProduct == null) {
       return const EmptyWidget();

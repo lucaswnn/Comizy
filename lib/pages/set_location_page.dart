@@ -40,7 +40,6 @@ class SetLocationPage extends StatelessWidget {
                       builder: (context, asyncActionNotifier, _) {
                         WidgetsBinding.instance.addPostFrameCallback(
                           (_) {
-                            print('result: ${asyncActionNotifier.result}');
                             switch (asyncActionNotifier.result) {
                               case GPSStatus.disabled:
                               case GPSStatus.permissionDenied:

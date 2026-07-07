@@ -43,14 +43,19 @@ class DatabaseParser {
     final showcaseData = await db.loadUserShowcaseData(uid);
     final showcaseMap = <ShowcaseItem, ShowcaseItemInfo>{};
     int showcaseCount = showcaseData.length;
+
     for (final showcaseSlot in showcaseData) {
-      final Map<String, dynamic>? showcaseItemData =
-          showcaseSlot['showcase_items'];
-      if (showcaseItemData == null) {
+      final Map<String, dynamic>? productData = showcaseSlot['products'];
+      final Map<String, dynamic>? neighborhoodData =
+          showcaseSlot['neighborhoods'];
+      if (productData == null || neighborhoodData == null) {
         continue;
       }
 
-      final showcaseItem = ShowcaseItem.fromJSON(showcaseItemData);
+      final showcaseItem = ShowcaseItem.fromJSON(
+        productData: productData,
+        neighborhoodData: neighborhoodData,
+      );
       final showcaseItemInfo = ShowcaseItemInfo.fromJSON(showcaseSlot);
       showcaseMap[showcaseItem] = showcaseItemInfo;
     }
@@ -128,10 +133,10 @@ class DatabaseParser {
   }
 
   static Future<HelpRequests> getHelpRequests(
-      Set<Neighborhood> neighborhoods) async {
+    Set<Neighborhood> neighborhoods,
+  ) async {
     final data =
         await DatabaseConnection.instance.loadHelpRequests(neighborhoods);
-
     final Set<HelpRequest> requests = {};
     for (final helpRequestData in data) {
       final int numberOfOrderes = helpRequestData['total'];
@@ -177,14 +182,12 @@ class DatabaseParser {
 
     final entries = rankingData.map((data) {
       final String userId = data['user_id'];
-      final String userName = data['user_name'];
       final int points = data['user_ranking_points'];
       final String neighborhoodName = data['neighborhood_name'];
       final String cityName = data['city_name'];
 
       return RankingEntry(
         userId: userId,
-        userName: userName,
         points: points,
         cityName: cityName,
         neighborhoodName: neighborhoodName,

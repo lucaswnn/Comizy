@@ -15,7 +15,6 @@ class SetCurrentLocationCommand implements AsyncCommand<GPSStatus> {
   @override
   Future<GPSStatus> execute() async {
     final res = await locationNotifier.setCurrentLocation();
-    print('res: $res');
     if (res == GPSStatus.enabled) {
       helpRequestNotifier.neighborhoods =
           locationNotifier.getNearestNeighborhoods();

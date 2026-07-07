@@ -117,6 +117,18 @@ class Showcase {
     return Map<ShowcaseItem, ShowcaseItemInfo>.fromEntries(
         _showcaseItems.entries.where((e) => e.key.product == product));
   }
+
+  @override
+  String toString() {
+    String showcaseString = 'Showcase:\n';
+    for (final entry in _showcaseItems.entries) {
+      showcaseString +=
+          'Item: ${entry.key}, Added At: ${entry.value.addedAt}, Expires At: ${entry.value.expiresAt}\n';
+    }
+    showcaseString +=
+        'Max Showcase Items Count: $maxShowcaseItemsCount, New Space Cost: $newSpaceCost, Max Showcase Slot Days: $maxShowcaseSlotDays';
+    return showcaseString;
+  }
 }
 
 class ShowcaseItem implements Comparable<ShowcaseItem> {
@@ -128,11 +140,10 @@ class ShowcaseItem implements Comparable<ShowcaseItem> {
     required this.neighborhood,
   });
 
-  factory ShowcaseItem.fromJSON(Map<String, dynamic> showcaseItemData) {
-    final Map<String, dynamic> productData = showcaseItemData['products'];
-    final Map<String, dynamic> neighborhoodData =
-        showcaseItemData['neighborhoods'];
-
+  factory ShowcaseItem.fromJSON({
+    required Map<String, dynamic> productData,
+    required Map<String, dynamic> neighborhoodData,
+  }) {
     final product = Product.fromJSON(productData);
     final neighborhood = Neighborhood.fromJSON(neighborhoodData);
 

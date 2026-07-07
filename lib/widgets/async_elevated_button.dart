@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 class AsyncElevatedButton<R> extends StatelessWidget {
   final AsyncActionNotifier<R> notifier;
-  final AsyncCommand<R> command;
+  final AsyncCommand<R>? command;
   final Widget child;
   final void Function()? onLongPress;
   final void Function(bool)? onHover;
@@ -34,7 +34,7 @@ class AsyncElevatedButton<R> extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed:
-          notifier.isExecuting ? null : () => notifier.execute(command),
+          notifier.isExecuting || command == null ? null : () => notifier.execute(command!),
       onLongPress: onLongPress,
       onHover: onHover,
       onFocusChange: onFocusChange,

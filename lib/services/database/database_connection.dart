@@ -204,8 +204,9 @@ class DatabaseConnection {
   }
 
   Future<List<Map<String, dynamic>>> loadRankingData() async {
-    final List<Map<String, dynamic>> res = await _dbInstance.rpc('get_leaderboard');
-  
+    final List<Map<String, dynamic>> res =
+        await _dbInstance.rpc('get_leaderboard');
+
     return res;
   }
 }
