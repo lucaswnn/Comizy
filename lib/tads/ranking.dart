@@ -7,8 +7,6 @@ class RankingEntry implements Comparable<RankingEntry> {
   final String neighborhoodName;
   final bool isCurrentUser;
 
-
-
   const RankingEntry({
     required this.userId,
     required this.points,
@@ -17,7 +15,8 @@ class RankingEntry implements Comparable<RankingEntry> {
     required this.isCurrentUser,
   });
 
-  String get userName => NicknameGenerator.generate(userId);
+  String get userName =>
+      isCurrentUser ? 'Você' : NicknameGenerator.generate(userId);
 
   @override
   int compareTo(RankingEntry other) => other.points.compareTo(points);
