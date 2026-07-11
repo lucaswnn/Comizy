@@ -161,15 +161,12 @@ class DatabaseParser {
 
   static Future<Set<HelpedRequest>> getLastHelpedSubmissions() async {
     final data = await DatabaseConnection.instance.loadLastHelpedSubmissions();
+    print(data);
     final helpedRequests = <HelpedRequest>{};
 
     for (final helpedSubmissionData in data) {
       final productData = helpedSubmissionData['products'];
       final shopData = helpedSubmissionData['shops'];
-      if (productData is! Map<String, dynamic> ||
-          shopData is! Map<String, dynamic>) {
-        continue;
-      }
 
       helpedRequests.add(
         HelpedRequest(
@@ -178,7 +175,7 @@ class DatabaseParser {
         ),
       );
     }
-
+    print(helpedRequests);
     return helpedRequests;
   }
 

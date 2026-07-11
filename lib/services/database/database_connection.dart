@@ -224,8 +224,9 @@ class DatabaseConnection {
   }
 
   Future<List<Map<String, dynamic>>> loadLastHelpedSubmissions() async {
-    final res = await _dbInstance.rpc('get_last_helped_submissions');
-    
+    final List<Map<String, dynamic>> res =
+        await _dbInstance.rpc('get_last_helped_submissions');
+        
     return res;
   }
 }
