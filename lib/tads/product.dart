@@ -30,9 +30,26 @@ class Product implements Comparable<Product> {
     final String productSubcategory =
         productSubcategoryData['product_subcategory_name'];
 
+    final rawVariationData = productData['product_variations'];
+    ProductVariation? productVariation;
+    if (rawVariationData is Map<String, dynamic>) {
+      final variationId = rawVariationData['product_variation_id'];
+      final variationDescription =
+          rawVariationData['product_variation_description'];
+      productVariation = ProductVariation(
+        id: variationId is int ? variationId : null,
+        description:
+            variationDescription is String ? variationDescription : null,
+      );
+      if (!productVariation.isDefined) {
+        productVariation = null;
+      }
+    }
+
     final productType = ProductType(
         mainCategory: ProductCategory(productCategory, productCategoryAsset),
-        subcategory: ProductSubcategory(productSubcategory));
+        subcategory: ProductSubcategory(productSubcategory),
+        productVariation: productVariation);
 
     return Product(
       id: productId,

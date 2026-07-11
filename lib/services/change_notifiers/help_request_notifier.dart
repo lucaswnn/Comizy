@@ -4,6 +4,7 @@ import 'package:comizy/tads/help_requests.dart';
 import 'package:comizy/tads/help_submission.dart';
 import 'package:comizy/tads/neighborhood.dart';
 import 'package:comizy/tads/product.dart';
+import 'package:comizy/tads/shop.dart';
 import 'package:flutter/material.dart';
 
 class NullNeighborhoodException implements Exception {
@@ -45,8 +46,9 @@ class HelpRequestNotifier extends DatabaseLoadable with ChangeNotifier {
     notifyListeners();
   }
 
-  void removeRequestByProduct(Product product) {
-    _helpRequests?.removeRequestByProduct(product);
+  void removeRequest({required Product product,
+  required Shop shop,}) {
+    _helpRequests?.removeRequest(product: product, shop: shop);
     notifyListeners();
   }
 
@@ -69,6 +71,14 @@ class HelpRequestNotifier extends DatabaseLoadable with ChangeNotifier {
           'sem vizinhança carregada para definir helpRequests');
     }
 
-    _helpRequests = await DatabaseParser.getHelpRequests(neighborhoods!);
+    final requestsFuture = DatabaseParser.getHelpRequests(neighborhoods!);
+    final helpedFuture = DatabaseParser.getLastHelpedSubmissions();
+    final requests = await requestsFuture;
+    final helpedRequests = await helpedFuture;
+
+    _helpRequests = HelpRequests(
+      helpRequests: requests.helpRequestItems,
+      helpedRequests: helpedRequests,
+    );
   }
 }

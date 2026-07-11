@@ -159,6 +159,29 @@ class DatabaseParser {
     return HelpRequests(helpRequests: requests);
   }
 
+  static Future<Set<HelpedRequest>> getLastHelpedSubmissions() async {
+    final data = await DatabaseConnection.instance.loadLastHelpedSubmissions();
+    final helpedRequests = <HelpedRequest>{};
+
+    for (final helpedSubmissionData in data) {
+      final productData = helpedSubmissionData['products'];
+      final shopData = helpedSubmissionData['shops'];
+      if (productData is! Map<String, dynamic> ||
+          shopData is! Map<String, dynamic>) {
+        continue;
+      }
+
+      helpedRequests.add(
+        HelpedRequest(
+          product: Product.fromJSON(productData),
+          shop: Shop.fromJSON(shopData),
+        ),
+      );
+    }
+
+    return helpedRequests;
+  }
+
   static Future<SubmitPriceStatus> submitPriceOffer(
     HelpSubmissionData helpData,
   ) async {

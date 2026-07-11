@@ -52,7 +52,12 @@ class DatabaseConnection {
           product_category_name,
           product_category_asset
         ),
-        product_subcategories(product_subcategory_name)
+        product_subcategories(product_subcategory_name),
+        product_variations
+        (
+          product_variation_id,
+          product_variation_description
+        )
       ),
       neighborhoods
       (
@@ -151,7 +156,15 @@ class DatabaseConnection {
           product_category_name,
           product_category_asset
         ),
-        product_subcategories(product_subcategory_name)
+        product_subcategories
+        (
+          product_subcategory_name
+        ),
+        product_variations
+        (
+          product_variation_id,
+          product_variation_description
+        )
       ),
       offer_price,
       offer_last_updated,
@@ -207,6 +220,12 @@ class DatabaseConnection {
     final List<Map<String, dynamic>> res =
         await _dbInstance.rpc('get_leaderboard');
 
+    return res;
+  }
+
+  Future<List<Map<String, dynamic>>> loadLastHelpedSubmissions() async {
+    final res = await _dbInstance.rpc('get_last_helped_submissions');
+    
     return res;
   }
 }

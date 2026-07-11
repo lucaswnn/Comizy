@@ -57,11 +57,17 @@ class SubmitPriceCommand implements AsyncCommand<SubmitPriceResult> {
           ),
         );
 
-        if (marketNotifier.market.productNeedsUpdate(product)) {
-          helpRequestNotifier.removeRequestByProduct(product);
-        }
+        helpRequestNotifier.removeRequest(
+          product: product,
+          shop: shop,
+        );
+        
         return SubmitPriceResult.success;
       case SubmitPriceStatus.hold:
+        helpRequestNotifier.removeRequest(
+          product: product,
+          shop: shop,
+        );
         return SubmitPriceResult.hold;
       case SubmitPriceStatus.error:
         return SubmitPriceResult.error;

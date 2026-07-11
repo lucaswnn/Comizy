@@ -1,17 +1,29 @@
 import 'package:comizy/tads/help_request.dart';
 import 'package:comizy/tads/product.dart';
+import 'package:comizy/tads/shop.dart';
 
 class HelpRequests {
   final Set<HelpRequest> _helpRequestItems;
+  final Set<HelpedRequest> _helpedRequestItems;
+
   Set<HelpRequest> get helpRequestItems => _helpRequestItems;
+  Set<HelpedRequest> get helpedRequestItems => _helpedRequestItems;
 
-  const HelpRequests({
+  HelpRequests({
     required Set<HelpRequest> helpRequests,
-  }) : _helpRequestItems = helpRequests;
+    Set<HelpedRequest>? helpedRequests,
+  })  : _helpRequestItems = helpRequests,
+        _helpedRequestItems = helpedRequests ?? {};
 
-  void removeRequestByProduct(Product product) {
-    _helpRequestItems.removeWhere((req) => req.product == product);
+  void removeRequest({
+    required Product product,
+    required Shop shop,
+  }) {
+    _helpedRequestItems.add(
+      HelpedRequest(
+        product: product,
+        shop: shop,
+      ),
+    );
   }
 }
-
-

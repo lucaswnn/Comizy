@@ -38,35 +38,45 @@ class _HelpRequestPageState extends State<HelpRequestPage> {
     NavigationHelper.pushNamed(AppRoutes.editProductPricePage);
   }
 
+  Widget _buildLocationNotSetMessage({
+    required BuildContext context,
+    required LocationNotifier locationNotifier,
+  }) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        IconButton(
+          onPressed: () async {
+            final shouldShowDialog =
+                await AppPreferences.shouldShowLocationMessage();
+            if (!context.mounted) return;
+
+            if (shouldShowDialog) {
+              showDialog(
+                  context: context,
+                  builder: (_) => const LocationAlertDialog());
+            } else {
+              locationNotifier.askForGPS();
+              NavigationHelper.pushNamed(AppRoutes.setLocationPage);
+            }
+          },
+          iconSize: 40,
+          icon: const Icon(Icons.location_pin),
+        ),
+        const SizedBox(height: 10),
+        const Text(
+            'Defina sua localização para ver lojas com pedidos de preço'),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final locationNotifier = context.read<LocationNotifier>();
     if (locationNotifier.settedLocation == null) {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          IconButton(
-            onPressed: () async {
-              final shouldShowDialog =
-                  await AppPreferences.shouldShowLocationMessage();
-              if (!context.mounted) return;
-
-              if (shouldShowDialog) {
-                showDialog(
-                    context: context,
-                    builder: (_) => const LocationAlertDialog());
-              } else {
-                locationNotifier.askForGPS();
-                NavigationHelper.pushNamed(AppRoutes.setLocationPage);
-              }
-            },
-            iconSize: 40,
-            icon: const Icon(Icons.location_pin),
-          ),
-          const SizedBox(height: 10),
-          const Text(
-              'Defina sua localização para ver lojas com pedidos de preço'),
-        ],
+      return _buildLocationNotSetMessage(
+        context: context,
+        locationNotifier: locationNotifier,
       );
     }
 

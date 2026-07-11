@@ -1,4 +1,5 @@
 import 'package:comizy/tads/help_requests.dart';
+import 'package:comizy/tads/help_request.dart';
 import 'package:comizy/tads/offer.dart';
 import 'package:comizy/tads/product.dart';
 import 'package:comizy/tads/shop.dart';
@@ -29,6 +30,7 @@ class Market {
 
   Map<Offer, OfferInfo> filterOffersByHelpRequests(HelpRequests helpRequests) {
     final requests = helpRequests.helpRequestItems;
+    final helpedRequests = helpRequests.helpedRequestItems;
 
     final filteredOffersByNeedingUpdate = Map<Offer, OfferInfo>.fromEntries(
       _offers.entries.where(
@@ -52,8 +54,17 @@ class Market {
         ),
       ),
     );
-    
-    return filteredOffersThatContainsPruducts;
+
+    return Map<Offer, OfferInfo>.fromEntries(
+      filteredOffersThatContainsPruducts.entries.where(
+        (entry) => !helpedRequests.contains(
+          HelpedRequest(
+            product: entry.key.product,
+            shop: entry.key.shop,
+          ),
+        ),
+      ),
+    );
   }
 
   bool productNeedsUpdate(Product product) {
