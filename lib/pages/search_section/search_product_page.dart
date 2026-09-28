@@ -133,7 +133,7 @@ class _ActionsWidgetState extends State<_ActionsWidget> {
               {};
           _firstNeighborhoodChoice =
               neighborhoodOptions.isNotEmpty ? neighborhoodOptions.first : null;
-          _neighborhoodChoice = _firstNeighborhoodChoice;
+          _neighborhoodChoice ??= _firstNeighborhoodChoice;
 
           return Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,

@@ -19,38 +19,6 @@ class ShowcasePage extends StatelessWidget {
         onTap: () => NavigationHelper.pushNamed(AppRoutes.searchPage),
       );
 
-  ListTile _itemListTile(
-    ShowcaseNotifier showcaseNotifier,
-    ShowcaseItem item,
-    ShowcaseItemInfo itemInfo,
-  ) {
-    final showcase = showcaseNotifier.showcase;
-    return ListTile(
-      leading: const Icon(Icons.abc),
-      trailing: showcase!.isItemRemovable(item)
-          ? IconButton(
-              onPressed: () async {
-                await showcaseNotifier.removeShowcaseItem(item);
-              },
-              icon: const Icon(Icons.remove),
-            )
-          : null,
-      title: Text(item.product.name),
-      subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text('${item.neighborhood}'),
-          Text('Adicionado em ${itemInfo.addedAt.toShortDateString}'),
-        ],
-      ),
-      onTap: () {
-        showcaseNotifier.currentShowcaseItem = item;
-        NavigationHelper.pushNamed(AppRoutes.showcaseProductPage);
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final showcaseNotifier = context.watch<ShowcaseNotifier>();
@@ -75,7 +43,72 @@ class ShowcasePage extends StatelessWidget {
 
         final item = items[i];
         final itemInfo = showcase.showcaseItems[item]!;
-        return _itemListTile(showcaseNotifier, item, itemInfo);
+        return _ItemListTile(
+          showcaseNotifier: showcaseNotifier,
+          item: item,
+          itemInfo: itemInfo,
+        );
+      },
+    );
+  }
+}
+
+class _ItemListTile extends StatelessWidget {
+  final ShowcaseNotifier showcaseNotifier;
+  final ShowcaseItem item;
+  final ShowcaseItemInfo itemInfo;
+
+  const _ItemListTile({
+    required this.showcaseNotifier,
+    required this.item,
+    required this.itemInfo,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final showcase = showcaseNotifier.showcase;
+    return ListTile(
+      leading: const Icon(Icons.abc),
+      trailing: showcase!.isItemRemovable(item)
+          ? IconButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (_) => AlertDialog(
+                    title: const Text('Remover produto da vitrine'),
+                    content: const Text(
+                        'Tem certeza que deseja remover este produto da vitrine?'),
+                    actions: [
+                      TextButton(
+                        child: const Text('Cancelar'),
+                        onPressed: () => NavigationHelper.pop(),
+                      ),
+                      TextButton(
+                        child: const Text('Remover'),
+                        onPressed: () async {
+                          NavigationHelper.pop();
+                          await showcaseNotifier.removeShowcaseItem(item);
+                        },
+                      ),
+                    ],
+                  ),
+                );
+              },
+              icon: const Icon(Icons.remove),
+            )
+          : null,
+      title: Text(item.product.name),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text('${item.neighborhood}'),
+          Text('Adicionado em ${itemInfo.addedAt.toShortDateString}'),
+        ],
+      ),
+      onTap: () {
+        showcaseNotifier.currentShowcaseItem = item;
+        NavigationHelper.pushNamed(AppRoutes.showcaseProductPage);
       },
     );
   }
@@ -122,7 +155,8 @@ class _NewSpaceListTile extends StatelessWidget {
     final showcase = showcaseNotifier.showcase;
     if (showcase == null) {
       return const ConnectionErrorPage(
-        errorMessage: 'Erro ao carregar dados da vitrine. Vitrine não carregada.',
+        errorMessage:
+            'Erro ao carregar dados da vitrine. Vitrine não carregada.',
       );
     }
     final isAddable = showcase.isSpaceAddable(wallet);

@@ -34,21 +34,9 @@ class _ShowcaseProductPageState extends State<ShowcaseProductPage> {
 
     final ageInDays = DateTime.now().difference(info.lastUpdated).inDays;
     if (ageInDays <= 3) {
-      return Colors.amber.shade700;
+      return Colors.yellow.shade700;
     }
     return Colors.orange.shade700;
-  }
-
-  String _freshnessLabel(OfferInfo info) {
-    if (!info.needsUpdate) {
-      return 'Alta probabilidade de estar correto';
-    }
-
-    final ageInDays = DateTime.now().difference(info.lastUpdated).inDays;
-    if (ageInDays <= 3) {
-      return 'Atualização recomendada em breve';
-    }
-    return 'Preço possivelmente desatualizado';
   }
 
   String _shopLocationLabel(Offer offer) {
@@ -214,6 +202,9 @@ class _ShowcaseProductPageState extends State<ShowcaseProductPage> {
     final newestOffer = offers.reduce(
       (a, b) => a.value.lastUpdated.isAfter(b.value.lastUpdated) ? a : b,
     );
+    final oldestOffer = offers.reduce(
+      (a, b) => a.value.lastUpdated.isBefore(b.value.lastUpdated) ? a : b,
+    );
 
     if (offers.length == 1) {
       return Card(
@@ -255,7 +246,7 @@ class _ShowcaseProductPageState extends State<ShowcaseProductPage> {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        'Última atualização em ${newestOffer.value.lastUpdated.toShortDateString} - ${_freshnessLabel(newestOffer.value)}',
+                        'Última atualização em ${newestOffer.value.lastUpdated.toShortDateString}',
                       ),
                     ),
                   ],
@@ -287,7 +278,8 @@ class _ShowcaseProductPageState extends State<ShowcaseProductPage> {
             _metricTile(
               title: 'Menor preço',
               value: _formatPrice(minOffer.value),
-              subtitle: _shopLocationLabel(minOffer.key),
+              subtitle:
+                  '${_shopLocationLabel(minOffer.key)} - atualizado em ${minOffer.value.lastUpdated.toShortDateString}',
               icon: Icons.trending_down,
               iconColor: Colors.green.shade600,
             ),
@@ -295,7 +287,8 @@ class _ShowcaseProductPageState extends State<ShowcaseProductPage> {
             _metricTile(
               title: 'Maior preço',
               value: _formatPrice(maxOffer.value),
-              subtitle: _shopLocationLabel(maxOffer.key),
+              subtitle:
+                  '${_shopLocationLabel(maxOffer.key)} - atualizado em ${maxOffer.value.lastUpdated.toShortDateString}',
               icon: Icons.trending_up,
               iconColor: Colors.red.shade600,
             ),
@@ -330,12 +323,40 @@ class _ShowcaseProductPageState extends State<ShowcaseProductPage> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'Última atualização em ${newestOffer.value.lastUpdated.toShortDateString} - ${_freshnessLabel(newestOffer.value)}',
+                      'Oferta mais recente: ${_shopLocationLabel(newestOffer.key)} - atualizado em ${newestOffer.value.lastUpdated.toShortDateString}',
                     ),
                   ),
                 ],
               ),
-            )
+            ),
+            const SizedBox(height: 12),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color:
+                    _freshnessColor(oldestOffer.value).withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: _freshnessColor(oldestOffer.value),
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.update,
+                    color: _freshnessColor(oldestOffer.value),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Oferta mais antiga: ${_shopLocationLabel(oldestOffer.key)} - atualizado em ${oldestOffer.value.lastUpdated.toShortDateString}',
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -432,7 +453,7 @@ class _ShowcaseProductPageState extends State<ShowcaseProductPage> {
         final remainingDays = differenceInDays < 0 ? 0 : differenceInDays;
         final dayFormatting = remainingDays == 1 ? 'dia' : 'dias';
         _showSimpleDialog(
-          'Este produto ainda nao pode ser removido da vitrine. Aguarde mais $remainingDays $dayFormatting.',
+          'Este produto ainda não pode ser removido da vitrine. Aguarde mais $remainingDays $dayFormatting.',
         );
         break;
       case ShowcaseRemoveStatus.itemNotFound:
